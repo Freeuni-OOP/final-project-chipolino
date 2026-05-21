@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
 import org.springframework.boot.jpa.test.autoconfigure.TestEntityManager;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -62,5 +63,48 @@ public class TestUserRepository {
         Optional<User> foundUser = userRepository.findUserByUsername("ghost");
 
         assertTrue(foundUser.isEmpty());
+    }
+
+    @Test
+    public void testFindUsersByBannedTrue() {
+        user.setBanned(true);
+        entityManager.persist(user);
+        entityManager.flush();
+
+        List<User> bannedUsers = userRepository.findUsersByBanned(true);
+
+        assertEquals(1, bannedUsers.size());
+        assertTrue(bannedUsers.get(0).getBanned());
+        assertEquals("giorgi", bannedUsers.get(0).getUsername());
+    }
+
+    @Test
+    public void testFindUsersByBannedFalse() {
+        entityManager.persist(user);
+
+        User bannedUser = new User();
+        bannedUser.setUsername("anano");
+        bannedUser.setEmail("anano@free.ge");
+        bannedUser.setPassword("bar");
+        bannedUser.setRoles(Role.USER);
+        bannedUser.setBanned(true);
+        entityManager.persist(bannedUser);
+
+        entityManager.flush();
+        List<User> activeUsers = userRepository.findUsersByBanned(false);
+
+        assertEquals(1, activeUsers.size());
+        assertEquals("giorgi", activeUsers.get(0).getUsername());
+    }
+
+    @Test
+    public void testFindUsersByBannedEmptyList() {
+        entityManager.persist(user);
+        entityManager.flush();
+
+        List<User> bannedUsers = userRepository.findUsersByBanned(true);
+
+        assertTrue(bannedUsers.isEmpty());
+        assertEquals(0, bannedUsers.size());
     }
 }
