@@ -3,15 +3,13 @@ package RoadReport.services.core;
 import RoadReport.entities.Comment;
 import RoadReport.entities.Report;
 import RoadReport.entities.User;
-import RoadReport.enums.Role;
 import RoadReport.repositories.CommentRepository;
 import RoadReport.repositories.ReportRepository;
 import RoadReport.repositories.UserRepository;
 import jakarta.transaction.Transactional;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.jsoup.Jsoup;
+import org.jsoup.safety.Safelist;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,7 +22,8 @@ public class CommentService {
     private final ReportRepository reportRepository;
 
     /**
-     * creates and store users comment
+     * creates and store users comment,
+     * ensures safety from XSS attacks
      *
      * @param userId   user ID, which writes comment
      * @param reportId report ID, which writes comment
@@ -36,13 +35,15 @@ public class CommentService {
     @Transactional
     public Comment addComment(Long userId, Long reportId, String text) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("couldn't found" + userId));
+                .orElseThrow(() -> new IllegalArgumentException("couldn't found: " + userId));
         Report report = reportRepository.findById(reportId)
-                .orElseThrow(() -> new IllegalArgumentException("couldn't found report " + reportId));
+                .orElseThrow(() -> new IllegalArgumentException("couldn't found report: " + reportId));
+
+        String safeText = Jsoup.clean(text, Safelist.none());
 
         Comment comment = new Comment();
         comment.setUser(user);
-        comment.setText(text);
+        comment.setText(safeText);
         comment.setReport(report);
         return commentRepository.save(comment);
     }

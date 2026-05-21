@@ -21,11 +21,11 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    private final int MINUS_REP_POINT = 5;
+    private final static int MINUS_REP_REPORT = 5;
     private final int VOTE_POINT = 1;
-    private final int NON_RELIABLE  = -15;
-    private final int RELIABLE_RESTORE_POINT = 20;
-    private final int MAX_AVAILABLE_REPORT_MISSED = 3;
+    private final static int NON_RELIABLE  = -15;
+    private final static int RELIABLE_RESTORE_POINT = 20;
+    private final static int MAX_REJECTED_REPORTS = 3;
 
 
 
@@ -94,9 +94,9 @@ public class UserService {
     public void handleRejectedReport(Long userId) {
         User user = getUserById(userId);
         user.setRejectedReportsCount(user.getRejectedReportsCount() + 1);
-        user.setReputationScore(user.getReputationScore() - MINUS_REP_POINT);
+        user.setReputationScore(user.getReputationScore() - MINUS_REP_REPORT);
 
-        if (user.getRejectedReportsCount() >= MAX_AVAILABLE_REPORT_MISSED) {
+        if (user.getRejectedReportsCount() >= MAX_REJECTED_REPORTS) {
             user.setRejectedReportsCount(0);
             user.setBanned(true);
             user.setBanExpiration(LocalDateTime.now().plusDays(3));
@@ -147,6 +147,7 @@ public class UserService {
      * @param userId the ID of the user to check
      * @return true if the user is currently banned, false otherwise
      */
+    @Transactional
     public boolean userIsBanned(Long userId) {
         User user = getUserById(userId);
         if (user.getBanned()) {
