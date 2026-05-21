@@ -2,13 +2,19 @@ package RoadReport.entities;
 
 import RoadReport.enums.Role;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Data
+@Builder
 @Table(name = "users")
+@NoArgsConstructor
+@AllArgsConstructor
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,6 +38,7 @@ public class User {
 
     private Integer rejectedReportsCount = 0;
     private Boolean banned = false;
+    private Boolean nonReliable = false;
     private LocalDateTime banExpiration;
 
     @Column(nullable = false)
