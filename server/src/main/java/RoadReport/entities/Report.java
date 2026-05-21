@@ -61,7 +61,6 @@ public class Report {
     @Column(columnDefinition = "JSON")
     private Map<String, Object> attributes;
 
-    @Column(nullable = false)
     private LocalDateTime expireDate;
     @Column(nullable = false)
     private LocalDateTime createDate;

@@ -12,21 +12,37 @@ import java.util.List;
 
 @Repository
 public interface ReportRepository extends JpaRepository<Report, Long> {
+
     List<Report> findByUserId(Long user_id);
 
     List<Report> findByStatus(ReportStatus status);
 
 
+    /**
+     * Finds road reports located within a specified radius from the user's location.
+     * <p>
+     * This method uses the <b>Haversine formula</b> to calculate the great-circle distance
+     * between two points on a sphere given their longitudes and latitudes.
+     * The result is compared against the provided search radius in kilometers.
+     * </p>
+     * @param user_latitude  The latitude of the user's current location in degrees.
+     * @param user_longitude The longitude of the user's current location in degrees.
+     * @param user_radius    The search radius in kilometers (e.g., 5.0 for a 5km radius).
+     * @return A list of {@link Report} entities found within the specified circular area.
+     */
     @Query(value = "SELECT * FROM reports as r " +
             "WHERE (6371 * acos(cos(radians(:lat)) * cos(radians(r.latitude)) *" +
             " cos(radians(r.longitude) - radians(:lon)) + sin(radians(:lat)) *" +
             " sin(radians(r.latitude)))) < :radius",
             nativeQuery = true
     )
+
     List<Report> findNearbyReports(@Param("lat") Double user_latitude,
                                    @Param("lon") Double user_longitude,
                                    @Param("radius") Double user_radius);
 
+
+    /** Performs a cleanup of the reports table by removing invalid or outdated entries.  */
     @Modifying
     @Query("DELETE FROM Report as r WHERE r.expireDate <= CURRENT_TIMESTAMP " +
             "OR r.status = 'REMOVED'")

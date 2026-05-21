@@ -9,9 +9,8 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Repository
-@Service
-@Controller
 public interface UserRepository extends JpaRepository<User, Long> {
+
     Optional<User> findUserByUsername(String Username);
 
     Optional<User> findUserByEmail(String email);
