@@ -8,6 +8,7 @@ import RoadReport.enums.ReportType;
 import RoadReport.enums.Role;
 import RoadReport.repositories.CommentRepository;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
@@ -26,6 +27,20 @@ public class TestCommentRepository {
 
     @Autowired
     private TestEntityManager entityManager;
+
+    private User userA;
+    private User userB;
+    private Report reportA;
+    private Report reportB;
+
+    @BeforeEach
+    public void setUp() {
+        userA = createAndPersistUser("ezuga", "gezug24@gmail.com");
+        userB = createAndPersistUser("bendo", "nbend24@gmail.com");
+
+        reportA = createAndPersistReport(userA);
+        reportB = createAndPersistReport(userA);
+    }
 
     private User createAndPersistUser(String username, String email) {
         User user = new User();
@@ -55,51 +70,42 @@ public class TestCommentRepository {
     }
 
     @Test
-    public void countByReportIdTest() {
-        User user = createAndPersistUser("ezuga", "gezug24@gmail.com");
-        Report report = createAndPersistReport(user);
-
-        long count = commentRepository.countByReportId(report.getId());
+    public void testCountByReportId() {
+        long count = commentRepository.countByReportId(reportA.getId());
         assertEquals(0, count);
 
-        addComment(user, report, "bendo");
-        count = commentRepository.countByReportId(report.getId());
+        addComment(userA, reportA, "bendo");
         entityManager.flush();
+        count = commentRepository.countByReportId(reportA.getId());
         assertEquals(1, count);
 
-        addComment(user, report, "is");
-        count = commentRepository.countByReportId(report.getId());
+        addComment(userA, reportA, "is");
         entityManager.flush();
+        count = commentRepository.countByReportId(reportA.getId());
         assertEquals(2, count);
 
-        addComment(user, report, "working");
-
+        addComment(userA, reportA, "working");
         entityManager.flush();
-        count = commentRepository.countByReportId(report.getId());
+        count = commentRepository.countByReportId(reportA.getId());
         assertEquals(3, count);
     }
 
     @Test
-    public void findByReportIdTest() {
-        User user = createAndPersistUser("ezuga", "gezug24@gmail.com");
-        Report reportA = createAndPersistReport(user);
+    public void testFindByReportId() {
+        addComment(userA, reportA, "bendo");
+        addComment(userA, reportA, "nika");
+        addComment(userA, reportA, "zuka");
+        addComment(userA, reportA, "luka");
+        addComment(userA, reportA, "fuka");
 
-        addComment(user, reportA, "bendo");
-        addComment(user, reportA, "nika");
-        addComment(user, reportA, "zuka");
-        addComment(user, reportA, "luka");
-        addComment(user, reportA, "fuka");
-
-        Report reportB = createAndPersistReport(user);
-        addComment(user, reportB, "other report");
+        addComment(userA, reportB, "other report");
 
         entityManager.flush();
+
         List<Comment> comments = commentRepository.findByReportId(reportA.getId());
         assertNotNull(comments);
-
         assertEquals(5, comments.size());
         assertEquals("bendo", comments.get(0).getText());
-
         assertEquals("fuka", comments.get(4).getText());
 
         List<Comment> emptyComments = commentRepository.findByReportId(999L);
@@ -111,19 +117,13 @@ public class TestCommentRepository {
     }
 
     @Test
-    public void findByUserId() {
-        User userA = createAndPersistUser("ezuga", "gezug24@gmail.com");
-        Report reportA = createAndPersistReport(userA);
-
+    public void testFindByUserId() {
         addComment(userA, reportA, "bendo");
         addComment(userA, reportA, "nika");
         addComment(userA, reportA, "zuka");
         addComment(userA, reportA, "luka");
         addComment(userA, reportA, "fuka");
         addComment(userA, reportA, "harden");
-
-        User userB = createAndPersistUser("bendo", "nbend24@gmail.com");
-        Report reportB = createAndPersistReport(userA);
 
         addComment(userB, reportB, "kertis");
         addComment(userB, reportB, "jones");
@@ -132,6 +132,7 @@ public class TestCommentRepository {
         addComment(userB, reportB, "GOAT");
 
         entityManager.flush();
+
         List<Comment> comments = commentRepository.findByUserId(userA.getId());
         assertNotNull(comments);
         assertEquals(6, comments.size());
@@ -144,7 +145,6 @@ public class TestCommentRepository {
         List<Comment> comments2 = commentRepository.findByUserId(userB.getId());
         assertEquals(5, comments2.size());
         assertEquals("kertis", comments2.get(0).getText());
-
     }
 
 }
