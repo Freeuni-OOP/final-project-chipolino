@@ -1,6 +1,9 @@
 package RoadReport.services.core;
 
+import RoadReport.entities.Report;
 import RoadReport.entities.User;
+import RoadReport.enums.Role;
+import RoadReport.repositories.ReportRepository;
 import RoadReport.repositories.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -8,6 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 
 /**
@@ -20,6 +24,7 @@ import java.time.LocalDateTime;
 public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final ReportRepository reportRepository;
 
     private final static int MINUS_REP_REPORT = 5;
     private final int VOTE_POINT = 1;
@@ -160,6 +165,41 @@ public class UserService {
             return true;
         }
         return false;
+    }
+
+    /**
+     * Safely deletes a user and reassigning all their submitted reports to a
+     * "Ghost User" before removal to preserve application history.
+     *
+     * @param userId the ID of the user to delete
+     * @throws IllegalArgumentException if the user to delete is not found
+     */
+    @Transactional
+    public void deleteUser(Long userId) {
+        User user = getUserById(userId);
+        User ghostUser = userRepository.findUserByUsername("ghostUser")
+                .orElseGet(() -> {
+                    User newGhost = new User();
+                    newGhost.setUsername("ghostUser");
+                    newGhost.setEmail("ghost@roadreport.ge");
+                    newGhost.setPassword("PROTECTED_SYSTEM_ACCOUNT_" + java.util.UUID.randomUUID());
+                    newGhost.setRoles(Role.USER);
+                    newGhost.setBanned(true);
+                    return userRepository.save(newGhost);
+                });
+        if (user.getId().equals(ghostUser.getId())) {
+            throw new IllegalArgumentException("Cannot delete the system ghost user account.");
+        }
+
+        List<Report> reports = reportRepository.findByUserId(userId);
+
+        for (Report report : reports) {
+            report.setUser(ghostUser);
+        }
+
+        reportRepository.saveAll(reports);
+
+        userRepository.delete(user);
     }
 
 }
