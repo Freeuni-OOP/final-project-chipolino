@@ -177,16 +177,7 @@ public class UserService {
     @Transactional
     public void deleteUser(Long userId) {
         User user = getUserById(userId);
-        User ghostUser = userRepository.findUserByUsername("ghostUser")
-                .orElseGet(() -> {
-                    User newGhost = new User();
-                    newGhost.setUsername("ghostUser");
-                    newGhost.setEmail("ghost@roadreport.ge");
-                    newGhost.setPassword("PROTECTED_SYSTEM_ACCOUNT_" + java.util.UUID.randomUUID());
-                    newGhost.setRoles(Role.USER);
-                    newGhost.setBanned(true);
-                    return userRepository.save(newGhost);
-                });
+        User ghostUser = getOrCreateGhostUser();
         if (user.getId().equals(ghostUser.getId())) {
             throw new IllegalArgumentException("Cannot delete the system ghost user account.");
         }
@@ -200,6 +191,22 @@ public class UserService {
         reportRepository.saveAll(reports);
 
         userRepository.delete(user);
+    }
+
+
+    // creates user safely, and ensure that 2 ghost users cant be created at the same time.
+    private synchronized User getOrCreateGhostUser() {
+        return userRepository.findUserByUsername("ghostUser")
+                .orElseGet(() -> {
+                    User newGhost = new User();
+                    newGhost.setUsername("ghostUser");
+                    newGhost.setEmail("ghost@roadreport.ge");
+                    newGhost.setPassword("PROTECTED_SYSTEM_ACCOUNT_" + java.util.UUID.randomUUID());
+                    newGhost.setRoles(Role.USER);
+                    newGhost.setBanned(true);
+
+                    return userRepository.saveAndFlush(newGhost);
+                });
     }
 
 }
