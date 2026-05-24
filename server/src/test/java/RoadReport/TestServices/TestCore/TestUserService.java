@@ -1,11 +1,14 @@
 package RoadReport.TestServices.TestCore;
 
+import RoadReport.entities.Comment;
 import RoadReport.entities.Report;
 import RoadReport.entities.User;
+import RoadReport.entities.Vote;
 import RoadReport.enums.Role;
 import RoadReport.repositories.CommentRepository;
 import RoadReport.repositories.ReportRepository;
 import RoadReport.repositories.UserRepository;
+import RoadReport.repositories.VoteRepository;
 import RoadReport.services.core.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -32,6 +35,12 @@ public class TestUserService {
 
     @Mock
     private UserRepository userRepository;
+
+    @Mock
+    private CommentRepository commentRepository;
+
+    @Mock
+    private VoteRepository voteRepository;
 
     @Mock
     private ReportRepository reportRepository;
@@ -344,10 +353,14 @@ public class TestUserService {
         Report report1 = new Report(); report1.setId(10L); report1.setUser(firstUser);
         Report report2 = new Report(); report2.setId(11L); report2.setUser(firstUser);
         List<Report> userReports = List.of(report1, report2);
+        List<Comment> userComments = new ArrayList<>();
+        List<Vote> userVotes = new ArrayList<>();
 
         when(userRepository.findById(firstUser.getId())).thenReturn(Optional.of(firstUser));
         when(userRepository.findUserByUsername("ghostUser")).thenReturn(Optional.of(ghostUser));
         when(reportRepository.findByUserId(firstUser.getId())).thenReturn(userReports);
+        when(commentRepository.findByUserId(firstUser.getId())).thenReturn(userComments);
+        when(voteRepository.findByUserId(firstUser.getId())).thenReturn(userVotes);
 
         userService.deleteUser(firstUser.getId());
         assertAll(
@@ -355,6 +368,8 @@ public class TestUserService {
                 () -> assertEquals(ghostUser.getId(), report2.getUser().getId())
         );
 
+        verify(commentRepository, times(1)).saveAll(userComments);
+        verify(voteRepository, times(1)).deleteAll(userVotes);
         verify(reportRepository, times(1)).saveAll(userReports);
         verify(userRepository, times(1)).delete(firstUser);
         verify(userRepository, never()).save(any(User.class));
@@ -363,14 +378,21 @@ public class TestUserService {
     @Test
     public void testDeleteUserWhenCreatingGhost() {
         List<Report> userReports = new ArrayList<>();
+        List<Comment> userComments = new ArrayList<>();
+        List<Vote> userVotes = new ArrayList<>();
+
         when(userRepository.findById(firstUser.getId())).thenReturn(Optional.of(firstUser));
         when(userRepository.findUserByUsername("ghostUser")).thenReturn(Optional.empty());
-        when(userRepository.save(any(User.class))).thenReturn(ghostUser);
+        when(userRepository.saveAndFlush(any(User.class))).thenReturn(ghostUser);
         when(reportRepository.findByUserId(firstUser.getId())).thenReturn(userReports);
+        when(commentRepository.findByUserId(firstUser.getId())).thenReturn(userComments);
+        when(voteRepository.findByUserId(firstUser.getId())).thenReturn(userVotes);
 
         userService.deleteUser(firstUser.getId());
         ArgumentCaptor<User> ghostCaptor = ArgumentCaptor.forClass(User.class);
-        verify(userRepository, times(1)).save(ghostCaptor.capture());
+
+        verify(userRepository, times(1)).saveAndFlush(ghostCaptor.capture());
+
         User createdGhost = ghostCaptor.getValue();
         assertAll(
                 () -> assertEquals("ghostUser", createdGhost.getUsername()),
@@ -379,6 +401,8 @@ public class TestUserService {
                 () -> assertTrue(createdGhost.getBanned())
         );
 
+        verify(commentRepository, times(1)).saveAll(userComments);
+        verify(voteRepository, times(1)).deleteAll(userVotes);
         verify(reportRepository, times(1)).saveAll(userReports);
         verify(userRepository, times(1)).delete(firstUser);
     }
