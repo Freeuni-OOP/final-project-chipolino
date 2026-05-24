@@ -1,10 +1,14 @@
 package RoadReport.services.core;
 
+import RoadReport.entities.Comment;
 import RoadReport.entities.Report;
 import RoadReport.entities.User;
+import RoadReport.entities.Vote;
 import RoadReport.enums.Role;
+import RoadReport.repositories.CommentRepository;
 import RoadReport.repositories.ReportRepository;
 import RoadReport.repositories.UserRepository;
+import RoadReport.repositories.VoteRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -25,6 +29,8 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final ReportRepository reportRepository;
+    private final CommentRepository commentRepository;
+    private final VoteRepository voteRepository;
 
     private final static int MINUS_REP_REPORT = 5;
     private final int VOTE_POINT = 1;
@@ -183,12 +189,19 @@ public class UserService {
         }
 
         List<Report> reports = reportRepository.findByUserId(userId);
-
         for (Report report : reports) {
             report.setUser(ghostUser);
         }
-
         reportRepository.saveAll(reports);
+
+        List<Comment> comments = commentRepository.findByUserId(userId);
+        for (Comment comment : comments) {
+            comment.setUser(ghostUser);
+        }
+        commentRepository.saveAll(comments);
+
+        List<Vote> votes = voteRepository.findByUserId(userId);
+        voteRepository.deleteAll(votes);
 
         userRepository.delete(user);
     }
