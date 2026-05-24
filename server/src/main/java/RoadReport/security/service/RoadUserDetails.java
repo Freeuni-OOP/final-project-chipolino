@@ -1,4 +1,4 @@
-package RoadReport.services.security;
+package RoadReport.security.service;
 
 import RoadReport.entities.User;
 import lombok.Builder;

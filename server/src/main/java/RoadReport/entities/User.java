@@ -2,15 +2,13 @@ package RoadReport.entities;
 
 import RoadReport.enums.Role;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Entity
-@Data
+@Getter
+@Setter
 @Builder
 @Table(name = "users")
 @NoArgsConstructor
@@ -33,12 +31,14 @@ public class User {
     @Column(nullable = false)
     private Role roles = Role.USER;
 
+    @Version
+    private Long version;
 
     private Integer reputationScore = 0;
+    private Boolean nonReliable = false;
 
     private Integer rejectedReportsCount = 0;
     private Boolean banned = false;
-    private Boolean nonReliable = false;
     private LocalDateTime banExpiration;
 
     @Column(nullable = false)

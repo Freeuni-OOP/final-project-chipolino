@@ -3,10 +3,7 @@ package RoadReport.entities;
 import RoadReport.enums.ReportStatus;
 import RoadReport.enums.ReportType;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
@@ -16,8 +13,9 @@ import java.util.List;
 import java.util.Map;
 
 @Entity
-@Data
 @Builder
+@Getter
+@Setter
 @Table(name = "reports")
 @NoArgsConstructor
 @AllArgsConstructor
@@ -54,12 +52,17 @@ public class Report {
     @Column(nullable = false)
     private ReportStatus status;
 
+    private Integer weight = 1;
+
     private Integer upvotes = 0;
     private Integer downvotes = 0;
 
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(columnDefinition = "JSON")
     private Map<String, Object> attributes;
+
+    @Version
+    private Long version;
 
     private LocalDateTime expireDate;
     @Column(nullable = false)

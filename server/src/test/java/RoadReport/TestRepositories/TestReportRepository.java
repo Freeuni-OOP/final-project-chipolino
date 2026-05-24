@@ -124,6 +124,20 @@ public class TestReportRepository {
     }
 
     @Test
+    public void testFindNearbyByType() {
+        List<Report> nearby = reportRepository.findNearbyReportsByType(
+                42.00, 16.00, 5.0, "POLICE");
+
+        assertEquals(1, nearby.size());
+        assertEquals(ReportType.POLICE, nearby.get(0).getType());
+        assertEquals(user1.getId(), nearby.get(0).getUser().getId());
+
+        List<Report> bigRadius = reportRepository.findNearbyReportsByType
+                (42.00, 16.00, 15000.0, "ACCIDENT");
+        assertEquals(1, bigRadius.size());
+    }
+
+    @Test
     public void testDeleteExpiredReports() {
         report1.setExpireDate(java.time.LocalDateTime.now().minusDays(1));
         reportRepository.save(report1);

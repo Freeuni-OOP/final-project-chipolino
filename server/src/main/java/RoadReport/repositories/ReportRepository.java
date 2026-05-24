@@ -36,10 +36,21 @@ public interface ReportRepository extends JpaRepository<Report, Long> {
             " sin(radians(r.latitude)))) < :radius",
             nativeQuery = true
     )
-
     List<Report> findNearbyReports(@Param("lat") Double user_latitude,
                                    @Param("lon") Double user_longitude,
                                    @Param("radius") Double user_radius);
+
+    @Query(value = "SELECT * FROM reports as r " +
+            "WHERE :type = r.type AND " +
+            " (6371 * acos(cos(radians(:lat)) * cos(radians(r.latitude)) *" +
+            " cos(radians(r.longitude) - radians(:lon)) + sin(radians(:lat)) *" +
+            " sin(radians(r.latitude)))) < :radius",
+            nativeQuery = true
+    )
+    List<Report> findNearbyReportsByType(@Param("lat") Double user_latitude,
+                                   @Param("lon") Double user_longitude,
+                                   @Param("radius") Double user_radius,
+                                   @Param("type") String type);
 
 
     /** Performs a cleanup of the reports table by removing invalid or outdated entries.  */

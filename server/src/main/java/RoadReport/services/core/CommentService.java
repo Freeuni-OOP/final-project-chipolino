@@ -3,6 +3,7 @@ package RoadReport.services.core;
 import RoadReport.entities.Comment;
 import RoadReport.entities.Report;
 import RoadReport.entities.User;
+import RoadReport.enums.Role;
 import RoadReport.repositories.CommentRepository;
 import RoadReport.repositories.ReportRepository;
 import RoadReport.repositories.UserRepository;
@@ -31,7 +32,6 @@ public class CommentService {
      * @return saved comment.
      * @throws IllegalArgumentException if comment or user does not exist
      */
-
     @Transactional
     public Comment addComment(Long userId, Long reportId, String text) {
         User user = userRepository.findById(userId)
@@ -65,7 +65,7 @@ public class CommentService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("couldn't find user id: " + userId));
 
-        if (!comment.getUser().getId().equals(userId)) {
+        if (!comment.getUser().getId().equals(userId) && user.getRoles() != Role.ADMIN) {
             throw new IllegalStateException("Wrong user id for this comment id: " + userId);
         }
         commentRepository.delete(comment);

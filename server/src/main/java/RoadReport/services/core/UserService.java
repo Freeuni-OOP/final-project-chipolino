@@ -33,12 +33,10 @@ public class UserService {
     private final VoteRepository voteRepository;
 
     private final static int MINUS_REP_REPORT = 5;
-    private final int VOTE_POINT = 1;
+    private final static int VOTE_POINT = 1;
     private final static int NON_RELIABLE  = -15;
     private final static int RELIABLE_RESTORE_POINT = 20;
     private final static int MAX_REJECTED_REPORTS = 3;
-
-
 
     /**
      * Registers a new user in the system.
@@ -62,7 +60,7 @@ public class UserService {
     }
 
     /**
-     * gets a user by their id.
+     * Gets a user by their id.
      *
      * @param userId the ID of the user to get
      * @return the found User
@@ -73,7 +71,7 @@ public class UserService {
     }
 
     /**
-     * gets a user by their username.
+     * Gets a user by their username
      *
      * @param name the username of the user to get
      * @return the found User
@@ -183,7 +181,9 @@ public class UserService {
     @Transactional
     public void deleteUser(Long userId) {
         User user = getUserById(userId);
-        User ghostUser = getOrCreateGhostUser();
+        User ghostUser = userRepository.findUserByUsername("ghostUser").
+                orElseThrow(() -> new IllegalStateException("Ghost user account not found."));
+
         if (user.getId().equals(ghostUser.getId())) {
             throw new IllegalArgumentException("Cannot delete the system ghost user account.");
         }
@@ -204,22 +204,6 @@ public class UserService {
         voteRepository.deleteAll(votes);
 
         userRepository.delete(user);
-    }
-
-
-    // creates user safely, and ensure that 2 ghost users cant be created at the same time.
-    private synchronized User getOrCreateGhostUser() {
-        return userRepository.findUserByUsername("ghostUser")
-                .orElseGet(() -> {
-                    User newGhost = new User();
-                    newGhost.setUsername("ghostUser");
-                    newGhost.setEmail("ghost@roadreport.ge");
-                    newGhost.setPassword("PROTECTED_SYSTEM_ACCOUNT_" + java.util.UUID.randomUUID());
-                    newGhost.setRoles(Role.USER);
-                    newGhost.setBanned(true);
-
-                    return userRepository.saveAndFlush(newGhost);
-                });
     }
 
 }
