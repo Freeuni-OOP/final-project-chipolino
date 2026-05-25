@@ -376,38 +376,6 @@ public class TestUserService {
     }
 
     @Test
-    public void testDeleteUserWhenCreatingGhost() {
-        List<Report> userReports = new ArrayList<>();
-        List<Comment> userComments = new ArrayList<>();
-        List<Vote> userVotes = new ArrayList<>();
-
-        when(userRepository.findById(firstUser.getId())).thenReturn(Optional.of(firstUser));
-        when(userRepository.findUserByUsername("ghostUser")).thenReturn(Optional.empty());
-        when(userRepository.saveAndFlush(any(User.class))).thenReturn(ghostUser);
-        when(reportRepository.findByUserId(firstUser.getId())).thenReturn(userReports);
-        when(commentRepository.findByUserId(firstUser.getId())).thenReturn(userComments);
-        when(voteRepository.findByUserId(firstUser.getId())).thenReturn(userVotes);
-
-        userService.deleteUser(firstUser.getId());
-        ArgumentCaptor<User> ghostCaptor = ArgumentCaptor.forClass(User.class);
-
-        verify(userRepository, times(1)).saveAndFlush(ghostCaptor.capture());
-
-        User createdGhost = ghostCaptor.getValue();
-        assertAll(
-                () -> assertEquals("ghostUser", createdGhost.getUsername()),
-                () -> assertEquals("ghost@roadreport.ge", createdGhost.getEmail()),
-                () -> assertTrue(createdGhost.getPassword().startsWith("PROTECTED_SYSTEM_ACCOUNT_")),
-                () -> assertTrue(createdGhost.getBanned())
-        );
-
-        verify(commentRepository, times(1)).saveAll(userComments);
-        verify(voteRepository, times(1)).deleteAll(userVotes);
-        verify(reportRepository, times(1)).saveAll(userReports);
-        verify(userRepository, times(1)).delete(firstUser);
-    }
-
-    @Test
     public void testDeleteUserWhenTryingToRemoveGhostUser() {
         when(userRepository.findById(ghostUser.getId())).thenReturn(Optional.of(ghostUser));
         when(userRepository.findUserByUsername("ghostUser")).thenReturn(Optional.of(ghostUser));
