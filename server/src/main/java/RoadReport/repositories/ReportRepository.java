@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -17,6 +18,7 @@ public interface ReportRepository extends JpaRepository<Report, Long> {
 
     List<Report> findByStatus(ReportStatus status);
 
+    List<Report> findByStatusNotAndExpireDateAfter(ReportStatus reportStatus, LocalDateTime now);
 
     /**
      * Finds road reports located within a specified radius from the user's location.
