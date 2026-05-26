@@ -17,11 +17,11 @@ import java.util.function.Function;
 @Service
 public class JwtService {
 
-//    @Value("${application.security.jwt.secret-key}")
-//    private String secretKey;
-//
-//    @Value("${application.security.jwt.expiration}")
-//    private long jwtExpiration;
+    @Value("${application.security.jwt.secret-key}")
+    private String secretKey;
+
+    @Value("${application.security.jwt.expiration}")
+    private long jwtExpiration;
 
     /**
      * Generates a new JWT token for a given user.
@@ -32,7 +32,7 @@ public class JwtService {
     public String generateToken(UserDetails userDetails) {
         return Jwts.builder().subject(userDetails.getUsername()).
                 issuedAt(new Date(System.currentTimeMillis())).
-                expiration(new Date(System.currentTimeMillis() + 1)).
+                expiration(new Date(System.currentTimeMillis() + jwtExpiration)).
                 signWith(getSigningKey()).compact();
     }
 
@@ -97,7 +97,7 @@ public class JwtService {
      * @return a {@link SecretKey} used for signing and verifying tokens
      */
     private SecretKey getSigningKey() {
-        byte[] keyBytes = Base64.getDecoder().decode("aa");
+        byte[] keyBytes = Base64.getDecoder().decode(secretKey);
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
