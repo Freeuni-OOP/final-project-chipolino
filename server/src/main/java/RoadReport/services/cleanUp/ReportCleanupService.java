@@ -59,7 +59,7 @@ public class ReportCleanupService {
                 List<Report> duplicates = reportRepository.findNearbyReportsByType(
                         mainReport.getLatitude(),
                         mainReport.getLongitude(),
-                        50.0,
+                        0.05,
                         mainReport.getType().name()
                 );
 

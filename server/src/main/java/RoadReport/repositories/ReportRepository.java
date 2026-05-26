@@ -18,8 +18,8 @@ public interface ReportRepository extends JpaRepository<Report, Long> {
     List<Report> findByStatus(ReportStatus status);
 
     /** Finds all Reports except removed and outdated ones  */
-    @Query("SELECT r FROM Report as r WHERE r.expireDate <= CURRENT_TIMESTAMP " +
-            "OR r.status = 'REMOVED'")
+    @Query("SELECT r FROM Report as r WHERE r.expireDate > CURRENT_TIMESTAMP " +
+            "OR r.status != 'REMOVED'")
     List<Report> findActiveReports();
 
     /**
