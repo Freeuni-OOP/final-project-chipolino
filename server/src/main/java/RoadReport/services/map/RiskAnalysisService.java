@@ -39,7 +39,13 @@ public class RiskAnalysisService {
         double base =  BASE_MAP.getOrDefault(report.getType(), 1.0);
         if(base == 0.0) return 0.0;
 
-        return reportIsCredible(report) ? base : (1.0+base)/2.0;
+        double weight = Math.max(1, report.getWeight());
+
+        if (reportIsCredible(report)) {
+            return base + (1.0 - base) / weight;
+        } else {
+            return base + (1.0 - base) / (2.0 * weight);
+        }
     }
 
 
