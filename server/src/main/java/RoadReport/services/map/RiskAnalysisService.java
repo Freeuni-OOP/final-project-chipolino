@@ -41,11 +41,12 @@ public class RiskAnalysisService {
 
         double weight = Math.max(1, report.getWeight());
 
-        if (reportIsCredible(report)) {
-            return base + (1.0 - base) / weight;
-        } else {
-            return base + (1.0 - base) / (2.0 * weight);
-        }
+        double effectiveWeight =
+                reportIsCredible(report)
+                        ? weight
+                        : weight * 0.5;
+
+        return Math.pow(base, Math.sqrt(effectiveWeight));
     }
 
 
