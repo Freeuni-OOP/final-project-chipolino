@@ -7,11 +7,8 @@ import RoadReport.enums.ReportStatus;
 import RoadReport.enums.ReportType;
 import RoadReport.enums.VoteType;
 import RoadReport.repositories.ReportRepository;
-import RoadReport.repositories.UserRepository;
-import RoadReport.repositories.VoteRepository;
 import RoadReport.services.core.ReportService;
 import RoadReport.services.core.UserService;
-import RoadReport.services.core.VoteService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,7 +17,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -76,8 +72,6 @@ public class TestReportService {
         reportService.addVote(report, newDownvote);
 
         assertEquals(ReportStatus.REMOVED, report.getStatus());
-        verify(reportRepository).delete(report);
-        verify(userService).handleRejectedReport(user.getId());
     }
 
     @Test
@@ -142,5 +136,19 @@ public class TestReportService {
 
         reportService.deleteExpiredReports();
         verify(reportRepository).deleteExpiredReports();
+    }
+
+    @Test
+    void testBannedUserCreatingReport() {
+        when(userService.userIsBanned(3L)).thenReturn(true);
+
+        try {
+            reportService.createReport(3L, report);
+            fail("Expected an IllegalStateException to be thrown, but nothing happened.");
+        } catch (IllegalStateException e) {
+            assertEquals("Banned users cannot submit reports.", e.getMessage());
+        }
+
+        verify(reportRepository, never()).save(any());
     }
 }

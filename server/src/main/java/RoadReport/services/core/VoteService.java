@@ -47,17 +47,20 @@ public class VoteService {
             if (vote.isPresent()) {
                 if (report.getStatus() != ReportStatus.PERMANENT) updateUsersScore(report, vote.get(), true);
                 reportService.handleReportVotes(vote.get(), report, -1);
-                voteRepository.delete(vote.get());
-                voteRepository.flush();
-            }
-            Vote newVote = new Vote();
-            newVote.setUser(user);
-            newVote.setReport(report);
-            newVote.setType(vt);
-            voteRepository.save(newVote);
+                vote.get().setType(vt);
 
-            if (report.getStatus() != ReportStatus.PERMANENT) updateUsersScore(report, newVote, false);
-            reportService.addVote(report, newVote);
+                if (report.getStatus() != ReportStatus.PERMANENT) updateUsersScore(report, vote.get(), false);
+                reportService.addVote(report, vote.get());
+            } else {
+                Vote newVote = new Vote();
+                newVote.setUser(user);
+                newVote.setReport(report);
+                newVote.setType(vt);
+                voteRepository.save(newVote);
+
+                if (report.getStatus() != ReportStatus.PERMANENT) updateUsersScore(report, newVote, false);
+                reportService.addVote(report, newVote);
+            }
         }
     }
 

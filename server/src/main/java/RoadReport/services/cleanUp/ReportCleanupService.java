@@ -53,7 +53,7 @@ public class ReportCleanupService {
     public void scheduledMergeReports() {
         log.info("Starting scheduled Merge reports");
 
-        List<Report> allActiveReports = reportRepository.findActiveReports();
+        List<Report> allActiveReports = reportRepository.findByStatusNotAndExpireDateAfter(ReportStatus.REMOVED, LocalDateTime.now());
         for(Report mainReport : allActiveReports){
             if(!ReportStatus.REMOVED.equals(mainReport.getStatus())){
                 List<Report> duplicates = reportRepository.findNearbyReportsByType(

@@ -66,9 +66,7 @@ public class TestVoteService {
 
         voteService.createVote(1L, 10L, VoteType.POSITIVE);
 
-        verify(voteRepository).delete(oldVote);
-        verify(voteRepository).flush();
-        verify(voteRepository).save(any(Vote.class));
+        verify(reportService).addVote(any(Report.class), any(Vote.class));
     }
 
     @Test

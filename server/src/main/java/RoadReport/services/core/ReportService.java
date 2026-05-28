@@ -88,8 +88,6 @@ public class ReportService {
                 1.0 * report.getDownvotes()/allVotes > MAX_RATIO_OF_NEGATIVE_VOTES) {
             report.setStatus(ReportStatus.REMOVED);
             userService.handleRejectedReport(report.getUser().getId());
-            reportRepository.delete(report);
-            reportRepository.flush();
         } else if (report.getStatus() != ReportStatus.PERMANENT &&
                 isEligibleForPermanentStatus(report) &&
                 allVotes > MIN_VOTES_TO_PERMANENT_STATUS &&
