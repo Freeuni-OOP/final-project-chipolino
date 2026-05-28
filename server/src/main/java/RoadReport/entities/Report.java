@@ -70,8 +70,12 @@ public class Report {
 
     @PrePersist
     private void creation(){
-        createDate = LocalDateTime.now();
-        // by default all temporary road reports live for 1 day
-        expireDate = createDate.plusDays(1);
+        if (createDate == null) {
+            createDate = LocalDateTime.now();
+        }
+        if (expireDate == null) {
+            // by default all temporary road reports live for 1 day
+            expireDate = createDate.plusDays(1);
+        }
     }
 }
