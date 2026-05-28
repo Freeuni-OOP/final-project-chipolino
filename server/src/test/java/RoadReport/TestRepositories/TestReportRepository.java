@@ -191,7 +191,7 @@ public class TestReportRepository {
                 .expireDate(now.minusDays(5)).createDate(now).build();
         entityManager.persist(inactiveReport);
         entityManager.flush();
-        List<Report> activeReports = reportRepository.findActiveReports();
+        List<Report> activeReports = reportRepository.findByStatusNotAndExpireDateAfter(ReportStatus.REMOVED, now);
         assertTrue(activeReports.contains(report1));
         assertTrue(activeReports.contains(report2));
         assertFalse(activeReports.contains(inactiveReport));

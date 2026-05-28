@@ -12,6 +12,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 
@@ -60,7 +61,8 @@ public class TestReportCleanupService {
 
     @Test
     public void testScheduledMergeReportsSuccessfulMerge() {
-        when(reportRepository.findActiveReports()).thenReturn(List.of(mainReport));
+        when(reportRepository.findByStatusNotAndExpireDateAfter(eq(ReportStatus.REMOVED), any(LocalDateTime.class)))
+                .thenReturn(List.of(mainReport));
         when(reportRepository.findNearbyReportsByType(
                 mainReport.getLatitude(), mainReport.getLongitude(), 0.05, mainReport.getType().name()
         )).thenReturn(List.of(duplicateReport));
@@ -71,8 +73,11 @@ public class TestReportCleanupService {
 
     @Test
     public void testScheduledMergeReportsNoActiveReportsFound() {
-        when(reportRepository.findActiveReports()).thenReturn(Collections.emptyList());
+        when(reportRepository.findByStatusNotAndExpireDateAfter(eq(ReportStatus.REMOVED), any(LocalDateTime.class)))
+                .thenReturn(Collections.emptyList());
+
         reportCleanupService.scheduledMergeReports();
+
         verify(reportRepository, never()).findNearbyReportsByType(anyDouble(), anyDouble(), anyDouble(), anyString());
         verifyNoInteractions(reportMergeService);
     }
@@ -80,8 +85,11 @@ public class TestReportCleanupService {
     @Test
     public void testScheduledMergeReportsMainReportIsRemoved() {
         mainReport.setStatus(ReportStatus.REMOVED);
-        when(reportRepository.findActiveReports()).thenReturn(List.of(mainReport));
+        when(reportRepository.findByStatusNotAndExpireDateAfter(eq(ReportStatus.REMOVED), any(LocalDateTime.class)))
+                .thenReturn(List.of(mainReport));
+
         reportCleanupService.scheduledMergeReports();
+
         verify(reportRepository, never()).findNearbyReportsByType(anyDouble(), anyDouble(), anyDouble(), anyString());
         verifyNoInteractions(reportMergeService);
     }
@@ -90,7 +98,8 @@ public class TestReportCleanupService {
     public void testScheduledMergeReportDuplicateReportIsRemoved() {
         duplicateReport.setStatus(ReportStatus.REMOVED);
 
-        when(reportRepository.findActiveReports()).thenReturn(List.of(mainReport));
+        when(reportRepository.findByStatusNotAndExpireDateAfter(eq(ReportStatus.REMOVED), any(LocalDateTime.class)))
+                .thenReturn(List.of(mainReport));
         when(reportRepository.findNearbyReportsByType(
                 mainReport.getLatitude(), mainReport.getLongitude(), 0.05, mainReport.getType().name()
         )).thenReturn(List.of(duplicateReport));
@@ -101,10 +110,12 @@ public class TestReportCleanupService {
 
     @Test
     public void testScheduledMergeReportsSelfMerge() {
-        when(reportRepository.findActiveReports()).thenReturn(List.of(mainReport));
+        when(reportRepository.findByStatusNotAndExpireDateAfter(eq(ReportStatus.REMOVED), any(LocalDateTime.class)))
+                .thenReturn(List.of(mainReport));
         when(reportRepository.findNearbyReportsByType(
                 mainReport.getLatitude(), mainReport.getLongitude(), 0.05, mainReport.getType().name()
         )).thenReturn(List.of(mainReport));
+
         reportCleanupService.scheduledMergeReports();
         verify(reportMergeService, never()).mergeReports(any(), any());
     }
