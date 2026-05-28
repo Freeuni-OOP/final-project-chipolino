@@ -20,8 +20,7 @@ public interface ReportRepository extends JpaRepository<Report, Long> {
 
     List<Report> findByStatusNotAndExpireDateAfter(ReportStatus reportStatus, LocalDateTime now);
     /** Finds all Reports except removed and outdated ones  */
-    @Query("SELECT r FROM Report as r WHERE r.expireDate > CURRENT_TIMESTAMP " +
-            "OR r.status != 'REMOVED'")
+    @Query("SELECT r FROM Report r WHERE (r.expireDate > CURRENT_TIMESTAMP OR r.expireDate IS NULL) AND r.status <> RoadReport.enums.ReportStatus.REMOVED")
     List<Report> findActiveReports();
 
     /**
@@ -61,7 +60,6 @@ public interface ReportRepository extends JpaRepository<Report, Long> {
 
     /** Performs a cleanup of the reports table by removing invalid or outdated entries.  */
     @Modifying
-    @Query("DELETE FROM Report AS r WHERE r.expireDate <= CURRENT_TIMESTAMP " +
-            "OR r.status = 'REMOVED'")
+    @Query("DELETE FROM Report r WHERE r.expireDate <= CURRENT_TIMESTAMP OR r.status = RoadReport.enums.ReportStatus.REMOVED")
     void deleteExpiredReports();
 }
