@@ -19,9 +19,6 @@ public interface ReportRepository extends JpaRepository<Report, Long> {
     List<Report> findByStatus(ReportStatus status);
 
     List<Report> findByStatusNotAndExpireDateAfter(ReportStatus reportStatus, LocalDateTime now);
-    /** Finds all Reports except removed and outdated ones  */
-    @Query("SELECT r FROM Report r WHERE (r.expireDate > CURRENT_TIMESTAMP OR r.expireDate IS NULL) AND r.status <> RoadReport.enums.ReportStatus.REMOVED")
-    List<Report> findActiveReports();
 
     /**
      * Finds road reports located within a specified radius from the user's location.
