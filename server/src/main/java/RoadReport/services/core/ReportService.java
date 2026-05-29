@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +27,13 @@ public class ReportService {
     private final double MIN_RATIO_OF_POSITIVE_VOTES = 0.95;
     private final int MIN_VOTES_TO_REMOVE_STATUS = 5;
     private final int MIN_VOTES_TO_PERMANENT_STATUS = 10;
+    private static final Set<ReportType> TEMPORARY_TYPES = Set.of(
+            ReportType.ACCIDENT,
+            ReportType.HEAVY_TRAFFIC,
+            ReportType.ROAD_CLOSURE,
+            ReportType.CUSTOM
+    );
+
 
 
     /**
@@ -41,8 +49,11 @@ public class ReportService {
             throw new IllegalStateException("Banned users cannot submit reports.");
         }
 
-        String cleanDescription = Jsoup.clean(reportData.getDescription(), Safelist.none());
-        reportData.setDescription(cleanDescription);
+        String description = reportData.getDescription();
+        if (description != null) {
+            reportData.setDescription(Jsoup.clean(description, Safelist.none()));
+        }
+
 
         User user = userService.getUserById(userId);
         reportData.setUser(user);
@@ -174,10 +185,6 @@ public class ReportService {
      * false - if it is a temporary incident type.
      */
     private boolean isEligibleForPermanentStatus(Report report) {
-        if (report.getType() != ReportType.ACCIDENT &&
-                report.getType() != ReportType.HEAVY_TRAFFIC &&
-                report.getType() != ReportType.ROAD_CLOSURE &&
-                report.getType() != ReportType.CUSTOM) return true;
-        return false;
+        return !TEMPORARY_TYPES.contains(report.getType());
     }
 }
