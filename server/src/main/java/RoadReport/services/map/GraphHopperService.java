@@ -59,8 +59,9 @@ public class GraphHopperService {
         hopper = new GraphHopper();
         hopper.setOSMFile(osmFilePath);
         hopper.setGraphHopperLocation(graphCachePath);
-
-        hopper.setProfiles(new Profile(PROFILE).setVehicle("car").setTurnCosts(false));
+        CustomModel customModel = new CustomModel();
+        customModel.addToSpeed(Statement.If("true", Statement.Op.LIMIT, "45"));
+        hopper.setProfiles(new Profile(PROFILE).setCustomModel(customModel));
         hopper.importOrLoad();
 
     }
@@ -181,6 +182,7 @@ public class GraphHopperService {
         if (weightedReports.isEmpty()) return;
 
         CustomModel model = new CustomModel();
+        model.addToSpeed(Statement.If("true", Statement.Op.LIMIT, "45"));
         for (WeightedReport r : weightedReports) {
             model.addToSpeed(toSpeedStatement(r));
         }
