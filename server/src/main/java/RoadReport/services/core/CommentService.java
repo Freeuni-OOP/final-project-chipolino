@@ -29,11 +29,10 @@ public class CommentService {
      * @param userId   user ID, which writes comment
      * @param reportId report ID, which writes comment
      * @param text     text of comment
-     * @return saved comment.
      * @throws IllegalArgumentException if comment or user does not exist
      */
     @Transactional
-    public Comment addComment(Long userId, Long reportId, String text) {
+    public void addComment(Long userId, Long reportId, String text) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("couldn't found: " + userId));
         Report report = reportRepository.findById(reportId)
@@ -45,7 +44,7 @@ public class CommentService {
         comment.setUser(user);
         comment.setText(safeText);
         comment.setReport(report);
-        return commentRepository.save(comment);
+        commentRepository.save(comment);
     }
 
     /**

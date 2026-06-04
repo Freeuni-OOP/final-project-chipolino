@@ -5,6 +5,7 @@ import RoadReport.entities.Report;
 import RoadReport.entities.User;
 import RoadReport.entities.Vote;
 import RoadReport.enums.Role;
+import RoadReport.enums.VoteType;
 import RoadReport.repositories.CommentRepository;
 import RoadReport.repositories.ReportRepository;
 import RoadReport.repositories.UserRepository;
@@ -15,6 +16,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -200,10 +202,34 @@ public class UserService {
         }
         commentRepository.saveAll(comments);
 
-        List<Vote> votes = voteRepository.findByUserId(userId);
-        voteRepository.deleteAll(votes);
+        deleteUserVotes(userId);
 
         userRepository.delete(user);
+    }
+
+
+    /**
+     * Deletes all votes associated with a specific user and synchronizes the
+     * affected reports vote counts.
+     * @param userId the unique identifier of the user whose votes are to be deleted
+     */
+    private void deleteUserVotes(Long userId) {
+
+        List<Vote> votes = voteRepository.findByUserId(userId);
+        List<Report> reportsToUpdate = new ArrayList<>();
+
+        for (Vote vote : votes) {
+            Report report = vote.getReport();
+            if (vote.getType() == VoteType.POSITIVE) {
+                report.setUpvotes(Math.max(0, report.getUpvotes() - 1));
+            } else {
+                report.setDownvotes(Math.max(0, report.getDownvotes() - 1));
+            }
+            reportsToUpdate.add(report);
+        }
+
+        reportRepository.saveAll(reportsToUpdate);
+        voteRepository.deleteAll(votes);
     }
 
 }

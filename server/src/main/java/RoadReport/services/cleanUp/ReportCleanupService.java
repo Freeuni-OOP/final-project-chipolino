@@ -25,6 +25,7 @@ public class ReportCleanupService {
     private final ReportRepository reportRepository;
     private final ReportMergeService reportMergeService;
 
+    private final static double MERGE_RADIUS = 0.05;
 
     /**
      * Performs a cleanup operation to delete false reports or reports that have
@@ -50,16 +51,17 @@ public class ReportCleanupService {
      * map accuracy and prioritize high-weight incidents.
      */
     @Scheduled(fixedDelay = 1000 * 60 * 60)
+    @Transactional
     public void scheduledMergeReports() {
         log.info("Starting scheduled Merge reports");
 
-        List<Report> allActiveReports = reportRepository.findActiveReports();
+        List<Report> allActiveReports = reportRepository.findByStatusNotAndExpireDateAfter(ReportStatus.REMOVED, LocalDateTime.now());
         for(Report mainReport : allActiveReports){
             if(!ReportStatus.REMOVED.equals(mainReport.getStatus())){
                 List<Report> duplicates = reportRepository.findNearbyReportsByType(
                         mainReport.getLatitude(),
                         mainReport.getLongitude(),
-                        0.05,
+                        MERGE_RADIUS,
                         mainReport.getType().name()
                 );
 
