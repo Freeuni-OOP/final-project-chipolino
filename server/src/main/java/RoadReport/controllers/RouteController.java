@@ -20,6 +20,13 @@ public class RouteController {
     private final GraphHopperService graphHopperService;
     private final ReportService reportService;
 
+    /**
+     * Calculates the optimal route based on a provided list of waypoints.
+     *
+     * @param request The data transfer object containing list of coordinate points.
+     * @return A {@link RouteResponse} object containing the total distance,
+     * estimated travel time, and the list of path coordinates for the route.
+     */
     @PostMapping("/calculate")
     public RouteResponse calculateOptimalRoute(@RequestBody RouteRequest request) {
         List<Report> activeReports = reportService.getActiveReports();
