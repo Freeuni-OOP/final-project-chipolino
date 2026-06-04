@@ -1,5 +1,6 @@
 package RoadReport.services.core;
 
+import RoadReport.controllers.dto.UserUpdateDTO;
 import RoadReport.entities.Comment;
 import RoadReport.entities.Report;
 import RoadReport.entities.User;
@@ -14,6 +15,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -171,6 +173,31 @@ public class UserService {
             return true;
         }
         return false;
+    }
+
+
+    /**
+     * Updates the profile information of an existing user.
+     * @param userId     id of user, whose information should be changed
+     * @param updateData the DTO containing username, email, and password
+     */
+    @Transactional
+    public void updateUser(Long userId, UserUpdateDTO updateData) {
+        User user = getUserById(userId);
+
+        if (StringUtils.hasText(updateData.username())) {
+            user.setUsername(updateData.username());
+        }
+
+        if (StringUtils.hasText(updateData.email())) {
+            user.setEmail(updateData.email());
+        }
+
+        if (StringUtils.hasText(updateData.password())) {
+            user.setPassword(passwordEncoder.encode(updateData.password()));
+        }
+
+        userRepository.save(user);
     }
 
     /**
