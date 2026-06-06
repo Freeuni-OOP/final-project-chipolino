@@ -30,11 +30,11 @@ public class RouteController {
     @PostMapping("/calculate")
     public RouteResponse calculateOptimalRoute(@RequestBody RouteRequest request) {
         List<Report> activeReports = reportService.getActiveReports();
-        var result = graphHopperService.getRouteViaWaypoints(request.getWaypoints(), activeReports);
-        return RouteResponse.builder()
-                .distanceMeters(result.distanceMeters())
-                .timeMillis(result.timeMillis())
-                .points(result.points())
-                .build();
+        var result = graphHopperService.getRouteViaWaypoints(request.waypoints(), activeReports);
+        return new RouteResponse(
+                result.distanceMeters(),
+                result.timeMillis(),
+                result.points()
+        );
     }
 }
