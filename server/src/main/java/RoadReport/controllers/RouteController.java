@@ -6,6 +6,7 @@ import RoadReport.entities.Report;
 import RoadReport.services.core.ReportService;
 import RoadReport.services.map.GraphHopperService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,13 +29,14 @@ public class RouteController {
      * estimated travel time, and the list of path coordinates for the route.
      */
     @PostMapping("/calculate")
-    public RouteResponse calculateOptimalRoute(@RequestBody RouteRequest request) {
+    public ResponseEntity<RouteResponse> calculateOptimalRoute(@RequestBody RouteRequest request) {
         List<Report> activeReports = reportService.getActiveReports();
         var result = graphHopperService.getRouteViaWaypoints(request.waypoints(), activeReports);
-        return new RouteResponse(
+        RouteResponse response = new RouteResponse(
                 result.distanceMeters(),
                 result.timeMillis(),
                 result.points()
         );
+        return ResponseEntity.ok(response);
     }
 }
