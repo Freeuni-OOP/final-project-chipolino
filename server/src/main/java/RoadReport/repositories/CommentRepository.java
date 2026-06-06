@@ -2,6 +2,7 @@ package RoadReport.repositories;
 
 import RoadReport.entities.Comment;
 import org.springframework.data.domain.Page;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -13,11 +14,17 @@ import java.util.List;
 
 @Repository
 public interface CommentRepository extends JpaRepository<Comment, Long> {
+    @EntityGraph(attributePaths = {"user"})
     List<Comment> findByReportId(Long reportId);
 
     List<Comment> findByUserId(Long userId);
 
     long countByReportId(Long reportId);
+
+    List<Comment> findByUserIdOrderByCreateDateDesc(Long userId);
+
+    @EntityGraph(attributePaths = {"user"})
+    List<Comment> findByReportIdOrderByCreateDateDesc(Long reportId);
 
     /**
      * Migrates all comments from one report to another.

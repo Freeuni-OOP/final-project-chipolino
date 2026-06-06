@@ -77,7 +77,7 @@ public class CommentService {
      * @return list of comments
      */
     public List<Comment> getCommentsByReport(Long reportId) {
-        return commentRepository.findByReportId(reportId);
+        return commentRepository.findByReportIdOrderByCreateDateDesc(reportId);
     }
 
     /**
@@ -87,6 +87,45 @@ public class CommentService {
      * @return list of comments
      */
     public List<Comment> getCommentsByUser(Long userId) {
-        return commentRepository.findByUserId(userId);
+        return commentRepository.findByUserIdOrderByCreateDateDesc(userId);
+    }
+
+    /**
+     * Admin method to force delete any comment without ownership checks.
+     *
+     * @param commentId ID of the comment to delete
+     */
+    @Transactional
+    public void adminDeleteComment(Long commentId) {
+        if (!commentRepository.existsById(commentId)) {
+            throw new IllegalArgumentException("couldn't find comment id: " + commentId);
+        }
+        commentRepository.deleteById(commentId);
+    }
+
+    /**
+     * Updates an existing comment.
+     * Ensures safety from XSS attacks and verifies ownership.
+     *
+     * @param commentId ID of the comment to update
+     * @param userId    ID of the user requesting the update
+     * @param newText   The new text for the comment
+     * @return The updated Comment entity
+     * @throws IllegalArgumentException if comment does not exist
+     * @throws IllegalStateException    if user is not the owner of the comment
+     */
+    @Transactional
+    public Comment updateComment(Long commentId, Long userId, String newText) {
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new IllegalArgumentException("couldn't find comment id: " + commentId));
+
+        if (!comment.getUser().getId().equals(userId)) {
+            throw new IllegalStateException("You can only edit your own comments");
+        }
+
+        String text = Jsoup.clean(newText, Safelist.none());
+        comment.setText(text);
+
+        return commentRepository.save(comment);
     }
 }
