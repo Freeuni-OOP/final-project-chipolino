@@ -28,28 +28,28 @@ public class RoadUserDetails implements UserDetails {
         return user.getPassword();
     }
 
-    public Long getUserId() {
+    public @NonNull Long getId() {
         return user.getId();
     }
 
-    public String getEmail() {
+    public @NonNull String getEmail() {
 
         return user.getEmail();
     }
 
-    public Integer getReputationScore() {
+    public @NonNull Integer getReputationScore() {
         return user.getReputationScore();
     }
 
-    public Boolean getBanned() {
+    public @NonNull Boolean getBanned() {
         return user.getBanned();
     }
 
-    public java.time.LocalDateTime getBanExpiration() {
+    public @NonNull java.time.LocalDateTime getBanExpiration() {
         return user.getBanExpiration();
     }
 
-    public java.time.LocalDateTime getCreateDate() {
+    public @NonNull java.time.LocalDateTime getCreateDate() {
         return user.getCreateDate();
     }
 

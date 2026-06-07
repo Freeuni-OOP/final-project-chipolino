@@ -23,7 +23,7 @@ public class UserController {
             (@AuthenticationPrincipal RoadUserDetails roadUserDetails){
 
         SelfResponseDTO selfResponse = new SelfResponseDTO(
-                roadUserDetails.getUserId(),
+                roadUserDetails.getId(),
                 roadUserDetails.getUsername(),
                 roadUserDetails.getEmail(),
                 roadUserDetails.getReputationScore(),
