@@ -4,6 +4,7 @@ import RoadReport.controllers.dto.SelfResponseDTO;
 import RoadReport.controllers.dto.UserResponseDTO;
 import RoadReport.controllers.dto.UserUpdateDTO;
 import RoadReport.entities.User;
+import RoadReport.security.service.RoadUserDetails;
 import RoadReport.services.core.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -19,17 +20,16 @@ public class UserController {
 
     @GetMapping("/me")
     public ResponseEntity<SelfResponseDTO> getCurrentUser
-            (@AuthenticationPrincipal UserDetails userDetails){
-        User user = userService.getUserByUsername(userDetails.getUsername());
+            (@AuthenticationPrincipal RoadUserDetails roadUserDetails){
 
         SelfResponseDTO selfResponse = new SelfResponseDTO(
-                user.getId(),
-                user.getUsername(),
-                user.getEmail(),
-                user.getReputationScore(),
-                user.getBanned(),
-                user.getBanExpiration(),
-                user.getCreateDate()
+                roadUserDetails.getUserId(),
+                roadUserDetails.getUsername(),
+                roadUserDetails.getEmail(),
+                roadUserDetails.getReputationScore(),
+                roadUserDetails.getBanned(),
+                roadUserDetails.getBanExpiration(),
+                roadUserDetails.getCreateDate()
         );
         return ResponseEntity.ok(selfResponse);
     }
