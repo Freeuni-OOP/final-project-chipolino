@@ -6,6 +6,9 @@ import RoadReport.entities.User;
 import RoadReport.enums.ReportStatus;
 import RoadReport.enums.ReportType;
 import RoadReport.enums.Role;
+import RoadReport.exceptions.core.CommentNotFoundException;
+import RoadReport.exceptions.core.ReportNotFoundException;
+import RoadReport.exceptions.core.UserNotFoundException;
 import RoadReport.repositories.CommentRepository;
 import RoadReport.repositories.ReportRepository;
 import RoadReport.repositories.UserRepository;
@@ -123,6 +126,27 @@ public class TestCommentService {
     }
 
     @Test
+    public void testDeleteCommentUnSuccessful() {
+        when(commentRepository.findById(100L)).thenReturn(Optional.of(standardComment));
+        UserNotFoundException exception = assertThrows(UserNotFoundException.class, () -> {
+            commentService.deleteComment(100L, randomUser.getId());
+        });
+
+        verify(commentRepository, never()).delete(any(Comment.class));
+        verify(commentRepository, times(1)).findById(100L);
+        verifyNoMoreInteractions(commentRepository);
+
+        when(commentRepository.findById(999L)).thenReturn(Optional.empty());
+        assertThrows(CommentNotFoundException.class, () -> {
+            commentService.deleteComment(999L, commentAuthor.getId());
+        });
+
+        verify(commentRepository, never()).delete(any(Comment.class));
+        verify(commentRepository, times(1)).findById(999L);
+        verifyNoMoreInteractions(commentRepository);
+    }
+
+    @Test
     public void testAddComment() {
         when(userRepository.findById(commentAuthor.getId())).thenReturn(Optional.of(commentAuthor));
         when(reportRepository.findById(report.getId())).thenReturn(Optional.of(report));
@@ -147,14 +171,14 @@ public class TestCommentService {
     @Test
     public void testAddCommentUnSuccessful() {
         when(userRepository.findById(999L)).thenReturn(Optional.empty());
-        assertThrows(IllegalArgumentException.class, () -> {
+        assertThrows(UserNotFoundException.class, () -> {
             commentService.addComment(999L, report.getId(), "This should fail");
         });
         verify(commentRepository, never()).save(any(Comment.class));
 
         when(userRepository.findById(commentAuthor.getId())).thenReturn(Optional.of(commentAuthor));
         when(reportRepository.findById(999L)).thenReturn(Optional.empty());
-        assertThrows(IllegalArgumentException.class, () -> {
+        assertThrows(ReportNotFoundException.class, () -> {
             commentService.addComment(commentAuthor.getId(), 999L, "This should fail");
         });
         verify(commentRepository, never()).save(any(Comment.class));

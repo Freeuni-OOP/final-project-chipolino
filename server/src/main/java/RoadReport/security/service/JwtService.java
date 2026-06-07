@@ -2,6 +2,8 @@ package RoadReport.security.service;
 
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
@@ -45,7 +47,11 @@ public class JwtService {
      * @return true if the token is valid, false otherwise
      */
     public boolean isTokenValid(String token, UserDetails userDetails) {
-        return !isTokenExpired(token) && Objects.equals(extractUsername(token), userDetails.getUsername());
+        try{
+            return !isTokenExpired(token) && Objects.equals(extractUsername(token), userDetails.getUsername());
+        } catch (JwtException | IllegalArgumentException e) {
+            return false;
+        }
     }
 
     /**
@@ -55,7 +61,11 @@ public class JwtService {
      * @return true if the token is expired, false otherwise
      */
     private boolean isTokenExpired(String token) {
-        return extractClaim(token, Claims::getExpiration).before(new Date());
+        try{
+            return extractClaim(token, Claims::getExpiration).before(new Date());
+        } catch (ExpiredJwtException e) {
+            return true;
+        }
     }
 
     /**
