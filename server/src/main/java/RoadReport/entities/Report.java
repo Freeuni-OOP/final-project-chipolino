@@ -52,9 +52,12 @@ public class Report {
     @Column(nullable = false)
     private ReportStatus status;
 
+    @Builder.Default
     private Integer weight = 1;
 
+    @Builder.Default
     private Integer upvotes = 0;
+    @Builder.Default
     private Integer downvotes = 0;
 
     @JdbcTypeCode(SqlTypes.JSON)

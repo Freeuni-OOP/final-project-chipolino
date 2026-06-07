@@ -4,6 +4,10 @@ import RoadReport.entities.Comment;
 import RoadReport.entities.Report;
 import RoadReport.entities.User;
 import RoadReport.enums.Role;
+import RoadReport.exceptions.special.ActionForbiddenException;
+import RoadReport.exceptions.core.CommentNotFoundException;
+import RoadReport.exceptions.core.ReportNotFoundException;
+import RoadReport.exceptions.core.UserNotFoundException;
 import RoadReport.repositories.CommentRepository;
 import RoadReport.repositories.ReportRepository;
 import RoadReport.repositories.UserRepository;
@@ -29,14 +33,15 @@ public class CommentService {
      * @param userId   user ID, which writes comment
      * @param reportId report ID, which writes comment
      * @param text     text of comment
-     * @throws IllegalArgumentException if comment or user does not exist
+     * @throws ReportNotFoundException if report does not exist
+     * @throws UserNotFoundException if user does not exist
      */
     @Transactional
     public void addComment(Long userId, Long reportId, String text) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("couldn't found: " + userId));
+                .orElseThrow(() -> new UserNotFoundException("couldn't found: " + userId));
         Report report = reportRepository.findById(reportId)
-                .orElseThrow(() -> new IllegalArgumentException("couldn't found report: " + reportId));
+                .orElseThrow(() -> new ReportNotFoundException("couldn't found report: " + reportId));
 
         String safeText = Jsoup.clean(text, Safelist.none());
 
@@ -51,21 +56,22 @@ public class CommentService {
      * deletes comment, if user tries to delete other users comment if
      * inside prevents it
      *
-     * @param commentId ID od delete comment
+     * @param commentId ID of deleted comment
      * @param userId    user id who tries to delete
-     * @throws IllegalArgumentException if comment or user does not exist
-     * @throws IllegalStateException   if this user cant delete this comment
+     * @throws CommentNotFoundException if comment does not exist
+     * @throws UserNotFoundException if user does not exist
+     * @throws ActionForbiddenException if this user cannot delete this comment
      */
     @Transactional
     public void deleteComment(Long commentId, Long userId) {
         Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new IllegalArgumentException("couldn't find comment id: " + commentId));
+                .orElseThrow(() -> new CommentNotFoundException("couldn't find comment id: " + commentId));
 
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("couldn't find user id: " + userId));
+                .orElseThrow(() -> new UserNotFoundException("couldn't find user id: " + userId));
 
         if (!comment.getUser().getId().equals(userId) && user.getRoles() != Role.ADMIN) {
-            throw new IllegalStateException("Wrong user id for this comment id: " + userId);
+            throw new ActionForbiddenException("Wrong user id for this comment id: " + userId);
         }
         commentRepository.delete(comment);
     }
