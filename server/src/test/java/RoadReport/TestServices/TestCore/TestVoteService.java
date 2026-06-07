@@ -5,6 +5,8 @@ import RoadReport.entities.User;
 import RoadReport.entities.Vote;
 import RoadReport.enums.ReportStatus;
 import RoadReport.enums.VoteType;
+import RoadReport.exceptions.core.UserBannedException;
+import RoadReport.exceptions.special.ActionForbiddenException;
 import RoadReport.repositories.ReportRepository;
 import RoadReport.repositories.UserRepository;
 import RoadReport.repositories.VoteRepository;
@@ -78,7 +80,7 @@ public class TestVoteService {
         try {
             voteService.createVote(1L, 10L, VoteType.NEGATIVE);
             fail("Expected an IllegalStateException to be thrown, but nothing happened.");
-        } catch (IllegalStateException e) {
+        } catch (UserBannedException e) {
             assertEquals("Banned users cannot vote!", e.getMessage());
         }
 
@@ -95,7 +97,7 @@ public class TestVoteService {
         try {
             voteService.createVote(1L, 10L, VoteType.NEGATIVE);
             fail("Expected an IllegalStateException to be thrown, but nothing happened.");
-        } catch (IllegalStateException e) {
+        } catch (ActionForbiddenException e) {
             assertEquals("Removed report cannot be voted!", e.getMessage());
         }
 
@@ -115,7 +117,7 @@ public class TestVoteService {
         try {
             voteService.createVote(1L, 10L, VoteType.NEGATIVE);
             fail("Should have thrown IllegalCallerException because usernames match");
-        } catch (IllegalCallerException e) {
+        } catch (ActionForbiddenException e) {
             assertEquals("Users cannot vote their own reports!", e.getMessage());
         }
 

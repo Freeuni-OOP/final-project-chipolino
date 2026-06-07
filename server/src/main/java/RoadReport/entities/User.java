@@ -29,15 +29,20 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
+    @Builder.Default
     private Role roles = Role.USER;
 
     @Version
     private Long version;
 
+    @Builder.Default
     private Integer reputationScore = 0;
+    @Builder.Default
     private Boolean nonReliable = false;
 
+    @Builder.Default
     private Integer rejectedReportsCount = 0;
+    @Builder.Default
     private Boolean banned = false;
     private LocalDateTime banExpiration;
 

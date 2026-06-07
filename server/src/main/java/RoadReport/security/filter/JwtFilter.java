@@ -25,10 +25,9 @@ public class JwtFilter extends OncePerRequestFilter {
     /**
      * Inspects the incoming request for a JWT token, performs validation, and sets up
      * the security authentication context if the token is valid.
-     * <p>
      * If an exception occurs during token parsing or validation (e.g., an expired or tampered token),
      * the filter aborts the normal filter chain execution and delegates to {@link #handleException}
-     * to return a 401 Unauthorized JSON response.
+     * to return a 401 Unauthorized response.
      *
      * @param request     the incoming HTTP request
      * @param response    the outgoing HTTP response

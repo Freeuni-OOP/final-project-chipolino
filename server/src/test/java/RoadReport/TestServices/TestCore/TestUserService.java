@@ -1,10 +1,14 @@
 package RoadReport.TestServices.TestCore;
 
+import RoadReport.controllers.dto.UserUpdateDTO;
 import RoadReport.entities.Comment;
 import RoadReport.entities.Report;
 import RoadReport.entities.User;
 import RoadReport.entities.Vote;
 import RoadReport.enums.Role;
+import RoadReport.exceptions.special.BadRequestException;
+import RoadReport.exceptions.core.UserAlreadyExistsException;
+import RoadReport.exceptions.core.UserNotFoundException;
 import RoadReport.repositories.CommentRepository;
 import RoadReport.repositories.ReportRepository;
 import RoadReport.repositories.UserRepository;
@@ -85,7 +89,7 @@ public class TestUserService {
         // Handle exception
         when(userRepository.findById(999L)).thenReturn(Optional.empty());
 
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+        UserNotFoundException exception = assertThrows(UserNotFoundException.class, () -> {
             userService.getUserById(999L);
         });
 
@@ -112,7 +116,7 @@ public class TestUserService {
         // Handle exception
         when(userRepository.findUserByUsername("sansa")).thenReturn(Optional.empty());
 
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+        UserNotFoundException exception = assertThrows(UserNotFoundException.class, () -> {
             userService.getUserByUsername("sansa");
         });
 
@@ -137,7 +141,7 @@ public class TestUserService {
         // Handle exception
         when(userRepository.findUserByEmail("bufallo@email.com")).thenReturn(Optional.empty());
 
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+        UserNotFoundException exception = assertThrows(UserNotFoundException.class, () -> {
             userService.getUserByEmail("bufallo@email.com");
         });
 
@@ -174,7 +178,7 @@ public class TestUserService {
     @Test
     public void testRegisterUserButEmailExists() {
         when(userRepository.findUserByEmail(firstUser.getEmail())).thenReturn(Optional.of(admin));
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+        UserAlreadyExistsException exception = assertThrows(UserAlreadyExistsException.class, () -> {
             userService.registerUser(firstUser);
         });
 
@@ -192,7 +196,7 @@ public class TestUserService {
         when(userRepository.findUserByEmail(firstUser.getEmail())).thenReturn(Optional.empty());
         when(userRepository.findUserByUsername(firstUser.getUsername())).thenReturn(Optional.of(admin));
 
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+        UserAlreadyExistsException exception = assertThrows(UserAlreadyExistsException.class, () -> {
             userService.registerUser(firstUser);
         });
 
@@ -349,6 +353,49 @@ public class TestUserService {
     }
 
     @Test
+    public void testUpdateUser() {
+        UserUpdateDTO updateData = new UserUpdateDTO
+                ("Gio", "gio@gmail.com", "007");
+
+        when(userRepository.findById(firstUser.getId())).thenReturn(Optional.of(firstUser));
+        when(userRepository.findUserByEmail("gio@gmail.com")).thenReturn(Optional.empty());
+        when(userRepository.findUserByUsername("Gio")).thenReturn(Optional.empty());
+        when(passwordEncoder.encode("007")).thenReturn("SECRET");
+
+        userService.updateUser(firstUser.getId(), updateData);
+
+        ArgumentCaptor<User> userArgumentCaptor = ArgumentCaptor.forClass(User.class);
+
+        verify(userRepository).save(userArgumentCaptor.capture());
+        User savedUser = userArgumentCaptor.getValue();
+
+        assertAll(
+                () -> assertEquals("Gio", savedUser.getUsername()),
+                () -> assertEquals("gio@gmail.com", savedUser.getEmail()),
+                () -> assertEquals("SECRET", savedUser.getPassword())
+        );
+
+        verify(userRepository).findById(firstUser.getId());
+        verify(passwordEncoder).encode(anyString());
+    }
+
+    @Test
+    public void testUserUpdateWhenUsernameAlreadyExists() {
+        UserUpdateDTO updateData = new UserUpdateDTO("admin", "admin@gmail.com", "007");
+
+        when(userRepository.findById(firstUser.getId())).thenReturn(Optional.of(firstUser));
+        when(userRepository.findUserByUsername("admin")).thenReturn(Optional.of(admin));
+
+        UserAlreadyExistsException exception = assertThrows(UserAlreadyExistsException.class,
+                () -> userService.updateUser(firstUser.getId(), updateData));
+
+        assertEquals("The username "+ updateData.username() +" is already taken",
+                exception.getMessage());
+
+        verify(userRepository, never()).save(any(User.class));
+    }
+
+    @Test
     public void testDeleteUser() {
         Report report1 = new Report(); report1.setId(10L); report1.setUser(firstUser);
         Report report2 = new Report(); report2.setId(11L); report2.setUser(firstUser);
@@ -379,7 +426,7 @@ public class TestUserService {
     public void testDeleteUserWhenTryingToRemoveGhostUser() {
         when(userRepository.findById(ghostUser.getId())).thenReturn(Optional.of(ghostUser));
         when(userRepository.findUserByUsername("ghostUser")).thenReturn(Optional.of(ghostUser));
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+        BadRequestException exception = assertThrows(BadRequestException.class, () -> {
             userService.deleteUser(ghostUser.getId());
         });
 
