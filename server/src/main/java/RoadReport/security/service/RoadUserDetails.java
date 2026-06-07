@@ -33,6 +33,7 @@ public class RoadUserDetails implements UserDetails {
     }
 
     public String getEmail() {
+
         return user.getEmail();
     }
 
@@ -66,6 +67,7 @@ public class RoadUserDetails implements UserDetails {
     public boolean isAccountNonLocked() {
         return true;
     }
+
 
     @Override
     public boolean isCredentialsNonExpired() {
