@@ -25,7 +25,7 @@ public class RoadUserDetailsService implements UserDetailsService {
      * @throws UsernameNotFoundException if the user could not be found with the given username
      */
     @Override
-    public @NonNull UserDetails loadUserByUsername(@NonNull String username) throws UsernameNotFoundException {
+    public @NonNull RoadUserDetails loadUserByUsername(@NonNull String username) throws UsernameNotFoundException {
         Optional<User> user = userRepository.findUserByUsername(username);
 
         return user.map(RoadUserDetails::new).

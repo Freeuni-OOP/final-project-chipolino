@@ -4,6 +4,7 @@ import RoadReport.controllers.dto.SelfResponseDTO;
 import RoadReport.controllers.dto.UserResponseDTO;
 import RoadReport.controllers.dto.UserUpdateDTO;
 import RoadReport.entities.User;
+import RoadReport.security.service.RoadUserDetails;
 import RoadReport.services.core.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -18,8 +19,8 @@ public class UserController {
 
     @GetMapping("/me")
     public SelfResponseDTO getCurrentUser
-            (@AuthenticationPrincipal UserDetails userDetails){
-        User user = userService.getUserByUsername(userDetails.getUsername());
+            (@AuthenticationPrincipal RoadUserDetails userDetails){
+        User user = userService.getUserById(userDetails.getId());
 
         return new SelfResponseDTO(
                 user.getId(),
@@ -46,10 +47,9 @@ public class UserController {
 
     @PutMapping("/me")
     public SelfResponseDTO updateUser
-            (@AuthenticationPrincipal UserDetails userDetails,
+            (@AuthenticationPrincipal RoadUserDetails userDetails,
              @RequestBody UserUpdateDTO updateData){
-        User currUser = userService.getUserByUsername(userDetails.getUsername());
-        User updatedUser = userService.updateUser(currUser.getId(), updateData);
+        User updatedUser = userService.updateUser(userDetails.getId(), updateData);
 
         return new SelfResponseDTO(
                 updatedUser.getId(),
@@ -64,9 +64,7 @@ public class UserController {
 
     @DeleteMapping("/me")
     public void deleteCurrentUser
-            (@AuthenticationPrincipal UserDetails userDetails){
-        User user = userService.getUserByUsername(userDetails.getUsername());
-
-        userService.deleteUser(user.getId());
+            (@AuthenticationPrincipal RoadUserDetails userDetails){
+        userService.deleteUser(userDetails.getId());
     }
 }

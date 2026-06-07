@@ -59,7 +59,7 @@ public class AuthService {
     }
 
     private String getToken(String username) {
-        UserDetails userDetails =
+        RoadUserDetails userDetails =
                 userDetailsService.loadUserByUsername(username);
 
         return jwtService.generateToken(userDetails);
