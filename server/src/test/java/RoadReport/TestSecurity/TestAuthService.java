@@ -4,6 +4,7 @@ import RoadReport.security.dto.LoginRequest;
 import RoadReport.security.dto.RegisterRequest;
 import RoadReport.security.service.AuthService;
 import RoadReport.security.service.JwtService;
+import RoadReport.security.service.RoadUserDetails;
 import RoadReport.security.service.RoadUserDetailsService;
 import RoadReport.services.core.UserService;
 import org.junit.jupiter.api.BeforeEach;
@@ -34,7 +35,7 @@ public class TestAuthService {
     @Mock
     private AuthenticationManager authenticationManager;
     @Mock
-    private UserDetails userDetails;
+    private RoadUserDetails userDetails;
 
     @InjectMocks
     private AuthService authService;

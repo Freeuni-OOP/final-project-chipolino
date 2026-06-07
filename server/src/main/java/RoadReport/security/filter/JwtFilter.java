@@ -1,6 +1,8 @@
 package RoadReport.security.filter;
 
 import RoadReport.security.service.JwtService;
+import RoadReport.security.service.RoadUserDetails;
+import RoadReport.security.service.RoadUserDetailsService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -20,7 +22,7 @@ import java.util.Arrays;
 @RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
-    private final UserDetailsService userDetailsService;
+    private final RoadUserDetailsService userDetailsService;
 
     /**
      * Inspects the incoming request for a JWT token, performs validation, and sets up
@@ -41,7 +43,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
             if (token != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 String username = jwtService.extractUsername(token);
-                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+                RoadUserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
                 if (jwtService.isTokenValid(token, userDetails)) {
                     UsernamePasswordAuthenticationToken authToken =

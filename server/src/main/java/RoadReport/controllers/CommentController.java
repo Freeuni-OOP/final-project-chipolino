@@ -3,15 +3,12 @@ package RoadReport.controllers;
 import RoadReport.controllers.dto.CommentRequest;
 import RoadReport.controllers.dto.CommentResponse;
 import RoadReport.entities.Comment;
-import RoadReport.entities.User;
+import RoadReport.security.service.RoadUserDetails;
 import RoadReport.services.core.CommentService;
-import RoadReport.services.core.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,7 +18,6 @@ import java.util.List;
 @RequestMapping("/api")
 public class CommentController {
     private final CommentService commentService;
-    private final UserService userService;
 
 
     /**
@@ -36,10 +32,9 @@ public class CommentController {
     public ResponseEntity<Void> addComment(
             @PathVariable Long reportId,
             @RequestBody CommentRequest request,
-            @AuthenticationPrincipal UserDetails userDetails
+            @AuthenticationPrincipal RoadUserDetails userDetails
     ) {
-        User user = userService.getUserByUsername(userDetails.getUsername());
-        commentService.addComment(user.getId(), reportId, request.content());
+        commentService.addComment(userDetails.getId(), reportId, request.content());
 
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
@@ -80,10 +75,9 @@ public class CommentController {
     public ResponseEntity<CommentResponse> updateComment(
             @PathVariable Long commentId,
             @RequestBody CommentRequest request,
-            @AuthenticationPrincipal UserDetails userDetails
+            @AuthenticationPrincipal RoadUserDetails userDetails
     ) {
-        User user = userService.getUserByUsername(userDetails.getUsername());
-        Comment comment = commentService.updateComment(commentId, user.getId(), request.content());
+        Comment comment = commentService.updateComment(commentId, userDetails.getId(), request.content());
         CommentResponse response = new CommentResponse(
                 comment.getId(),
                 comment.getText(),
@@ -104,10 +98,9 @@ public class CommentController {
     @DeleteMapping("/comments/{commentId}")
     public ResponseEntity<Void> deleteComment(
             @PathVariable Long commentId,
-            @AuthenticationPrincipal UserDetails userDetails
+            @AuthenticationPrincipal RoadUserDetails userDetails
     ) {
-        User user = userService.getUserByUsername(userDetails.getUsername());
-        commentService.deleteComment(commentId, user.getId());
+        commentService.deleteComment(commentId, userDetails.getId());
         return ResponseEntity.noContent().build();
     }
 

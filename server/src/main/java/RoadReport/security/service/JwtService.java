@@ -2,6 +2,8 @@ package RoadReport.security.service;
 
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,7 +31,7 @@ public class JwtService {
      * @param userDetails the authenticated user details
      * @return a signed JWT token string
      */
-    public String generateToken(UserDetails userDetails) {
+    public String generateToken(RoadUserDetails userDetails) {
         return Jwts.builder().subject(userDetails.getUsername()).
                 issuedAt(new Date(System.currentTimeMillis())).
                 expiration(new Date(System.currentTimeMillis() + jwtExpiration)).
@@ -44,10 +46,10 @@ public class JwtService {
      * @param userDetails the user details to compare against
      * @return true if the token is valid, false otherwise
      */
-    public boolean isTokenValid(String token, UserDetails userDetails) {
-        try {
+    public boolean isTokenValid(String token, RoadUserDetails userDetails) {
+        try{
             return !isTokenExpired(token) && Objects.equals(extractUsername(token), userDetails.getUsername());
-        } catch (Exception e) {
+        } catch (JwtException | IllegalArgumentException e) {
             return false;
         }
     }
@@ -59,7 +61,11 @@ public class JwtService {
      * @return true if the token is expired, false otherwise
      */
     private boolean isTokenExpired(String token) {
-        return extractClaim(token, Claims::getExpiration).before(new Date());
+        try{
+            return extractClaim(token, Claims::getExpiration).before(new Date());
+        } catch (ExpiredJwtException e) {
+            return true;
+        }
     }
 
     /**
