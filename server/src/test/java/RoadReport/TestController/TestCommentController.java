@@ -5,6 +5,7 @@ import RoadReport.controllers.dto.CommentRequest;
 import RoadReport.entities.Comment;
 import RoadReport.entities.User;
 import RoadReport.security.service.JwtService;
+import RoadReport.security.service.RoadUserDetails;
 import RoadReport.services.core.CommentService;
 import RoadReport.services.core.UserService;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,6 +23,7 @@ import java.util.List;
 
 import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -39,21 +41,17 @@ public class TestCommentController {
     private CommentService commentService;
 
     @MockitoBean
-    private UserService userService;
-
-    @MockitoBean
     private JwtService jwtService;
 
     private User mockUser;
     private Comment mockComment;
+    private RoadUserDetails mockUserDetails;
 
     @BeforeEach
     public void setUp() {
         mockUser = User.builder()
                 .id(1L)
                 .username("Giorgi")
-                .email("gezug@gmail.com")
-                .password("gezug2000")
                 .build();
 
         mockComment = new Comment();
@@ -61,31 +59,33 @@ public class TestCommentController {
         mockComment.setText("This is a test comment");
         mockComment.setUser(mockUser);
         mockComment.setCreateDate(LocalDateTime.now());
+
+        mockUserDetails = mock(RoadUserDetails.class);
+        when(mockUserDetails.getId()).thenReturn(1L);
+        when(mockUserDetails.getUsername()).thenReturn("Giorgi");
+        when(mockUserDetails.getPassword()).thenReturn("password");
     }
 
     @Test
-    @WithMockUser(username = "Giorgi")
     public void testAddCommentOK() throws Exception {
         CommentRequest request = new CommentRequest("New awesome comment");
 
-        when(userService.getUserByUsername("Giorgi")).thenReturn(mockUser);
-
         mvc.perform(post("/api/reports/100/comments")
+                        .with(user(mockUserDetails))
+                        .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request))
-                        .with(csrf()))
+                        .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated());
 
-        verify(userService).getUserByUsername("Giorgi");
         verify(commentService).addComment(1L, 100L, "New awesome comment");
     }
 
     @Test
-    @WithMockUser(username = "Giorgi")
     public void testAddCommentError() throws Exception {
         mvc.perform(post("/api/reports/100/comments")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .with(csrf()))
+                        .with(user(mockUserDetails))
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
 
         verifyNoInteractions(commentService);
@@ -107,8 +107,7 @@ public class TestCommentController {
     }
 
     @Test
-    @WithMockUser(username = "Giorgi")
-    public void testUpdateComment() throws Exception {
+    public void testUpdateCommentOK() throws Exception {
         CommentRequest request = new CommentRequest("Updated comment text");
 
         Comment updatedComment = new Comment();
@@ -117,50 +116,46 @@ public class TestCommentController {
         updatedComment.setUser(mockUser);
         updatedComment.setCreateDate(mockComment.getCreateDate());
 
-        when(userService.getUserByUsername("Giorgi")).thenReturn(mockUser);
         when(commentService.updateComment(10L, 1L, "Updated comment text")).thenReturn(updatedComment);
 
         mvc.perform(put("/api/comments/10")
+                        .with(user(mockUserDetails))
+                        .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request))
-                        .accept(MediaType.APPLICATION_JSON)
-                        .with(csrf()))
+                        .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(10L))
                 .andExpect(jsonPath("$.content").value("Updated comment text"))
                 .andExpect(jsonPath("$.authorUsername").value("Giorgi"));
 
-        verify(userService).getUserByUsername("Giorgi");
         verify(commentService).updateComment(10L, 1L, "Updated comment text");
     }
 
     @Test
-    @WithMockUser(username = "Giorgi")
     public void testUpdateCommentError() throws Exception {
         mvc.perform(put("/api/comments/10")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .with(csrf()))
+                        .with(user(mockUserDetails))
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
 
         verifyNoInteractions(commentService);
     }
 
     @Test
-    @WithMockUser(username = "Giorgi")
-    public void testDeleteComment() throws Exception {
-        when(userService.getUserByUsername("Giorgi")).thenReturn(mockUser);
-
+    public void testDeleteCommentOK() throws Exception {
         mvc.perform(delete("/api/comments/10")
+                        .with(user(mockUserDetails))
                         .with(csrf()))
                 .andExpect(status().isNoContent());
 
-        verify(userService).getUserByUsername("Giorgi");
         verify(commentService).deleteComment(10L, 1L);
     }
 
     @Test
     @WithMockUser(username = "admin", roles = {"ADMIN"})
-    public void testAdminDeleteComment() throws Exception {
+    public void testAdminDeleteCommentOK() throws Exception {
         mvc.perform(delete("/api/admin/comments/10")
                         .with(csrf()))
                 .andExpect(status().isNoContent());
