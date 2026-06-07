@@ -1,4 +1,4 @@
-package RoadReport.TestController;
+package RoadReport.TestControllers;
 
 public class TestCommentController {
 }

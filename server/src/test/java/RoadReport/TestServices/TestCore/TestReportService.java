@@ -6,6 +6,7 @@ import RoadReport.entities.Vote;
 import RoadReport.enums.ReportStatus;
 import RoadReport.enums.ReportType;
 import RoadReport.enums.VoteType;
+import RoadReport.exceptions.core.UserBannedException;
 import RoadReport.repositories.ReportRepository;
 import RoadReport.services.core.ReportService;
 import RoadReport.services.core.UserService;
@@ -145,7 +146,7 @@ public class TestReportService {
         try {
             reportService.createReport(3L, report);
             fail("Expected an IllegalStateException to be thrown, but nothing happened.");
-        } catch (IllegalStateException e) {
+        } catch (UserBannedException e) {
             assertEquals("Banned users cannot submit reports.", e.getMessage());
         }
 
