@@ -6,6 +6,8 @@ import RoadReport.entities.Vote;
 import RoadReport.enums.ReportStatus;
 import RoadReport.enums.ReportType;
 import RoadReport.enums.VoteType;
+import RoadReport.exceptions.core.ReportNotFoundException;
+import RoadReport.exceptions.core.UserBannedException;
 import RoadReport.repositories.ReportRepository;
 import lombok.RequiredArgsConstructor;
 import org.jsoup.Jsoup;
@@ -46,7 +48,7 @@ public class ReportService {
     @Transactional
     public void createReport(Long userId, Report reportData) {
         if (userService.userIsBanned(userId)) {
-            throw new IllegalStateException("Banned users cannot submit reports.");
+            throw new UserBannedException("Banned users cannot submit reports.");
         }
 
         String description = reportData.getDescription();
@@ -125,6 +127,17 @@ public class ReportService {
     @Transactional(readOnly = true)
     public List<Report> getActiveReports() {
         return reportRepository.findByStatusNotAndExpireDateAfter(ReportStatus.REMOVED, LocalDateTime.now());
+    }
+
+    /**
+     * Gets a report by its ID.
+     * @param reportId the ID of the report to find
+     * @return the found Report
+     * @throws ReportNotFoundException if no report exists with given ID
+     */
+    public Report getReportById(Long reportId) {
+        return reportRepository.findById(reportId)
+                .orElseThrow(() -> new ReportNotFoundException("Report not found with ID: " + reportId));
     }
 
     /**

@@ -5,6 +5,10 @@ import RoadReport.entities.User;
 import RoadReport.entities.Vote;
 import RoadReport.enums.ReportStatus;
 import RoadReport.enums.VoteType;
+import RoadReport.exceptions.special.ActionForbiddenException;
+import RoadReport.exceptions.core.ReportNotFoundException;
+import RoadReport.exceptions.core.UserBannedException;
+import RoadReport.exceptions.core.UserNotFoundException;
 import RoadReport.repositories.ReportRepository;
 import RoadReport.repositories.UserRepository;
 import RoadReport.repositories.VoteRepository;
@@ -29,16 +33,15 @@ public class VoteService {
      * @param userId   The ID of the user casting the vote.
      * @param reportId The ID of the report being voted on.
      * @param vt       The type of vote (UPVOTE/DOWNVOTE).
-     * @throws IllegalArgumentException if the user or report does not exist.
-     * @throws IllegalStateException    if the report is removed or the user is banned.
-     * @throws IllegalCallerException   if the user tries to vote on their own report.
+     * @throws ReportNotFoundException  if the report does not exist.
+     * @throws UserNotFoundException    if the user does not exist.
      */
     @Transactional
     public void createVote(Long userId, Long reportId, VoteType vt) {
         Report report = reportRepository.findById(reportId)
-                .orElseThrow(() -> new IllegalArgumentException("couldn't found report " + reportId));
+                .orElseThrow(() -> new ReportNotFoundException("couldn't found report " + reportId));
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("couldn't found user " + userId));
+                .orElseThrow(() -> new UserNotFoundException("couldn't found user " + userId));
 
         validateVoteEligibility(user, report);
 
@@ -123,18 +126,20 @@ public class VoteService {
      * Performs business rule validation to ensure the vote is legal.
      * @param user   The user entity attempting to vote.
      * @param report The report entity being targeted.
+     * @throws ActionForbiddenException if the report is removed or the user tries to vote on their own report.
+     * @throws UserBannedException if the user is banned.
      */
     private void validateVoteEligibility(User user, Report report) {
         if (report.getStatus() == ReportStatus.REMOVED) {
-            throw new IllegalStateException("Removed report cannot be voted!");
+            throw new ActionForbiddenException("Removed report cannot be voted!");
         }
 
         if (userService.userIsBanned(user.getId())) {
-            throw new IllegalStateException("Banned users cannot vote!");
+            throw new UserBannedException("Banned users cannot vote!");
         }
 
         if (report.getUser().getUsername().equals(user.getUsername())) {
-            throw new IllegalCallerException("Users cannot vote their own reports!");
+            throw new ActionForbiddenException("Users cannot vote their own reports!");
         }
     }
 }
