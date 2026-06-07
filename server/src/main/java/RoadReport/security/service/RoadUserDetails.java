@@ -28,6 +28,8 @@ public class RoadUserDetails implements UserDetails {
         return user.getPassword();
     }
 
+    public Long getId() {return user.getId();}
+
     @Override
     public @NonNull String getUsername() {
         return user.getUsername();
