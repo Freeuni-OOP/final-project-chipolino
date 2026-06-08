@@ -1,7 +1,7 @@
 package RoadReport.TestSecurity;
 
-import RoadReport.security.dto.LoginRequest;
-import RoadReport.security.dto.RegisterRequest;
+import RoadReport.controllers.dto.LoginRequest;
+import RoadReport.controllers.dto.RegisterRequest;
 import RoadReport.security.service.AuthService;
 import RoadReport.security.service.JwtService;
 import RoadReport.security.service.RoadUserDetailsService;
