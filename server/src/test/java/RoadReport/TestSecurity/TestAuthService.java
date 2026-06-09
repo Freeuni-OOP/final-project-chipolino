@@ -1,7 +1,7 @@
 package RoadReport.TestSecurity;
 
-import RoadReport.controllers.dto.LoginRequest;
-import RoadReport.controllers.dto.RegisterRequest;
+import RoadReport.security.dto.LoginRequest;
+import RoadReport.security.dto.RegisterRequest;
 import RoadReport.security.service.AuthService;
 import RoadReport.security.service.JwtService;
 import RoadReport.security.service.RoadUserDetails;
@@ -17,7 +17,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.userdetails.UserDetails;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;

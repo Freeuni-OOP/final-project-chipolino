@@ -3,12 +3,11 @@ package RoadReport.security.service;
 import RoadReport.entities.User;
 import RoadReport.enums.Role;
 import RoadReport.services.core.UserService;
-import RoadReport.controllers.dto.LoginRequest;
-import RoadReport.controllers.dto.RegisterRequest;
+import RoadReport.security.dto.LoginRequest;
+import RoadReport.security.dto.RegisterRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 @Service

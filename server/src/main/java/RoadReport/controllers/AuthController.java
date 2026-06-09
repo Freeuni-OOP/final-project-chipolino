@@ -1,10 +1,11 @@
 package RoadReport.controllers;
 
-import RoadReport.controllers.dto.JwtResponseDTO;
-import RoadReport.controllers.dto.LoginRequest;
-import RoadReport.controllers.dto.RegisterRequest;
+import RoadReport.security.dto.LoginRequest;
+import RoadReport.security.dto.RegisterRequest;
 import RoadReport.security.service.AuthService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,9 +24,20 @@ public class AuthController {
      * @return A ResponseEntity containing the generated JWT token in a JwtResponseDTO and HTTP 200 status.
      */
     @PostMapping("/login")
-    public ResponseEntity<JwtResponseDTO> login(@RequestBody LoginRequest request) {
+    public ResponseEntity<Void> login(@RequestBody LoginRequest request) {
         String token = authService.login(request);
-        return ResponseEntity.ok(new JwtResponseDTO(token));
+
+        ResponseCookie cookie = ResponseCookie.from("jwt_token", token)
+                .httpOnly(true)
+                .secure(false)
+                .path("/")
+                .maxAge(60 * 60 * 24)
+                .sameSite("Lax")
+                .build();
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, cookie.toString())
+                .build();
     }
 
     /**
@@ -36,9 +48,20 @@ public class AuthController {
      * @return A ResponseEntity containing the JwtResponseDTO and HTTP 200 status.
      */
     @PostMapping("/register")
-    public ResponseEntity<JwtResponseDTO> register(@RequestBody RegisterRequest request) {
+    public ResponseEntity<Void> register(@RequestBody RegisterRequest request) {
         String token = authService.register(request);
-        return ResponseEntity.ok(new JwtResponseDTO(token));
+
+        ResponseCookie cookie = ResponseCookie.from("jwt_token", token)
+                .httpOnly(true)
+                .secure(false)
+                .path("/")
+                .maxAge(60 * 60 * 24)
+                .sameSite("Lax")
+                .build();
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, cookie.toString())
+                .build();
     }
 
     /**
@@ -48,7 +71,15 @@ public class AuthController {
      * @return A ResponseEntity with a success message and HTTP 200 status
      */
     @PostMapping("/logout")
-    public ResponseEntity<String> logout() {
-        return ResponseEntity.ok("Successfully logged out.");
+    public ResponseEntity<Void> logout() {
+        ResponseCookie cookie = ResponseCookie.from("jwt_token", "")
+                .httpOnly(true)
+                .path("/")
+                .maxAge(0)
+                .build();
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, cookie.toString())
+                .build();
     }
 }
