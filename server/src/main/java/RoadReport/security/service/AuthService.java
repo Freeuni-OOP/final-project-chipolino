@@ -8,7 +8,6 @@ import RoadReport.security.dto.RegisterRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -59,7 +58,7 @@ public class AuthService {
     }
 
     private String getToken(String username) {
-        UserDetails userDetails =
+        RoadUserDetails userDetails =
                 userDetailsService.loadUserByUsername(username);
 
         return jwtService.generateToken(userDetails);

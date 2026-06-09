@@ -28,7 +28,30 @@ public class RoadUserDetails implements UserDetails {
         return user.getPassword();
     }
 
-    public Long getId() {return user.getId();}
+    public @NonNull Long getId() {
+        return user.getId();
+    }
+
+    public @NonNull String getEmail() {
+
+        return user.getEmail();
+    }
+
+    public @NonNull Integer getReputationScore() {
+        return user.getReputationScore();
+    }
+
+    public @NonNull Boolean getBanned() {
+        return user.getBanned();
+    }
+
+    public @NonNull java.time.LocalDateTime getBanExpiration() {
+        return user.getBanExpiration();
+    }
+
+    public @NonNull java.time.LocalDateTime getCreateDate() {
+        return user.getCreateDate();
+    }
 
     @Override
     public @NonNull String getUsername() {
@@ -44,6 +67,7 @@ public class RoadUserDetails implements UserDetails {
     public boolean isAccountNonLocked() {
         return true;
     }
+
 
     @Override
     public boolean isCredentialsNonExpired() {
