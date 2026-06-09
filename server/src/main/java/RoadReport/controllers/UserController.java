@@ -7,6 +7,7 @@ import RoadReport.entities.User;
 import RoadReport.security.service.RoadUserDetails;
 import RoadReport.services.core.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
@@ -17,18 +18,43 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
     private final UserService userService;
 
-    /**
-     * Gets full profile information of the authenticated user.
-     * Endpoint: {@code GET /api/users/me}
-     * @param userDetails the details of current user,
-     * @return {@link SelfResponseDTO} with extended profile data
-     */
     @GetMapping("/me")
-    public SelfResponseDTO getCurrentUser
-            (@AuthenticationPrincipal RoadUserDetails userDetails){
-        User user = userService.getUserById(userDetails.getId());
+    public ResponseEntity<SelfResponseDTO> getCurrentUser
+            (@AuthenticationPrincipal RoadUserDetails roadUserDetails){
 
-        return new SelfResponseDTO(
+        SelfResponseDTO selfResponse = new SelfResponseDTO(
+                roadUserDetails.getId(),
+                roadUserDetails.getUsername(),
+                roadUserDetails.getEmail(),
+                roadUserDetails.getReputationScore(),
+                roadUserDetails.getBanned(),
+                roadUserDetails.getBanExpiration(),
+                roadUserDetails.getCreateDate()
+        );
+        return ResponseEntity.ok(selfResponse);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<UserResponseDTO> getUser(@PathVariable Long id){
+        User user = userService.getUserById(id);
+
+        UserResponseDTO userResponse = new UserResponseDTO(
+                user.getId(),
+                user.getUsername(),
+                user.getReputationScore(),
+                user.getCreateDate()
+        );
+        return ResponseEntity.ok(userResponse);
+    }
+
+    @PutMapping("/me")
+    public ResponseEntity<SelfResponseDTO> updateUser
+            (@AuthenticationPrincipal UserDetails userDetails,
+             @RequestBody UserUpdateDTO updateData){
+        User user = userService.getUserByUsername(userDetails.getUsername());
+        userService.updateUser(user.getId(), updateData);
+
+        SelfResponseDTO selfResponse = new SelfResponseDTO(
                 user.getId(),
                 user.getUsername(),
                 user.getEmail(),
@@ -37,60 +63,16 @@ public class UserController {
                 user.getBanExpiration(),
                 user.getCreateDate()
         );
+        return ResponseEntity.ok(selfResponse);
     }
 
-
-    /**
-     * Gets profile information of a user by its unique identifier.
-     * Endpoint: {@code GET /api/users/{id}}
-     * @param id the unique identifier of the requested user
-     * @return {@link UserResponseDTO} with public details only
-     */
-    @GetMapping("/{id}")
-    public UserResponseDTO getUser(@PathVariable Long id){
-        User user = userService.getUserById(id);
-
-        return new UserResponseDTO(
-                user.getId(),
-                user.getUsername(),
-                user.getReputationScore(),
-                user.getCreateDate()
-        );
-    }
-
-    /**
-     * Updates personal details of the authenticated user.
-     * Endpoint: {@code PUT /api/users/me}
-     * @param userDetails the details of current user
-     * @param updateData  the DTO containing the new user profile data
-     * @return {@link SelfResponseDTO} with extended updated profile data
-     */
-    @PutMapping("/me")
-    public SelfResponseDTO updateUser
-            (@AuthenticationPrincipal RoadUserDetails userDetails,
-             @RequestBody UserUpdateDTO updateData){
-        User updatedUser = userService.updateUser(userDetails.getId(), updateData);
-
-        return new SelfResponseDTO(
-                updatedUser.getId(),
-                updatedUser.getUsername(),
-                updatedUser.getEmail(),
-                updatedUser.getReputationScore(),
-                updatedUser.getBanned(),
-                updatedUser.getBanExpiration(),
-                updatedUser.getCreateDate()
-        );
-    }
-
-
-    /**
-     * Deletes the account of the currently authenticated user from the system.
-     * Endpoint: {@code DELETE /api/users/me}
-     * @param userDetails the details of current user account being deleted
-     */
     @DeleteMapping("/me")
-    public void deleteCurrentUser
-            (@AuthenticationPrincipal RoadUserDetails userDetails){
-        userService.deleteUser(userDetails.getId());
+    public ResponseEntity<Void> deleteCurrentUser
+            (@AuthenticationPrincipal UserDetails userDetails){
+        User user = userService.getUserByUsername(userDetails.getUsername());
+
+        userService.deleteUser(user.getId());
+
+        return ResponseEntity.noContent().build();
     }
 }
