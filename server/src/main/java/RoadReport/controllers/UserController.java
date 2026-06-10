@@ -9,7 +9,6 @@ import RoadReport.services.core.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -49,10 +48,10 @@ public class UserController {
 
     @PutMapping("/me")
     public ResponseEntity<SelfResponseDTO> updateUser
-            (@AuthenticationPrincipal UserDetails userDetails,
+            (@AuthenticationPrincipal RoadUserDetails userDetails,
              @RequestBody UserUpdateDTO updateData){
-        User user = userService.getUserByUsername(userDetails.getUsername());
-        userService.updateUser(user.getId(), updateData);
+        User user = userService.getUserById(userDetails.getId());
+        user = userService.updateUser(user.getId(), updateData);
 
         SelfResponseDTO selfResponse = new SelfResponseDTO(
                 user.getId(),
@@ -68,8 +67,8 @@ public class UserController {
 
     @DeleteMapping("/me")
     public ResponseEntity<Void> deleteCurrentUser
-            (@AuthenticationPrincipal UserDetails userDetails){
-        User user = userService.getUserByUsername(userDetails.getUsername());
+            (@AuthenticationPrincipal RoadUserDetails userDetails){
+        User user = userService.getUserById(userDetails.getId());
 
         userService.deleteUser(user.getId());
 
