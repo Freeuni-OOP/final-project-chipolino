@@ -96,17 +96,16 @@ public class CommentService {
         return commentRepository.findByUserIdOrderByCreateDateDesc(userId);
     }
 
+
     /**
-     * Admin method to force delete any comment without ownership checks.
-     *
-     * @param commentId ID of the comment to delete
+     * Retrieves a specific comment from the database by its unique identifier.
+     * * @param commentId The ID of the comment to be retrieved.
+     * @return The {@link Comment} entity associated with the provided ID.
+     * @throws CommentNotFoundException if no comment exists with the specified ID.
      */
-    @Transactional
-    public void adminDeleteComment(Long commentId) {
-        if (!commentRepository.existsById(commentId)) {
-            throw new IllegalArgumentException("couldn't find comment id: " + commentId);
-        }
-        commentRepository.deleteById(commentId);
+    public Comment getCommentById(Long commentId) {
+        return commentRepository.findById(commentId)
+                .orElseThrow(() -> new CommentNotFoundException("couldn't find comment id: " + commentId));
     }
 
     /**

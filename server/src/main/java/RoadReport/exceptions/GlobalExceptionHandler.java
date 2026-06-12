@@ -174,4 +174,21 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
     }
 
+    /**
+     * Handles security violations where an administrative action is attempted against
+     * another protected administrator account (The "Admin Shield").
+     * * @param ex The caught {@link AdminOperationException} containing the violation details.
+     * @return A {@code 403 Forbidden} response containing a specialized error payload
+     * with the type "ADMIN_SHIELD_VIOLATION".
+     */
+    @ExceptionHandler(AdminOperationException.class)
+    public ResponseEntity<Map<String, String>> handleAdminShieldViolation(AdminOperationException ex) {
+        Map<String, String> response = new HashMap<>();
+
+        response.put("error", ex.getMessage());
+        response.put("type", "ADMIN_SHIELD_VIOLATION");
+        response.put("status", String.valueOf(HttpStatus.FORBIDDEN.value()));
+
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+    }
 }

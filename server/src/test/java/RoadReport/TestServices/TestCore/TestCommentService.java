@@ -9,6 +9,7 @@ import RoadReport.enums.Role;
 import RoadReport.exceptions.core.CommentNotFoundException;
 import RoadReport.exceptions.core.ReportNotFoundException;
 import RoadReport.exceptions.core.UserNotFoundException;
+import RoadReport.exceptions.special.ActionForbiddenException;
 import RoadReport.repositories.CommentRepository;
 import RoadReport.repositories.ReportRepository;
 import RoadReport.repositories.UserRepository;
@@ -126,6 +127,35 @@ public class TestCommentService {
     }
 
     @Test
+    public void testGetCommentByIdSuccess() {
+        when(commentRepository.findById(100L)).thenReturn(Optional.of(standardComment));
+
+        Comment result = commentService.getCommentById(100L);
+
+        assertAll(
+                () -> assertNotNull(result),
+                () -> assertEquals(100L, result.getId()),
+                () -> assertEquals(standardComment.getText(), result.getText()),
+                () -> assertEquals(commentAuthor.getId(), result.getUser().getId())
+        );
+
+        verify(commentRepository, times(1)).findById(100L);
+        verifyNoMoreInteractions(commentRepository);
+    }
+
+    @Test
+    public void testGetCommentByIdNotFound() {
+        when(commentRepository.findById(999L)).thenReturn(Optional.empty());
+
+        assertThrows(CommentNotFoundException.class, () -> {
+            commentService.getCommentById(999L);
+        });
+
+        verify(commentRepository, times(1)).findById(999L);
+        verifyNoMoreInteractions(commentRepository);
+    }
+
+    @Test
     public void testDeleteCommentUnSuccessful() {
         when(commentRepository.findById(100L)).thenReturn(Optional.of(standardComment));
         UserNotFoundException exception = assertThrows(UserNotFoundException.class, () -> {
@@ -235,22 +265,13 @@ public class TestCommentService {
     }
 
 
-
     @Test
     public void testDeleteCommentUnSuccessfulNotFound() {
-        when(commentRepository.findById(100L)).thenReturn(Optional.of(standardComment));
-        when(userRepository.findById(randomUser.getId())).thenReturn(Optional.empty());
-
-        assertThrows(IllegalArgumentException.class, () -> {
-            commentService.deleteComment(100L, randomUser.getId());
-        });
-
         when(commentRepository.findById(999L)).thenReturn(Optional.empty());
-        assertThrows(IllegalArgumentException.class, () -> {
+
+        assertThrows(CommentNotFoundException.class, () -> {
             commentService.deleteComment(999L, commentAuthor.getId());
         });
-
-        verify(commentRepository, never()).delete(any(Comment.class));
     }
 
     @Test
@@ -258,27 +279,11 @@ public class TestCommentService {
         when(commentRepository.findById(100L)).thenReturn(Optional.of(standardComment));
         when(userRepository.findById(randomUser.getId())).thenReturn(Optional.of(randomUser));
 
-        assertThrows(IllegalStateException.class, () -> {
+        assertThrows(ActionForbiddenException.class, () -> {
             commentService.deleteComment(100L, randomUser.getId());
         });
 
         verify(commentRepository, never()).delete(any(Comment.class));
-    }
-
-    @Test
-    public void testAdminDeleteCommentSuccess() {
-        when(commentRepository.existsById(100L)).thenReturn(true);
-        commentService.adminDeleteComment(100L);
-        verify(commentRepository, times(1)).deleteById(100L);
-    }
-
-    @Test
-    public void testAdminDeleteCommentNotFound() {
-        when(commentRepository.existsById(999L)).thenReturn(false);
-        assertThrows(IllegalArgumentException.class, () -> {
-            commentService.adminDeleteComment(999L);
-        });
-        verify(commentRepository, never()).deleteById(anyLong());
     }
 
     @Test
