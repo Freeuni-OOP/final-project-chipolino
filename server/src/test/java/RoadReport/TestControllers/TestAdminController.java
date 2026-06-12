@@ -185,7 +185,7 @@ public class TestAdminController {
         mvc.perform(delete("/api/admin/users/{userId}", 2L)
                         .with(csrf())
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isUnauthorized());
+                .andExpect(status().isForbidden());
 
         verifyNoInteractions(adminService);
     }

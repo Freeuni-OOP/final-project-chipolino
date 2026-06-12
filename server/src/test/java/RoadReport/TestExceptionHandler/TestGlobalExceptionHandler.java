@@ -100,6 +100,14 @@ public class TestGlobalExceptionHandler {
         assertErrorResponse(response, HttpStatus.NOT_FOUND, "Username not found");
     }
 
+    @Test
+    public void testHandleAdminShieldViolation() {
+        AdminOperationException ex = new AdminOperationException("Do not have such privileges");
+        ResponseEntity<Map<String, String>> response = exceptionHandler.handleAdminShieldViolation(ex);
+        assertErrorResponse(response, HttpStatus.FORBIDDEN, "Do not have such privileges");
+    }
+
+
     private void assertErrorResponse(ResponseEntity<Map<String, String>> response,
                                      HttpStatus expectedStatus,
                                      String expectedMessage) {
