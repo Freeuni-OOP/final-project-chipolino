@@ -88,7 +88,7 @@ public class AdminService {
      * @param isReset      If true, forces the user's reputation back to 0, ignoring the score parameter.
      * @param score        The amount of points to add or subtract from the current score (ignored if isReset is true).
      * @throws AdminOperationException  if the target user is an Administrator.
-     * @throws IllegalArgumentException if isReset is false but no score modifier is provided.
+     * @throws BadRequestException if isReset is false but no score modifier is provided.
      */
     @Transactional
     public void adjustReputation(Long targetUserId, boolean isReset, Integer score) {
