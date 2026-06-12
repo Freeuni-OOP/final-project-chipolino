@@ -104,17 +104,4 @@ public class CommentController {
         return ResponseEntity.noContent().build();
     }
 
-    /**
-     * Admin operation to forcefully delete any comment.
-     * Bypasses ownership checks.
-     *
-     * @param commentId The ID of the comment to delete.
-     * @return A {@link ResponseEntity} with HTTP status 204 (No Content).
-     */
-    @DeleteMapping("/admin/comments/{commentId}")
-    public ResponseEntity<Void> adminDeleteComment(@PathVariable Long commentId) {
-        commentService.adminDeleteComment(commentId);
-        return ResponseEntity.noContent().build();
-    }
-
 }
