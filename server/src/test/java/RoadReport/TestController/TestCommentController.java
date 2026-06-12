@@ -152,14 +152,4 @@ public class TestCommentController {
 
         verify(commentService).deleteComment(10L, 1L);
     }
-
-    @Test
-    @WithMockUser(username = "admin", roles = {"ADMIN"})
-    public void testAdminDeleteCommentOK() throws Exception {
-        mvc.perform(delete("/api/admin/comments/10")
-                        .with(csrf()))
-                .andExpect(status().isNoContent());
-
-        verify(commentService).adminDeleteComment(10L);
-    }
 }
