@@ -2,15 +2,22 @@ import {createContext, useState, useEffect, useCallback} from "react";
 import {getMe} from "../api/userApi.js";
 import {login, logout, register} from "../api/authApi.js";
 
-export const AuthContext = createContext()
+/**
+ * Global Context object for sharing authentication state across the application.
+ */
+export const AuthContext = createContext(undefined)
 
+/**
+ * Context Provider component that manages global user authentication state.
+ * Wraps the application to provide user data, loading states, and auth handlers.
+ */
 export const AuthProvider = ({children}) => {
     const [user, setUser] = useState(null)
     const [loading, setLoading] = useState(true);
 
     const fetchUser = useCallback(() => {
         getMe().
-        then(res => setUser(res.data)).
+        then(res => setUser(res)).
         catch(() => setUser(null)).
         finally(() => setLoading(false))
     }, []);
@@ -21,7 +28,7 @@ export const AuthProvider = ({children}) => {
     const handleLogin =  async (data) => {
         await login(data)
         const res = await getMe()
-        setUser(res.data)
+        setUser(res)
     }
 
     const handleLogout =  async () => {
@@ -32,7 +39,7 @@ export const AuthProvider = ({children}) => {
     const handleRegister =  async (data) => {
         await register(data)
         const res = await getMe()
-        setUser(res.data)
+        setUser(res)
     }
 
     return (
