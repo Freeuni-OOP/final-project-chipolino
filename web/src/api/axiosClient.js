@@ -1,21 +1,42 @@
-import axios from 'axios';
+/**
+ * @fileoverview Axios Client Configuration API
+ * Handles network requests, automatic cookie injection
+ * and global HTTPS response interception for security.
+ */
 
-const axiosClient = axios.create({
-    baseURL: 'http://localhost:8080/api',
-    withCredentials: true,  // ← sends httpOnly cookie automatically
-    headers: {
-        'Content-Type': 'application/json'
-    }
+import axios from "axios";
+
+/**
+ * Axios instance created for talking to the Spring Boot backend.
+ * @constant
+ * @type {import('axios').AxiosInstance}
+ * @property baseURL - The root URL for all backend API endpoints.
+ * @property withCredentials - Forces the browser to automatically include HttpOnly JWT session cookies.
+ */
+const axiosApi = axios.create({
+    baseURL: "http://localhost:8080/api",   //Need to change http with https later!!
+    headers: {"Content-Type" : "application/json"},
+    timeout: 5000,
+    withCredentials: true,
 });
 
-axiosClient.interceptors.response.use(
-    response => response,
-    error => {
-        if (error.response?.status === 401) {
+/**
+ * Global Response Interceptor (The Security Checkpoint)
+ * Checks all incoming data from the server. If a request returns a 401 Unauthorized status,
+ * it implies that the JWT cookie has expired or is invalid. The interceptor will automatically
+ * remove the local session flags and redirect the user back to the login screen.
+ */
+axiosApi.interceptors.response.use(
+    (success) => success,
+    (failure) => {
+        if (failure.response && (failure.response.status === 401 || failure.response.status === 402)) {
+            console.warn("Session expired or unauthorized. Redirecting to login.");
+            localStorage.removeItem("isLoggedIn");  //Need to write putItem in some component!!
             window.location.href = '/login';
         }
-        return Promise.reject(error);
+
+        return Promise.reject(failure);
     }
 );
 
-export default axiosClient;
+export default axiosApi;

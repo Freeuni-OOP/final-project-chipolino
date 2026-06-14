@@ -1,5 +1,5 @@
 import {createContext, useState, useEffect, useCallback} from "react";
-import {getMe} from "../api/userApi.js";
+import {getCurrentUser} from "../api/userApi.js";
 import {login, logout, register} from "../api/authApi.js";
 
 /**
@@ -16,7 +16,7 @@ export const AuthProvider = ({children}) => {
     const [loading, setLoading] = useState(true);
 
     const fetchUser = useCallback(() => {
-        getMe().
+        getCurrentUser().
         then(res => setUser(res)).
         catch(() => setUser(null)).
         finally(() => setLoading(false))
@@ -27,7 +27,7 @@ export const AuthProvider = ({children}) => {
 
     const handleLogin =  async (data) => {
         await login(data)
-        const res = await getMe()
+        const res = await getCurrentUser()
         setUser(res)
     }
 
@@ -38,7 +38,7 @@ export const AuthProvider = ({children}) => {
 
     const handleRegister =  async (data) => {
         await register(data)
-        const res = await getMe()
+        const res = await getCurrentUser()
         setUser(res)
     }
 

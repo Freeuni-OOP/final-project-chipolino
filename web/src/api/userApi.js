@@ -1,13 +1,35 @@
-import axiosClient from './axiosClient';
+/**
+ * @fileoverview User API module.
+ * Handles all user-related network requests
+ */
+import axios from './axiosClient';
 
-export const getMe = () =>
-    axiosClient.get('/users/me');
+/**
+ * Fetches the profile of the currently logged-in user.
+ * @returns {Promise<Object>} The current user's data.
+ */
+export const getCurrentUser = () =>
+    axios.get('/users/me').then(res => res.data);
 
-export const getUserById = (id) =>
-    axiosClient.get(`/users/${id}`);
+/**
+ * Fetches a specific user's profile by their ID.
+ * @param {number} id - The unique ID of the user.
+ * @returns {Promise<Object>} The user's public data.
+ */
+export const getUser = (id) =>
+    axios.get(`/users/${id}`).then(res => res.data);
 
-export const updateProfile = (data) =>
-    axiosClient.put('/users/me', data);
+/**
+ * Updates the current user's profile information.
+ * @param {Object} updateData - The new data to update.
+ * @returns {Promise<Object>} The updated user data.
+ */
+export const updateUser = (updateData) =>
+    axios.put('/users/me', updateData).then(res => res.data);
 
-export const deleteAccount = () =>
-    axiosClient.delete('/users/me');
+/**
+ * Permanently deletes the currently logged-in user's account.
+ * @returns {Promise<void>}
+ */
+export const deleteCurrentUser = () =>
+    axios.delete('/users/me').then(res => res.data);
