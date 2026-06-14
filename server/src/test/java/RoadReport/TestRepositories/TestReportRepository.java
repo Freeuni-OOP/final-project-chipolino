@@ -15,6 +15,7 @@ import org.springframework.boot.jpa.test.autoconfigure.TestEntityManager;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -149,6 +150,67 @@ public class TestReportRepository {
         List<Report> allReports = reportRepository.findAll();
         assertEquals(1, allReports.size());
         assertEquals(ReportType.ACCIDENT, allReports.get(0).getType());
+    }
+
+    @Test
+    public void testFindByStatusNotAndExpireDateAfter() {
+        java.time.LocalDateTime now = java.time.LocalDateTime.now();
+        java.time.LocalDateTime searchTime = now.minusHours(1);
+        Report validReport = Report.builder().user(user1).votes(new ArrayList<>()).comments(new ArrayList<>())
+                .type(ReportType.POLICE).longitude(20.0).latitude(20.0).status(ReportStatus.TEMPORARY)
+                .expireDate(now.plusDays(5)).createDate(now).build();
+
+        Report expiredReport = Report.builder().user(user1).votes(new ArrayList<>()).comments(new ArrayList<>())
+                .type(ReportType.POLICE).longitude(10.0).latitude(10.0).status(ReportStatus.TEMPORARY)
+                .expireDate(now.minusDays(2)).createDate(now).build();
+
+        Report removedReport = Report.builder().user(user1).votes(new ArrayList<>()).comments(new ArrayList<>())
+                .type(ReportType.ACCIDENT).longitude(11.0).latitude(11.0).status(ReportStatus.REMOVED)
+                .expireDate(now.plusDays(2)).createDate(now).build();
+
+        entityManager.persist(validReport);
+        entityManager.persist(expiredReport);
+        entityManager.persist(removedReport);
+        entityManager.flush();
+        List<Report> result = reportRepository.findByStatusNotAndExpireDateAfter(ReportStatus.REMOVED, searchTime);
+
+        List<Long> resultIds = result.stream().map(Report::getId).collect(Collectors.toList());
+
+        assertTrue(resultIds.contains(validReport.getId()));
+        assertTrue(resultIds.contains(report1.getId()));
+        assertFalse(resultIds.contains(expiredReport.getId()));
+        assertFalse(resultIds.contains(removedReport.getId()));
+    }
+
+
+    @Test
+    public void testFindActiveReports() {
+        java.time.LocalDateTime now = java.time.LocalDateTime.now();
+        Report inactiveReport = Report.builder().user(user1).votes(new ArrayList<>()).comments(new ArrayList<>())
+                .type(ReportType.ACCIDENT).longitude(12.0).latitude(12.0).status(ReportStatus.REMOVED)
+                .expireDate(now.minusDays(5)).createDate(now).build();
+        entityManager.persist(inactiveReport);
+        entityManager.flush();
+        List<Report> activeReports = reportRepository.findByStatusNotAndExpireDateAfter(ReportStatus.REMOVED, now);
+        assertTrue(activeReports.contains(report1));
+        assertTrue(activeReports.contains(report2));
+        assertFalse(activeReports.contains(inactiveReport));
+    }
+
+
+    @Test
+    public void testDeleteExpiredReportsRemovedStatus() {
+        report1.setExpireDate(java.time.LocalDateTime.now().plusDays(10));
+        report1.setStatus(ReportStatus.REMOVED);
+        reportRepository.save(report1);
+        entityManager.flush();
+        reportRepository.deleteExpiredReports();
+        entityManager.flush();
+
+        List<Report> allReports = reportRepository.findAll();
+        assertEquals(1, allReports.size());
+        assertFalse(allReports.contains(report1));
+        assertTrue(allReports.contains(report2));
     }
 
 }

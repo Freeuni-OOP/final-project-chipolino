@@ -147,4 +147,49 @@ public class TestCommentRepository {
         assertEquals("kertis", comments2.get(0).getText());
     }
 
+    @Test
+    public void testMigrateComments() {
+        addComment(userA, reportA, "This is report A - comment 1");
+        addComment(userB, reportA, "This is report A - comment 2");
+        entityManager.flush();
+
+        commentRepository.migrateComments(reportA.getId(), reportB.getId());
+        entityManager.clear();
+        List<Comment> reportAComments = commentRepository.findByReportId(reportA.getId());
+        List<Comment> reportBComments = commentRepository.findByReportId(reportB.getId());
+        assertTrue(reportAComments.isEmpty());
+        assertEquals(2, reportBComments.size());
+    }
+
+    @Test
+    public void testFindByReportIdOrderByCreateDateDesc() throws InterruptedException {
+        addComment(userA, reportA, "first comment");
+        Thread.sleep(10);
+        addComment(userB, reportA, "second comment");
+        Thread.sleep(10);
+        addComment(userA, reportA, "third comment");
+
+        entityManager.flush();
+        List<Comment> comments = commentRepository.findByReportIdOrderByCreateDateDesc(reportA.getId());
+
+        assertEquals(3, comments.size());
+        assertEquals("third comment", comments.get(0).getText());
+        assertEquals("second comment", comments.get(1).getText());
+        assertEquals("first comment", comments.get(2).getText());
+    }
+
+    @Test
+    public void testFindByUserIdOrderByCreateDateDesc() throws InterruptedException {
+        addComment(userA, reportB, "oldest user comment");
+        Thread.sleep(10);
+        addComment(userA, reportA, "newest user comment");
+
+        entityManager.flush();
+        List<Comment> comments = commentRepository.findByUserIdOrderByCreateDateDesc(userA.getId());
+
+        assertEquals(2, comments.size());
+        assertEquals("newest user comment", comments.get(0).getText());
+        assertEquals("oldest user comment", comments.get(1).getText());
+    }
+
 }

@@ -5,6 +5,9 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
+# GraphHopper routing engine cache directory
+graph-cache/
+
 # React / Node.js
 node_modules/
 web/node_modules/

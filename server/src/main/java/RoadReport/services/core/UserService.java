@@ -1,10 +1,14 @@
 package RoadReport.services.core;
 
+import RoadReport.controllers.dto.UserUpdateDTO;
 import RoadReport.entities.Comment;
 import RoadReport.entities.Report;
 import RoadReport.entities.User;
 import RoadReport.entities.Vote;
-import RoadReport.enums.Role;
+import RoadReport.enums.VoteType;
+import RoadReport.exceptions.special.BadRequestException;
+import RoadReport.exceptions.core.UserAlreadyExistsException;
+import RoadReport.exceptions.core.UserNotFoundException;
 import RoadReport.repositories.CommentRepository;
 import RoadReport.repositories.ReportRepository;
 import RoadReport.repositories.UserRepository;
@@ -13,9 +17,12 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 
 /**
@@ -51,7 +58,7 @@ public class UserService {
         String name = user.getUsername();
         String email = user.getEmail();
         if (userRepository.findUserByEmail(email).isPresent() || userRepository.findUserByUsername(name).isPresent()) {
-            throw new IllegalArgumentException("This name or email is taken");
+            throw new UserAlreadyExistsException("This name or email is taken");
         }
         String password = user.getPassword();
         String hashedPassword = passwordEncoder.encode(password);
@@ -67,7 +74,7 @@ public class UserService {
      * @throws IllegalArgumentException if no user is found with the given ID
      */
     public User getUserById(Long userId) {
-        return userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("User not found with ID: " + userId));
+        return userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User not found with ID: " + userId));
     }
 
     /**
@@ -78,7 +85,7 @@ public class UserService {
      * @throws IllegalArgumentException if no user is found with the given username
      */
     public User getUserByUsername(String name) {
-        return userRepository.findUserByUsername(name).orElseThrow(() -> new IllegalArgumentException("User not found with name: " + name));
+        return userRepository.findUserByUsername(name).orElseThrow(() -> new UserNotFoundException("User not found with name: " + name));
     }
 
     /**
@@ -89,7 +96,7 @@ public class UserService {
      * @throws IllegalArgumentException if no user is found with the given email
      */
     public User getUserByEmail(String email) {
-        return userRepository.findUserByEmail(email).orElseThrow(() -> new IllegalArgumentException("User not found with name: " + email));
+        return userRepository.findUserByEmail(email).orElseThrow(() -> new UserNotFoundException("User not found with name: " + email));
     }
 
     /**
@@ -171,6 +178,41 @@ public class UserService {
         return false;
     }
 
+
+    /**
+     * Updates the profile information of an existing user.
+     * @param userId     id of user, whose information should be changed
+     * @param updateData the DTO containing username, email, and password
+     * @return new data of updated user
+     */
+    @Transactional
+    public User updateUser(Long userId, UserUpdateDTO updateData) {
+        User user = getUserById(userId);
+
+        if (StringUtils.hasText(updateData.username())) {
+            Optional<User> existingUser = userRepository.findUserByUsername(updateData.username());
+            if (existingUser.isPresent() && !existingUser.get().getId().equals(userId)) {
+                throw new UserAlreadyExistsException("The username "+ updateData.username() +" is already taken");
+            }
+            user.setUsername(updateData.username());
+        }
+
+        if (StringUtils.hasText(updateData.email())) {
+            Optional<User> existingUser = userRepository.findUserByEmail(updateData.email());
+            if (existingUser.isPresent() && !existingUser.get().getId().equals(userId)) {
+                throw new UserAlreadyExistsException("The email "+ updateData.email() +" is already taken");
+            }
+            user.setEmail(updateData.email());
+        }
+
+        if (StringUtils.hasText(updateData.password())) {
+            user.setPassword(passwordEncoder.encode(updateData.password()));
+        }
+
+        userRepository.save(user);
+        return user;
+    }
+
     /**
      * Safely deletes a user and reassigning all their submitted reports to a
      * "Ghost User" before removal to preserve application history.
@@ -185,7 +227,7 @@ public class UserService {
                 orElseThrow(() -> new IllegalStateException("Ghost user account not found."));
 
         if (user.getId().equals(ghostUser.getId())) {
-            throw new IllegalArgumentException("Cannot delete the system ghost user account.");
+            throw new BadRequestException("Cannot delete the system ghost user account.");
         }
 
         List<Report> reports = reportRepository.findByUserId(userId);
@@ -200,10 +242,34 @@ public class UserService {
         }
         commentRepository.saveAll(comments);
 
-        List<Vote> votes = voteRepository.findByUserId(userId);
-        voteRepository.deleteAll(votes);
+        deleteUserVotes(userId);
 
         userRepository.delete(user);
+    }
+
+
+    /**
+     * Deletes all votes associated with a specific user and synchronizes the
+     * affected reports vote counts.
+     * @param userId the unique identifier of the user whose votes are to be deleted
+     */
+    private void deleteUserVotes(Long userId) {
+
+        List<Vote> votes = voteRepository.findByUserId(userId);
+        List<Report> reportsToUpdate = new ArrayList<>();
+
+        for (Vote vote : votes) {
+            Report report = vote.getReport();
+            if (vote.getType() == VoteType.POSITIVE) {
+                report.setUpvotes(Math.max(0, report.getUpvotes() - 1));
+            } else {
+                report.setDownvotes(Math.max(0, report.getDownvotes() - 1));
+            }
+            reportsToUpdate.add(report);
+        }
+
+        reportRepository.saveAll(reportsToUpdate);
+        voteRepository.deleteAll(votes);
     }
 
 }

@@ -8,19 +8,19 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
 public interface ReportRepository extends JpaRepository<Report, Long> {
 
+    Report findReportById(Long id);
+
     List<Report> findByUserId(Long user_id);
 
     List<Report> findByStatus(ReportStatus status);
 
-    /** Finds all Reports except removed and outdated ones  */
-    @Query("SELECT r FROM Report as r WHERE r.expireDate > CURRENT_TIMESTAMP " +
-            "OR r.status != 'REMOVED'")
-    List<Report> findActiveReports();
+    List<Report> findByStatusNotAndExpireDateAfter(ReportStatus reportStatus, LocalDateTime now);
 
     /**
      * Finds road reports located within a specified radius from the user's location.
@@ -59,7 +59,6 @@ public interface ReportRepository extends JpaRepository<Report, Long> {
 
     /** Performs a cleanup of the reports table by removing invalid or outdated entries.  */
     @Modifying
-    @Query("DELETE FROM Report AS r WHERE r.expireDate <= CURRENT_TIMESTAMP " +
-            "OR r.status = 'REMOVED'")
+    @Query("DELETE FROM Report r WHERE r.expireDate <= CURRENT_TIMESTAMP OR r.status = RoadReport.enums.ReportStatus.REMOVED")
     void deleteExpiredReports();
 }

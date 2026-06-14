@@ -2,6 +2,8 @@ package RoadReport.TestSecurity;
 
 import RoadReport.security.filter.JwtFilter;
 import RoadReport.security.service.JwtService;
+import RoadReport.security.service.RoadUserDetails;
+import RoadReport.security.service.RoadUserDetailsService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -29,10 +31,10 @@ public class TestJwtFilter {
     private JwtService jwtService;
 
     @Mock
-    private UserDetails userDetails;
+    private RoadUserDetails userDetails;
 
     @Mock
-    private UserDetailsService userDetailsService;
+    private RoadUserDetailsService userDetailsService;
 
     @Mock
     private FilterChain filterChain;

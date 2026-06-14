@@ -52,9 +52,12 @@ public class Report {
     @Column(nullable = false)
     private ReportStatus status;
 
+    @Builder.Default
     private Integer weight = 1;
 
+    @Builder.Default
     private Integer upvotes = 0;
+    @Builder.Default
     private Integer downvotes = 0;
 
     @JdbcTypeCode(SqlTypes.JSON)
@@ -70,8 +73,12 @@ public class Report {
 
     @PrePersist
     private void creation(){
-        createDate = LocalDateTime.now();
-        // by default all temporary road reports live for 1 day
-        expireDate = createDate.plusDays(1);
+        if (createDate == null) {
+            createDate = LocalDateTime.now();
+        }
+        if (expireDate == null) {
+            // by default all temporary road reports live for 1 day
+            expireDate = createDate.plusDays(1);
+        }
     }
 }
