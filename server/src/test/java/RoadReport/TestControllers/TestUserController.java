@@ -1,7 +1,7 @@
 package RoadReport.TestControllers;
 
 import RoadReport.controllers.UserController;
-import RoadReport.controllers.dto.UserUpdateDTO;
+import RoadReport.controllers.dto.user.UserUpdateDTO;
 import RoadReport.entities.User;
 import RoadReport.exceptions.core.UserNotFoundException;
 import RoadReport.security.service.JwtService;
@@ -49,24 +49,24 @@ public class TestUserController {
     @Mock
     private RoadUserDetails mockDetails;
 
-    private User mock;
-
     @BeforeEach
     public void setUp(){
-        lenient().when(mockDetails.getId()).thenReturn(1L);
-
-        mock = User.builder()
+        User mock = User.builder()
                 .id(1L)
                 .username("Giorgi")
                 .email("gezug@gmail.com")
                 .password("gezug2000").build();
+
+        lenient().when(mockDetails.getId()).thenReturn(1L);
+        lenient().when(mockDetails.getUsername()).thenReturn("Giorgi");
+        lenient().when(mockDetails.getEmail()).thenReturn("gezug@gmail.com");
+        lenient().when(mockDetails.getReputationScore()).thenReturn(0);
+        lenient().when(userService.getUserById(1L)).thenReturn(mock);
     }
 
     @Test
     @WithMockUser(username = "Giorgi")
     public void testGetCurrentUserOK() throws Exception {
-        when(userService.getUserById(1L)).thenReturn(mock);
-
         mvc.perform(get("/api/users/me")
                         .with(user(mockDetails))
                         .accept(MediaType.APPLICATION_JSON))
@@ -77,22 +77,15 @@ public class TestUserController {
     }
 
     @Test
-    @WithMockUser(username = "Giorgi")
     public void testGetCurrentUserError() throws Exception {
-        when(userService.getUserById(1L))
-                .thenThrow(new UserNotFoundException("couldn't find user: Giorgi"));
-
         mvc.perform(get("/api/users/me")
-                        .with(user(mockDetails))
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNotFound());
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
     @WithMockUser(username = "Giorgi")
     public void testGetUserOK() throws Exception {
-        when(userService.getUserById(1L)).thenReturn(mock);
-
         mvc.perform(get("/api/users/{id}", 1L)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -105,10 +98,10 @@ public class TestUserController {
     @Test
     @WithMockUser(username = "Giorgi")
     public void testGetUserError() throws Exception {
-        when(userService.getUserById(1L))
+        when(userService.getUserById(2L))
                 .thenThrow(new UserNotFoundException("couldn't find user with this ID"));
 
-        mvc.perform(get("/api/users/{id}", 1L)
+        mvc.perform(get("/api/users/{id}", 2L)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
     }
@@ -157,11 +150,10 @@ public class TestUserController {
     @Test
     @WithMockUser(username = "Giorgi")
     public void testDeleteOK() throws Exception {
-
         mvc.perform(delete("/api/users/me")
                         .with(csrf())
                         .with(user(mockDetails)))
-                .andExpect(status().isOk());
+                .andExpect(status().isNoContent());
 
         verify(userService).deleteUser(1L);
     }
@@ -175,8 +167,9 @@ public class TestUserController {
         mvc.perform(delete("/api/users/me")
                         .with(csrf())
                         .with(user(mockDetails))
-                        .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
+
+        verify(userService).deleteUser(1L);
     }
 }

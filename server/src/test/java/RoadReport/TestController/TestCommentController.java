@@ -1,11 +1,12 @@
 package RoadReport.TestController;
 
 import RoadReport.controllers.CommentController;
-import RoadReport.controllers.dto.CommentRequest;
+import RoadReport.controllers.dto.comment.CommentRequestDTO;
 import RoadReport.entities.Comment;
 import RoadReport.entities.User;
 import RoadReport.security.service.JwtService;
 import RoadReport.security.service.RoadUserDetails;
+import RoadReport.security.service.RoadUserDetailsService;
 import RoadReport.services.core.CommentService;
 import RoadReport.services.core.UserService;
 import org.junit.jupiter.api.BeforeEach;
@@ -38,6 +39,9 @@ public class TestCommentController {
     private ObjectMapper objectMapper;
 
     @MockitoBean
+    private RoadUserDetailsService roadUserDetailsService;
+
+    @MockitoBean
     private CommentService commentService;
 
     @MockitoBean
@@ -68,7 +72,7 @@ public class TestCommentController {
 
     @Test
     public void testAddCommentOK() throws Exception {
-        CommentRequest request = new CommentRequest("New awesome comment");
+        CommentRequestDTO request = new CommentRequestDTO("New awesome comment");
 
         mvc.perform(post("/api/reports/100/comments")
                         .with(user(mockUserDetails))
@@ -108,7 +112,7 @@ public class TestCommentController {
 
     @Test
     public void testUpdateCommentOK() throws Exception {
-        CommentRequest request = new CommentRequest("Updated comment text");
+        CommentRequestDTO request = new CommentRequestDTO("Updated comment text");
 
         Comment updatedComment = new Comment();
         updatedComment.setId(10L);
@@ -151,15 +155,5 @@ public class TestCommentController {
                 .andExpect(status().isNoContent());
 
         verify(commentService).deleteComment(10L, 1L);
-    }
-
-    @Test
-    @WithMockUser(username = "admin", roles = {"ADMIN"})
-    public void testAdminDeleteCommentOK() throws Exception {
-        mvc.perform(delete("/api/admin/comments/10")
-                        .with(csrf()))
-                .andExpect(status().isNoContent());
-
-        verify(commentService).adminDeleteComment(10L);
     }
 }

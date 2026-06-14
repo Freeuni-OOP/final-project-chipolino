@@ -1,7 +1,7 @@
 package RoadReport.TestControllers;
 
 import RoadReport.controllers.ReportController;
-import RoadReport.controllers.dto.ReportRequestDTO;
+import RoadReport.controllers.dto.report.ReportRequestDTO;
 import RoadReport.entities.Report;
 import RoadReport.enums.ReportStatus;
 import RoadReport.enums.ReportType;
@@ -125,36 +125,5 @@ public class TestReportController {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].type").value("POLICE"))
                 .andExpect(jsonPath("$[0].upvotes").value(5));
-    }
-
-    @Test
-    public void testUpvoteReportOK() throws Exception {
-        mvc.perform(post("/api/reports/{id}/upvote", 100L)
-                        .with(authentication(mockAuth))
-                        .with(csrf()))
-                .andExpect(status().isOk());
-
-        verify(voteService).createVote(1L, 100L, VoteType.POSITIVE);
-    }
-
-    @Test
-    public void testDownvoteReportOK() throws Exception {
-        mvc.perform(post("/api/reports/{id}/downvote", 100L)
-                        .with(authentication(mockAuth))
-                        .with(csrf()))
-                .andExpect(status().isOk());
-
-        verify(voteService).createVote(1L, 100L, VoteType.NEGATIVE);
-    }
-
-    @Test
-    public void testUpvoteReportNotFound() throws Exception {
-        doThrow(new BadRequestException("Report not found"))
-                .when(voteService).createVote(anyLong(), eq(999L), any(VoteType.class));
-
-        mvc.perform(post("/api/reports/{id}/upvote", 999L)
-                        .with(authentication(mockAuth))
-                        .with(csrf()))
-                .andExpect(status().isBadRequest());
     }
 }

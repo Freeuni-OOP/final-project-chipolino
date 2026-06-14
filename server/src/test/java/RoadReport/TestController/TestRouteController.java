@@ -1,10 +1,11 @@
 package RoadReport.TestController;
 
 import RoadReport.controllers.RouteController;
-import RoadReport.controllers.dto.RouteRequest;
-import RoadReport.controllers.dto.RouteResponse;
+import RoadReport.controllers.dto.route.RouteResponseDTO;
+import RoadReport.controllers.dto.route.RouteRequestDTO;
 import RoadReport.entities.Report;
 import RoadReport.security.service.JwtService;
+import RoadReport.security.service.RoadUserDetailsService;
 import RoadReport.services.core.ReportService;
 import RoadReport.services.map.GraphHopperService;
 import org.junit.jupiter.api.BeforeEach;
@@ -41,6 +42,9 @@ public class TestRouteController {
     private ReportService reportService;
 
     @MockitoBean
+    private RoadUserDetailsService roadUserDetailsService;
+
+    @MockitoBean
     private JwtService jwtService;
 
     private List<double[]> mockWaypoints;
@@ -65,7 +69,7 @@ public class TestRouteController {
     @Test
     @WithMockUser
     public void testCalculateOptimalRoute() throws Exception {
-        RouteRequest request = new RouteRequest(mockWaypoints);
+        RouteRequestDTO request = new RouteRequestDTO(mockWaypoints);
 
 
         when(reportService.getActiveReports()).thenReturn(activeReports);

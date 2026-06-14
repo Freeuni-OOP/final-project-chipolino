@@ -76,6 +76,7 @@ public class AuthController {
                 .httpOnly(true)
                 .path("/")
                 .maxAge(0)
+                .sameSite("Lax")
                 .build();
 
         return ResponseEntity.ok()
