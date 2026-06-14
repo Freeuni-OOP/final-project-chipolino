@@ -1,8 +1,8 @@
 package RoadReport.controllers;
 
-import RoadReport.controllers.dto.SelfResponseDTO;
-import RoadReport.controllers.dto.UserResponseDTO;
-import RoadReport.controllers.dto.UserUpdateDTO;
+import RoadReport.controllers.dto.user.SelfResponseDTO;
+import RoadReport.controllers.dto.user.UserResponseDTO;
+import RoadReport.controllers.dto.user.UserUpdateDTO;
 import RoadReport.entities.User;
 import RoadReport.security.service.RoadUserDetails;
 import RoadReport.services.core.UserService;

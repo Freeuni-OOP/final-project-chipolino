@@ -1,4 +1,4 @@
-package RoadReport.controllers.dto;
+package RoadReport.controllers.dto.report;
 
 import RoadReport.enums.ReportType;
 import org.jetbrains.annotations.NotNull;

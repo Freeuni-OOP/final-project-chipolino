@@ -1,4 +1,4 @@
-package RoadReport.controllers.dto;
+package RoadReport.controllers.dto.comment;
 
-public record CommentRequest(String content) {
+public record CommentRequestDTO(String content) {
 }

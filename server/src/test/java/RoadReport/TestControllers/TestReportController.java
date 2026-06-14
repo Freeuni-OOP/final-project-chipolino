@@ -1,7 +1,7 @@
 package RoadReport.TestControllers;
 
 import RoadReport.controllers.ReportController;
-import RoadReport.controllers.dto.ReportRequestDTO;
+import RoadReport.controllers.dto.report.ReportRequestDTO;
 import RoadReport.entities.Report;
 import RoadReport.enums.ReportStatus;
 import RoadReport.enums.ReportType;

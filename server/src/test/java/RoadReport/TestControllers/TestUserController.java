@@ -1,7 +1,7 @@
 package RoadReport.TestControllers;
 
 import RoadReport.controllers.UserController;
-import RoadReport.controllers.dto.UserUpdateDTO;
+import RoadReport.controllers.dto.user.UserUpdateDTO;
 import RoadReport.entities.User;
 import RoadReport.exceptions.core.UserNotFoundException;
 import RoadReport.security.service.JwtService;

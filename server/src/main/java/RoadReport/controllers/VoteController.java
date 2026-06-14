@@ -1,6 +1,6 @@
 package RoadReport.controllers;
 
-import RoadReport.controllers.dto.VoteResponseDTO;
+import RoadReport.controllers.dto.vote.VoteResponseDTO;
 import RoadReport.enums.VoteType;
 import RoadReport.security.service.RoadUserDetails;
 import RoadReport.services.core.VoteService;

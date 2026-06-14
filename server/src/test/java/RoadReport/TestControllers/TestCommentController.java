@@ -2,7 +2,7 @@ package RoadReport.TestControllers;
 
 import RoadReport.config.SecurityConfig;
 import RoadReport.controllers.CommentController;
-import RoadReport.controllers.dto.CommentRequest;
+import RoadReport.controllers.dto.comment.CommentRequestDTO;
 import RoadReport.entities.Comment;
 import RoadReport.entities.User;
 import RoadReport.security.service.JwtService;
@@ -81,7 +81,7 @@ public class TestCommentController {
 
     @Test
     public void testAddCommentOK() throws Exception {
-        CommentRequest request = new CommentRequest("New awesome comment");
+        CommentRequestDTO request = new CommentRequestDTO("New awesome comment");
 
         mvc.perform(post("/api/reports/100/comments")
                         .with(user(mockUserDetails))
@@ -121,7 +121,7 @@ public class TestCommentController {
 
     @Test
     public void testUpdateCommentOK() throws Exception {
-        CommentRequest request = new CommentRequest("Updated comment text");
+        CommentRequestDTO request = new CommentRequestDTO("Updated comment text");
 
         Comment updatedComment = new Comment();
         updatedComment.setId(10L);

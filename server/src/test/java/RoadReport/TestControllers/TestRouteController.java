@@ -2,7 +2,7 @@ package RoadReport.TestControllers;
 
 import RoadReport.config.SecurityConfig;
 import RoadReport.controllers.RouteController;
-import RoadReport.controllers.dto.RouteRequest;
+import RoadReport.controllers.dto.route.RouteRequestDTO;
 import RoadReport.entities.Report;
 import RoadReport.security.service.JwtService;
 import RoadReport.security.service.RoadUserDetailsService;
@@ -77,7 +77,7 @@ public class TestRouteController {
     @Test
     @WithMockUser
     public void testCalculateOptimalRoute() throws Exception {
-        RouteRequest request = new RouteRequest(mockWaypoints);
+        RouteRequestDTO request = new RouteRequestDTO(mockWaypoints);
 
         when(reportService.getActiveReports()).thenReturn(activeReports);
         when(graphHopperService.getRouteViaWaypoints(anyList(), anyList())).thenReturn(mockServiceResult);

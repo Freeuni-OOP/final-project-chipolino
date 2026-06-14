@@ -1,7 +1,8 @@
 package RoadReport.controllers;
 
-import RoadReport.controllers.dto.ReportRequestDTO;
-import RoadReport.controllers.dto.ReportResponseDTO;
+
+import RoadReport.controllers.dto.report.ReportRequestDTO;
+import RoadReport.controllers.dto.report.ReportResponseDTO;
 import RoadReport.entities.Report;
 import RoadReport.security.service.RoadUserDetails;
 import RoadReport.services.core.ReportService;
@@ -19,7 +20,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ReportController {
 
-    private final ReportService reportService; // VoteService is completely removed from here!
+    private final ReportService reportService;
 
     private Report convertDTOToReport(ReportRequestDTO reportRequestDTO) {
         return Report.builder()

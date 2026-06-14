@@ -1,6 +1,6 @@
-package RoadReport.controllers.dto;
+package RoadReport.controllers.dto.route;
 
 import java.util.List;
 
-public record RouteRequest(List<double[]> waypoints) {
+public record RouteRequestDTO(List<double[]> waypoints) {
 }
