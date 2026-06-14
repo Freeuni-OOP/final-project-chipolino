@@ -1,6 +1,6 @@
 package RoadReport.services.core;
 
-import RoadReport.controllers.dto.UserUpdateDTO;
+import RoadReport.controllers.dto.user.UserUpdateDTO;
 import RoadReport.entities.Comment;
 import RoadReport.entities.Report;
 import RoadReport.entities.User;

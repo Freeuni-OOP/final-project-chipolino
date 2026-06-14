@@ -1,6 +1,5 @@
-package RoadReport.TestControllers;
+package RoadReport.TestController;
 
-import RoadReport.config.SecurityConfig;
 import RoadReport.controllers.CommentController;
 import RoadReport.controllers.dto.comment.CommentRequestDTO;
 import RoadReport.entities.Comment;
@@ -12,13 +11,9 @@ import RoadReport.services.core.CommentService;
 import RoadReport.services.core.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -35,9 +30,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(CommentController.class)
-@ExtendWith(MockitoExtension.class)
-@EnableMethodSecurity
-@Import(SecurityConfig.class)
 public class TestCommentController {
 
     @Autowired
@@ -47,13 +39,13 @@ public class TestCommentController {
     private ObjectMapper objectMapper;
 
     @MockitoBean
+    private RoadUserDetailsService roadUserDetailsService;
+
+    @MockitoBean
     private CommentService commentService;
 
     @MockitoBean
     private JwtService jwtService;
-
-    @MockitoBean
-    private RoadUserDetailsService roadUserDetailsService;
 
     private User mockUser;
     private Comment mockComment;
@@ -73,10 +65,9 @@ public class TestCommentController {
         mockComment.setCreateDate(LocalDateTime.now());
 
         mockUserDetails = mock(RoadUserDetails.class);
-
-        lenient().when(mockUserDetails.getId()).thenReturn(1L);
-        lenient().when(mockUserDetails.getUsername()).thenReturn("Giorgi");
-        lenient().when(mockUserDetails.getPassword()).thenReturn("password");
+        when(mockUserDetails.getId()).thenReturn(1L);
+        when(mockUserDetails.getUsername()).thenReturn("Giorgi");
+        when(mockUserDetails.getPassword()).thenReturn("password");
     }
 
     @Test

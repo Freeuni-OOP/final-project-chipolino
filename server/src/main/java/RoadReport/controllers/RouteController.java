@@ -1,7 +1,7 @@
 package RoadReport.controllers;
 
-import RoadReport.controllers.dto.RouteRequest;
-import RoadReport.controllers.dto.RouteResponse;
+import RoadReport.controllers.dto.route.RouteRequestDTO;
+import RoadReport.controllers.dto.route.RouteResponseDTO;
 import RoadReport.entities.Report;
 import RoadReport.services.core.ReportService;
 import RoadReport.services.map.GraphHopperService;
@@ -25,14 +25,14 @@ public class RouteController {
      * Calculates the optimal route based on a provided list of waypoints.
      *
      * @param request The data transfer object containing list of coordinate points.
-     * @return A {@link RouteResponse} object containing the total distance,
+     * @return A {@link RouteResponseDTO} object containing the total distance,
      * estimated travel time, and the list of path coordinates for the route.
      */
     @PostMapping("/calculate")
-    public ResponseEntity<RouteResponse> calculateOptimalRoute(@RequestBody RouteRequest request) {
+    public ResponseEntity<RouteResponseDTO> calculateOptimalRoute(@RequestBody RouteRequestDTO request) {
         List<Report> activeReports = reportService.getActiveReports();
         var result = graphHopperService.getRouteViaWaypoints(request.waypoints(), activeReports);
-        RouteResponse response = new RouteResponse(
+        RouteResponseDTO response = new RouteResponseDTO(
                 result.distanceMeters(),
                 result.timeMillis(),
                 result.points()

@@ -1,7 +1,7 @@
-package RoadReport.TestControllers;
+package RoadReport.TestController;
 
-import RoadReport.config.SecurityConfig;
 import RoadReport.controllers.RouteController;
+import RoadReport.controllers.dto.route.RouteResponseDTO;
 import RoadReport.controllers.dto.route.RouteRequestDTO;
 import RoadReport.entities.Report;
 import RoadReport.security.service.JwtService;
@@ -10,13 +10,9 @@ import RoadReport.services.core.ReportService;
 import RoadReport.services.map.GraphHopperService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -32,11 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(RouteController.class)
-@ExtendWith(MockitoExtension.class)
-@EnableMethodSecurity
-@Import(SecurityConfig.class)
 public class TestRouteController {
-
     @Autowired
     private MockMvc mvc;
 
@@ -50,10 +42,10 @@ public class TestRouteController {
     private ReportService reportService;
 
     @MockitoBean
-    private JwtService jwtService;
+    private RoadUserDetailsService roadUserDetailsService;
 
     @MockitoBean
-    private RoadUserDetailsService roadUserDetailsService;
+    private JwtService jwtService;
 
     private List<double[]> mockWaypoints;
     private List<Report> activeReports;
@@ -79,6 +71,7 @@ public class TestRouteController {
     public void testCalculateOptimalRoute() throws Exception {
         RouteRequestDTO request = new RouteRequestDTO(mockWaypoints);
 
+
         when(reportService.getActiveReports()).thenReturn(activeReports);
         when(graphHopperService.getRouteViaWaypoints(anyList(), anyList())).thenReturn(mockServiceResult);
 
@@ -102,7 +95,6 @@ public class TestRouteController {
                         .contentType(MediaType.APPLICATION_JSON)
                         .with(csrf()))
                 .andExpect(status().isBadRequest());
-
         verifyNoInteractions(reportService);
         verifyNoInteractions(graphHopperService);
     }
