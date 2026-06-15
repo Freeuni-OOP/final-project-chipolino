@@ -29,10 +29,11 @@ const axiosApi = axios.create({
 axiosApi.interceptors.response.use(
     (success) => success,
     (failure) => {
-        if (failure.response && (failure.response.status === 401 || failure.response.status === 402)) {
-            console.warn("Session expired or unauthorized. Redirecting to login.");
-            localStorage.removeItem("isLoggedIn");  //Need to write putItem in some component!!
-            window.location.href = '/login';
+        if (failure.response?.status === 401) {
+            const path = window.location.pathname;
+            if (path !== '/login' && path !== '/register') {
+                window.location.href = '/login';
+            }
         }
 
         return Promise.reject(failure);
