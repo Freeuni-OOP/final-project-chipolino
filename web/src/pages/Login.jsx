@@ -44,7 +44,7 @@ const Login = () => {
     return (
         <div className={styles.container}>
             <div className={styles.card}>
-                <h2 className={styles.title}>login</h2>
+                <h2 className={styles.title}>Login</h2>
                 {errors.general && (
                     <div className={styles.errorBox}>
                         {errors.general}
