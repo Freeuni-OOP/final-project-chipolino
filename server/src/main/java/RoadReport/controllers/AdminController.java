@@ -1,8 +1,11 @@
 package RoadReport.controllers;
 
+import RoadReport.controllers.dto.user.SelfResponseDTO;
+import RoadReport.entities.User;
 import RoadReport.enums.ReportStatus;
 import RoadReport.security.service.RoadUserDetails;
 import RoadReport.services.core.AdminService;
+import RoadReport.services.core.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
@@ -17,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 public class AdminController {
 
     private final AdminService adminService;
+    private final UserService userService;
 
     @PatchMapping("/users/{userId}/ban")
     public ResponseEntity<String> banUser(@PathVariable Long userId, @RequestParam Integer daysToBan) {
@@ -62,5 +66,25 @@ public class AdminController {
                                                 @AuthenticationPrincipal RoadUserDetails roadUserDetails) {
         adminService.deleteComment(commentId, roadUserDetails);
         return ResponseEntity.ok("Comment deleted successfully.");
+    }
+
+    @GetMapping("/users/{id}")
+    public ResponseEntity<SelfResponseDTO> getSelectedUser
+            (@AuthenticationPrincipal RoadUserDetails roadUserDetails,
+             @PathVariable Long id){
+        User user = userService.getUserById(id);
+
+        SelfResponseDTO selfResponse = new SelfResponseDTO(
+                user.getId(),
+                user.getUsername(),
+                user.getEmail(),
+                user.getReputationScore(),
+                user.getBanned(),
+                user.getBanExpiration(),
+                user.getCreateDate(),
+                user.getRoles()
+        );
+
+        return ResponseEntity.ok(selfResponse);
     }
 }

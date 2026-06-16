@@ -1,6 +1,15 @@
 import axiosClient from './axiosClient.js'
 
 /**
+ * Gets selected user extended info.
+ * @param {number|string} id - The ID of the user to select.
+ * @returns {Promise<Object>} A promise with users extended info.
+ */
+export const selectUser = (id) =>
+    axiosClient.get(`/admin/users/${id}`)
+        .then(res => res.data);
+
+/**
  * Bans a user for a specific number of days.
  * @param {number|string} userId - The ID of the user to ban.
  * @param {number} daysToBan - The duration of the ban in days.
