@@ -58,7 +58,7 @@ public class TestAuthController {
                         .content(objMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
                 .andExpect(header().exists(HttpHeaders.SET_COOKIE))
-                .andExpect(header().string(HttpHeaders.SET_COOKIE, containsString("jwt_token=")));
+                .andExpect(header().string(HttpHeaders.SET_COOKIE, containsString("jwt=")));
     }
 
     @Test
@@ -89,7 +89,7 @@ public class TestAuthController {
                         .content(objMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
                 .andExpect(header().exists(HttpHeaders.SET_COOKIE))
-                .andExpect(header().string(HttpHeaders.SET_COOKIE, containsString("jwt_token=")));
+                .andExpect(header().string(HttpHeaders.SET_COOKIE, containsString("jwt=")));
     }
 
     @Test

@@ -27,7 +27,7 @@ public class AuthController {
     public ResponseEntity<Void> login(@RequestBody LoginRequest request) {
         String token = authService.login(request);
 
-        ResponseCookie cookie = ResponseCookie.from("jwt_token", token)
+        ResponseCookie cookie = ResponseCookie.from("jwt", token)
                 .httpOnly(true)
                 .secure(false)
                 .path("/")
@@ -51,7 +51,7 @@ public class AuthController {
     public ResponseEntity<Void> register(@RequestBody RegisterRequest request) {
         String token = authService.register(request);
 
-        ResponseCookie cookie = ResponseCookie.from("jwt_token", token)
+        ResponseCookie cookie = ResponseCookie.from("jwt", token)
                 .httpOnly(true)
                 .secure(false)
                 .path("/")
@@ -72,7 +72,7 @@ public class AuthController {
      */
     @PostMapping("/logout")
     public ResponseEntity<Void> logout() {
-        ResponseCookie cookie = ResponseCookie.from("jwt_token", "")
+        ResponseCookie cookie = ResponseCookie.from("jwt", "")
                 .httpOnly(true)
                 .path("/")
                 .maxAge(0)
