@@ -1,0 +1,52 @@
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f5f7fa;
+    font-family: system-ui, -apple-system, sans-serif;
+}
+
+.card {
+    background-color: white;
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    width: 100%;
+    max-width: 400px;
+}
+
+.title {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #333;
+    font-size: 24px;
+    text-transform: capitalize;
+}
+
+.errorBox {
+    color: #d32f2f;
+    background-color: #ffebee;
+    padding: 10px 15px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+    font-size: 14px;
+    text-align: center;
+}
+
+.inputGroup {
+    margin-bottom: 20px;
+}
+
+.footerText {
+    text-align: center;
+    margin-top: 25px;
+    font-size: 14px;
+    color: #666;
+}
+
+.link {
+    color: #0056b3;
+    text-decoration: none;
+    font-weight: 500;
+}
