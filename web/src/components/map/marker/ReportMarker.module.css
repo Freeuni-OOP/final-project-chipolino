@@ -1,0 +1,13 @@
+.custom-hazard-container {
+    background: transparent;
+    border: none;
+}
+
+.hazard-emoji-marker {
+    font-size: 26px;
+    text-align: center;
+    filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.3));
+    --marker-brightness: 1;
+    opacity: var(--marker-brightness);
+    transition: opacity 0.3s ease;
+}

@@ -1,0 +1,50 @@
+.container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100vw;
+    height: 100vh;
+    background-color: #f8f9fa;
+    font-family: sans-serif;
+    text-align: center;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.content {
+    max-width: 450px;
+}
+
+.errorCode {
+    font-size: 96px;
+    margin: 0;
+    color: #c62828;
+    line-height: 1;
+}
+
+.emoji {
+    font-size: 48px;
+    margin: 20px 0;
+}
+
+.title {
+    font-size: 24px;
+    color: #333;
+    margin: 0 0 12px 0;
+}
+
+.message {
+    font-size: 16px;
+    color: #666;
+    margin: 0 0 28px 0;
+    line-height: 1.5;
+}
+
+.link {
+    text-decoration: none;
+}
+
+.homeBtn {
+    padding: 10px 24px !important;
+    font-size: 15px !important;
+}
