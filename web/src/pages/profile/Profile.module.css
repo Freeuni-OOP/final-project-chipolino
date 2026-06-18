@@ -1,0 +1,178 @@
+.profileContainer {
+    max-width: 500px;
+    margin: 40px auto;
+    padding: 0 20px;
+    font-family: system-ui, -apple-system, sans-serif;
+}
+
+.profileHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.title {
+    font-size: 24px;
+    color: #1a202c;
+    margin: 0;
+    font-weight: 700;
+}
+
+.backBtn {
+    background-color: #f7fafc !important;
+    color: #4a5568 !important;
+    border: 1px solid #e2e8f0 !important;
+    padding: 6px 14px !important;
+    font-size: 14px !important;
+    box-shadow: none !important;
+}
+
+.backBtn:hover {
+    background-color: #edf2f7 !important;
+}
+
+.profileCard {
+    padding: 28px !important;
+    margin-bottom: 20px;
+    border: 1px solid #e2e8f0;
+}
+
+.avatarSection {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-bottom: 1px solid #edf2f7;
+    padding-bottom: 20px;
+    margin-bottom: 20px;
+}
+
+.avatarCircle {
+    width: 80px;
+    height: 80px;
+    background-color: #3182ce;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    font-weight: bold;
+    margin-bottom: 12px;
+    box-shadow: 0 4px 6px rgba(49, 130, 206, 0.2);
+}
+
+.adminAvatar {
+    background-color: #dd6b20;
+    box-shadow: 0 4px 6px rgba(221, 107, 32, 0.2);
+}
+
+.username {
+    font-size: 22px;
+    margin: 0 0 6px 0;
+    color: #2d3748;
+}
+
+.roleBadge {
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    background-color: #e2e8f0;
+    color: #4a5568;
+}
+
+.roleBadge.admin {
+    background-color: #feebc8;
+    color: #c05621;
+}
+
+.infoGrid {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.infoField {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.label {
+    font-size: 14px;
+    color: #718096;
+}
+
+.value {
+    font-size: 15px;
+    color: #1a202c;
+    font-weight: 600;
+}
+
+.positiveRep {
+    color: #38a169;
+}
+
+.negativeRep {
+    color: #e53e3e;
+}
+
+.myTarget {
+    font-size: 14px;
+    color: #3182ce;
+    font-weight: normal;
+    margin-left: 6px;
+}
+
+.accountActions {
+    margin-top: 24px;
+    padding-top: 16px;
+    border-top: 1px solid #edf2f7;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.editBtn {
+    background-color: #f7fafc !important;
+    color: #4a5568 !important;
+    border: 1px solid #cbd5e0 !important;
+    font-size: 13px !important;
+    padding: 6px 12px !important;
+}
+
+
+.rankCard {
+    padding: 16px 20px !important;
+    background-color: #f7fafc !important;
+    border: 1px dashed #e2e8f0;
+    text-align: center;
+}
+
+.rankTitle {
+    font-size: 12px;
+    text-transform: uppercase;
+    color: #a0aec0;
+    margin: 0 0 4px 0;
+    letter-spacing: 1px;
+}
+
+.rankText {
+    font-size: 16px;
+    font-weight: 700;
+    color: #2b6cb0;
+    margin: 0;
+}
+
+
+.errorCard {
+    text-align: center;
+    padding: 24px !important;
+}
+
+.errorMsg {
+    color: #e53e3e;
+    margin-bottom: 16px;
+}

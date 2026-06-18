@@ -1,0 +1,145 @@
+.commentsWrapper {
+    margin-top: 16px;
+    border-top: 1px solid #e2e8f0;
+    padding-top: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.commentsTitle {
+    font-size: 14px;
+    margin: 0;
+    color: #1e293b;
+    font-weight: 600;
+}
+
+.noComments {
+    font-size: 13px;
+    color: #94a3b8;
+    text-align: center;
+    padding: 16px 0;
+    background-color: #f8fafc;
+    border-radius: 8px;
+    border: 1px dashed #cbd5e1;
+}
+
+.commentsList {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-height: 240px;
+    overflow-y: auto;
+    padding-right: 6px;
+
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e1 transparent;
+}
+
+.commentsList::-webkit-scrollbar {
+    width: 4px;
+}
+.commentsList::-webkit-scrollbar-track {
+    background: transparent;
+}
+.commentsList::-webkit-scrollbar-thumb {
+    background-color: #cbd5e1;
+    border-radius: 10px;
+}
+.commentsList::-webkit-scrollbar-thumb:hover {
+    background-color: #94a3b8;
+}
+
+.commentCard {
+    background-color: #f8fafc;
+    border-radius: 8px;
+    padding: 10px 12px;
+    border: 1px solid #e2e8f0;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.commentCard:hover {
+    background-color: #ffffff;
+    border-color: #cbd5e1;
+}
+
+.commentHeader {
+    display: flex;
+    align-items: center;
+    margin-bottom: 6px;
+    gap: 8px;
+}
+
+.commentAuthor {
+    font-size: 12px;
+    font-weight: 600;
+    color: #2563eb;
+}
+
+.commentDate {
+    font-size: 11px;
+    color: #64748b;
+    margin-right: auto;
+}
+
+.commentContent {
+    font-size: 13px;
+    margin: 0;
+    color: #334155;
+    line-height: 1.5;
+    word-break: break-word;
+    white-space: pre-wrap;
+}
+
+.loader, .error {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 13px;
+    padding: 20px 0;
+    color: #64748b;
+}
+
+.error {
+    color: #ef4444;
+    background-color: #fef2f2;
+    border-radius: 6px;
+    border: 1px solid #fecaca;
+}
+
+.deleteBtn {
+    background: transparent !important;
+    border: none !important;
+    padding: 4px !important;
+    font-size: 14px !important;
+    cursor: pointer;
+    box-shadow: none !important;
+    border-radius: 6px !important;
+    color: #94a3b8 !important;
+    transition: all 0.2s ease !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.7;
+}
+
+.deleteBtn:hover {
+    background-color: #fee2e2 !important;
+    opacity: 1;
+}
+
+.deleteBtn:active {
+    transform: scale(0.9) !important;
+}
+
+.loginHint {
+    font-size: 13px;
+    color: #64748b;
+    text-align: center;
+    padding: 12px;
+    margin-top: 10px;
+    background-color: #f1f5f9;
+    border-radius: 8px;
+    font-weight: 500;
+    border: 1px solid #e2e8f0;
+}
