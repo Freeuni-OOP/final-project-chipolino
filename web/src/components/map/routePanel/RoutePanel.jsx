@@ -5,11 +5,22 @@ import { calculateOptimalRoute } from '../../../api/routeApi.js';
 
 import styles from './RoutePanel.module.css';
 
-const RoutePanel = ({ startPoint, endPoint, onRouteCalculated }) => {
+const RoutePanel = ({ startPoint, endPoint, onRouteCalculated, onClearRoute }) => {
     const [distance, setDistance] = useState(null);
     const [duration, setDuration] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState('');
+
+
+    const handleClear = () => {
+        setDistance(null);
+        setDuration(null);
+        setError('');
+
+        if (onClearRoute) {
+            onClearRoute();
+        }
+    };
 
     const handleCalculate = async () => {
         if (!startPoint || !endPoint) {
@@ -79,13 +90,24 @@ const RoutePanel = ({ startPoint, endPoint, onRouteCalculated }) => {
                 </div>
             )}
 
-            <Button
-                onClick={handleCalculate}
-                disabled={isLoading || !startPoint || !endPoint}
-                className={styles.calcBtn}
-            >
-                {isLoading ? <Spinner /> : 'Find Route'}
-            </Button>
+            <div className={styles.buttonGroup}>
+                <button
+                    type="button"
+                    className={styles.clearBtn}
+                    onClick={handleClear}
+                    disabled={isLoading || (!startPoint && !endPoint && !distance)}
+                >
+                    Clear
+                </button>
+
+                <Button
+                    onClick={handleCalculate}
+                    disabled={isLoading || !startPoint || !endPoint}
+                    className={styles.calcBtn}
+                >
+                    {isLoading ? <Spinner /> : 'Find Route'}
+                </Button>
+            </div>
         </div>
     );
 
