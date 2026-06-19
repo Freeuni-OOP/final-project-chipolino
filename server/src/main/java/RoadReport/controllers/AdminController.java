@@ -8,7 +8,6 @@ import RoadReport.services.core.AdminService;
 import RoadReport.services.core.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -70,8 +69,7 @@ public class AdminController {
 
     @GetMapping("/users/{id}")
     public ResponseEntity<SelfResponseDTO> getSelectedUser
-            (@AuthenticationPrincipal RoadUserDetails roadUserDetails,
-             @PathVariable Long id){
+            (@PathVariable Long id){
         User user = userService.getUserById(id);
 
         SelfResponseDTO selfResponse = new SelfResponseDTO(
