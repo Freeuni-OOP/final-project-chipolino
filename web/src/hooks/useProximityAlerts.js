@@ -29,8 +29,8 @@ const calculateDistance = (lat1, lon1, lat2, lon2) => {
  * Hook to track user proximity to the road hazards.
  * Uses the Haversine formula to calculate spherical distance.
  * @param {Object} userLocation - The current GPS coordinates of the user.
- * @param {number} userLocation.latitude - User's current latitude.
- * @param {number} userLocation.longitude - User's current longitude.
+ * @param {number} userLocation.lat - User's current latitude.
+ * @param {number} userLocation.lng - User's current longitude.
  * @param {Array<Object>} hazards - Array of reported road hazards from the database.
  * @param {number} radiusInMeters - The boundary radius to trigger an alert.
  * @returns {Array<Object>} Filtered list of hazards within the radius.
@@ -43,8 +43,8 @@ export const useProximityAlerts = (userLocation, hazards, radiusInMeters = 50) =
 
         const nearbyHazards = hazards.filter((hazard) => {
             const distance = calculateDistance(
-                userLocation.latitude,
-                userLocation.longitude,
+                userLocation.lat,
+                userLocation.lng,
                 hazard.latitude,
                 hazard.longitude
             );
