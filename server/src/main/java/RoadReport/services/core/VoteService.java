@@ -64,6 +64,12 @@ public class VoteService {
                 if (report.getStatus() != ReportStatus.PERMANENT) updateUsersScore(report, newVote, false);
                 reportService.addVote(report, newVote);
             }
+        } else {
+            if (report.getStatus() != ReportStatus.PERMANENT) {
+                updateUsersScore(report, vote.get(), true);
+            }
+            reportService.handleReportVotes(vote.get(), report, -1);
+            voteRepository.delete(vote.get());
         }
     }
 

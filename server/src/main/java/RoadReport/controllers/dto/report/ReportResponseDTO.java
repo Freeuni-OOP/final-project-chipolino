@@ -7,6 +7,8 @@ import java.time.LocalDateTime;
 
 public record ReportResponseDTO(
         Long id,
+        Long userId,
+        String authorUsername,
         ReportType type,
         String description,
         Double latitude,

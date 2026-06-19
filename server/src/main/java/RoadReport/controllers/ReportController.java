@@ -47,6 +47,8 @@ public class ReportController {
     private ReportResponseDTO convertReportToDTO(Report report) {
         return new ReportResponseDTO(
                 report.getId(),
+                report.getUser().getId(),
+                report.getUser().getUsername(),
                 report.getType(),
                 report.getDescription(),
                 report.getLatitude(),

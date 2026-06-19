@@ -2,6 +2,7 @@ package RoadReport.TestControllers;
 
 
 import RoadReport.config.SecurityConfig;
+import RoadReport.services.core.UserService;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import java.util.List;
 import RoadReport.controllers.AdminController;
@@ -48,6 +49,9 @@ public class TestAdminController {
 
     @MockitoBean
     private RoadUserDetailsService roadUserDetailsService;
+
+    @MockitoBean
+    private UserService userService;
 
     @Mock
     private RoadUserDetails mockAdminDetails;

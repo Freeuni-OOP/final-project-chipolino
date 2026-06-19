@@ -1,12 +1,26 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 
-import { Input } from '../components/common/input/Input';
-import { Button } from '../components/common/button/Button';
-import  { Spinner } from '../components/common/spinner/Spinner'
-import { useAuth } from '../hooks/useAuth';
+import { Input } from '../../components/common/input/Input.jsx';
+import { Button } from '../../components/common/button/Button.jsx';
+import { Spinner } from '../../components/common/spinner/Spinner.jsx';
+import { useAuth } from '../../hooks/useAuth.js';
 import styles from './Login.module.css';
 
+/**
+ * Authentication component for user login.
+ * <p>The page performs the following tasks:
+ * <ul>
+ * <li>Manages local state for user input (username/password), form validation errors, and loading states.</li>
+ * <li>Uses the {@link useAuth} hook to handle the authentication process and track session state.</li>
+ * <li>Redirects authenticated users automatically to the map page via {@link useEffect} if a valid session exists.</li>
+ * <li>Performs client-side validation to ensure fields are not empty before API submission.</li>
+ * <li>Implements error handling to capture and display API response messages to the user.</li>
+ * <li>Provides a responsive UI with a loading spinner during the login process and navigation links to the registration page.</li>
+ * </ul>
+ * </p>
+ * @returns A JSX element containing a login form with input fields, error display, and submission controls.
+ */
 const Login = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
@@ -14,7 +28,13 @@ const Login = () => {
     const [isLoading, setIsLoading] = useState(false);
 
     const navigate = useNavigate();
-    const { handleLogin } = useAuth();
+    const { handleLogin, user, loading: authLoading } = useAuth();
+
+    useEffect(() => {
+        if (!authLoading && user) {
+            navigate('/map', { replace: true });
+        }
+    }, [user, authLoading, navigate]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -33,7 +53,7 @@ const Login = () => {
 
         try {
             await handleLogin({ username, password });
-            navigate('/');
+            navigate('/map', { replace: true });
         } catch (err) {
             const errorMessage = err.response?.data?.message || 'Invalid credentials. Please try again.';
             setErrors({ general: errorMessage });
@@ -41,6 +61,11 @@ const Login = () => {
             setIsLoading(false);
         }
     };
+
+    if (authLoading) {
+        return <Spinner fullScreen />;
+    }
+
     return (
         <div className={styles.container}>
             <div className={styles.card}>

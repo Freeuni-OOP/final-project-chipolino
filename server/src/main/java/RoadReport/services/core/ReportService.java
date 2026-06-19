@@ -56,6 +56,8 @@ public class ReportService {
             reportData.setDescription(Jsoup.clean(description, Safelist.none()));
         }
 
+        reportData.setUpvotes(0);
+        reportData.setDownvotes(0);
 
         User user = userService.getUserById(userId);
         reportData.setUser(user);
@@ -90,21 +92,21 @@ public class ReportService {
     @Transactional
     public void addVote(Report report, Vote vote) {
         if (report.getExpireDate().isBefore(LocalDateTime.now()) ||
-                report.getStatus() == ReportStatus.PERMANENT ||
                 report.getStatus() == ReportStatus.REMOVED) return;
 
         handleReportVotes(vote, report, 1);
 
+        if(report.getStatus() == ReportStatus.PERMANENT) return;
+
         int allVotes = report.getUpvotes() + report.getDownvotes();
 
         if (allVotes >= MIN_VOTES_TO_REMOVE_STATUS &&
-                1.0 * report.getDownvotes()/allVotes > MAX_RATIO_OF_NEGATIVE_VOTES) {
+                1.0 * report.getDownvotes()/allVotes >= MAX_RATIO_OF_NEGATIVE_VOTES) {
             report.setStatus(ReportStatus.REMOVED);
             userService.handleRejectedReport(report.getUser().getId());
-        } else if (report.getStatus() != ReportStatus.PERMANENT &&
-                isEligibleForPermanentStatus(report) &&
-                allVotes > MIN_VOTES_TO_PERMANENT_STATUS &&
-                1.0 * report.getUpvotes()/allVotes > MIN_RATIO_OF_POSITIVE_VOTES) {
+        } else if (isEligibleForPermanentStatus(report) &&
+                allVotes >= MIN_VOTES_TO_PERMANENT_STATUS &&
+                1.0 * report.getUpvotes() / allVotes >= MIN_RATIO_OF_POSITIVE_VOTES) {
             report.setStatus(ReportStatus.PERMANENT);
         }
     }
@@ -169,8 +171,8 @@ public class ReportService {
      */
     @Transactional(readOnly = true)
     public List<Report> findNearbyReports(@Param("lat") Double user_latitude,
-                                   @Param("lon") Double user_longitude,
-                                   @Param("radius") Double user_radius) {
+                                          @Param("lon") Double user_longitude,
+                                          @Param("radius") Double user_radius) {
         return reportRepository.findNearbyReports(user_latitude, user_longitude, user_radius);
     }
 

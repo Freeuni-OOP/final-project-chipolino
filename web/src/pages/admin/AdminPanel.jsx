@@ -12,6 +12,20 @@ import {
     overrideReportStatus, deleteReport, deleteComment, selectUser
 } from '../../api/adminApi.js'
 
+/**
+ * Administrative control panel for system moderation.
+ * <p>This component provides a centralized interface for administrators to manage
+ * users, reports, and comments. It is divided into three primary functional tabs:
+ * <ul>
+ * <li><b>User Management:</b> Lookup users by ID to inspect profiles, manage bans,
+ * adjust reputation scores, and remove users from the system.</li>
+ * <li><b>Report Overrides:</b> Forcefully update the status of reports or delete reports entirely.</li>
+ * <li><b>Comment Control:</b> Remove individual comments by ID to maintain platform standards.</li>
+ * </ul>
+ * </p>
+ * * @returns A JSX element containing the administrative navigation, input forms for
+ * entity lookup, and action triggers within cards and modals.
+ */
 export const AdminPanel = () => {
     const [tab, setTab] = useState('users')
     const [loading, setLoading] = useState(false)
@@ -186,7 +200,7 @@ export const AdminPanel = () => {
                             setTab('users')
                             setSelectedUser(null)
                         }}>
-                    👤 User Verification
+                    👤 User Management
                 </Button>
 
                 <Button className={`${styles.tabButton} 

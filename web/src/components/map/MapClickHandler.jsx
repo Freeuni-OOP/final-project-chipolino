@@ -12,7 +12,7 @@ export const MapClickHandler = ({mode, onMapClicked}) => {
     useMapEvents({
         click(e){
             const {lat, lng} = e.latlng;
-            console.log(`Map clicked at lat: ${lat} and lng: ${lng}. In mode ${mode}`);
+            console.log( `Map clicked at lat: ${lat} and lng: ${lng}. In mode ${mode}`);
 
             onMapClicked({lat, lng});
         }
