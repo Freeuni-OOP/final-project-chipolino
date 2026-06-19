@@ -66,13 +66,20 @@ const ReportForm = ({ location, onClose }) => {
 
                 <form onSubmit={handleSubmit}>
                     <div className={styles.inputGroup}>
-                        <Select
-                            label="Report Type"
-                            options={reportOptions}
+                        <label className={styles.label}>Report Type</label>
+                        <select
                             value={reportType}
                             onChange={(e) => setReportType(e.target.value)}
                             disabled={isLoading}
-                        />
+                            className={styles.selectDropdown}
+                        >
+                            <option value="" style={{ color: '#888' }}>-- Select Type --</option>
+                            {reportOptions.map((opt) => (
+                                <option key={opt.value} value={opt.value}>
+                                    {opt.label}
+                                </option>
+                            ))}
+                        </select>
                         {errors.reportType && <span className={styles.errorText}>{errors.reportType}</span>}
                     </div>
 

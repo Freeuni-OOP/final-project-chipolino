@@ -1,0 +1,40 @@
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #0f172a; /* Sleek dark slate */
+    padding: 0.75rem 1.5rem;
+    border-bottom: 1px solid #1e293b;
+    height: 4rem;
+    box-sizing: border-box;
+}
+
+.logo {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #38bdf8; /* Bright sky blue */
+    text-decoration: none;
+}
+
+.navLinks {
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+}
+
+.link {
+    color: #94a3b8;
+    text-decoration: none;
+    font-size: 0.95rem;
+    font-weight: 500;
+    transition: color 0.2s ease;
+}
+
+.link:hover {
+    color: #f8fafc;
+}
+
+.modeControls {
+    display: flex;
+    gap: 0.5rem;
+}

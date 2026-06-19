@@ -87,3 +87,22 @@
     opacity: 0.7;
     cursor: not-allowed;
 }
+
+.selectDropdown {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+    box-sizing: border-box;
+    font-family: inherit;
+    background-color: #ffffff;
+    color: #333333;
+    cursor: pointer;
+    min-height: 42px;
+    height: 42px;
+}
+
+.selectDropdown:focus {
+    outline: none;
+    border-color: #0056b3;
+}
