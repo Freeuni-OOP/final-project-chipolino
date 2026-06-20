@@ -177,6 +177,15 @@ public class ReportService {
     }
 
     /**
+     * Finds all reports on the map.
+     * @return A list of all reports on the map
+     */
+    @Transactional(readOnly = true)
+    public List<Report> findAllReports() {
+        return reportRepository.findAll();
+    }
+
+    /**
      * Removes all reports from the database that have passed their expiration date.
      */
     @Transactional

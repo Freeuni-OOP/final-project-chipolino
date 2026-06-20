@@ -36,8 +36,8 @@ const RoutePanel = ({ startPoint, endPoint, onRouteCalculated, onClearRoute }) =
         try {
             const routeData = {
                 waypoints: [
-                    { latitude: startPoint.lat, longitude: startPoint.lng },
-                    { latitude: endPoint.lat, longitude: endPoint.lng }
+                    [startPoint.lat, startPoint.lng],
+                    [endPoint.lat, endPoint.lng]
                 ]
             };
 

@@ -18,21 +18,21 @@ import static RoadReport.enums.VoteType.POSITIVE;
 public class VoteController {
     private final VoteService voteService;
 
-    @PostMapping("{reportId}/upvote")
+    @PostMapping("/{reportId}/upvote")
     public ResponseEntity<Void> upvoteReport(@PathVariable Long reportId,
                                              @AuthenticationPrincipal RoadUserDetails userDetails) {
         voteService.createVote(reportId, userDetails.getId(), POSITIVE);
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("{reportId}/downvote")
+    @PostMapping("/{reportId}/downvote")
     public ResponseEntity<Void> downvoteReport(@PathVariable Long reportId,
                                                @AuthenticationPrincipal RoadUserDetails userDetails) {
         voteService.createVote(reportId, userDetails.getId(), NEGATIVE);
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("{reportId}/votes")
+    @GetMapping("/{reportId}/votes")
     public ResponseEntity<VoteResponseDTO> downvoteReport(@PathVariable Long reportId) {
         VoteResponseDTO votes = new VoteResponseDTO(
                 voteService.countByReportIdAndType(reportId, POSITIVE),

@@ -4,7 +4,7 @@ import styles from './CommentLists.module.css'
 import {Card} from "../../common/card/Card.jsx"
 import {Button} from "../../common/button/Button.jsx"
 import {Spinner} from "../../common/spinner/Spinner.jsx"
-import { CommentForm } from '../forms/CommentForm.jsx'
+import { CommentForm } from '../form/CommentForm.jsx'
 
 /**
  * A component responsible for displaying, managing, and interacting with a list of comments
@@ -77,7 +77,7 @@ export const CommentLists = ({reportId, currentUser}) => {
     if (error) {
         return <div className={styles.error}>{error}</div>
     }
-
+    console.log('CommentLists', comments)
     return (
         <div className={styles.commentsWrapper}>
             <h2 className={styles.commentsTitle}>

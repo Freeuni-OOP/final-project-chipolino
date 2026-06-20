@@ -14,7 +14,7 @@ import axios from "axios";
  * @property withCredentials - Forces the browser to automatically include HttpOnly JWT session cookies.
  */
 const axiosApi = axios.create({
-    baseURL: "http://localhost:8080/api",   //Need to change http with https later!!
+    baseURL: "/api",   //Need to change http with https later!!
     headers: {"Content-Type" : "application/json"},
     timeout: 5000,
     withCredentials: true,

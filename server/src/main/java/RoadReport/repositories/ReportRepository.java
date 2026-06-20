@@ -2,6 +2,7 @@ package RoadReport.repositories;
 
 import RoadReport.entities.Report;
 import RoadReport.enums.ReportStatus;
+import org.jspecify.annotations.NonNull;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -13,6 +14,8 @@ import java.util.List;
 
 @Repository
 public interface ReportRepository extends JpaRepository<Report, Long> {
+
+    @NonNull List<Report> findAll();
 
     Report findReportById(Long id);
 

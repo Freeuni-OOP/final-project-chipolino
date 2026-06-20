@@ -1,0 +1,84 @@
+/* Layout wrapper container holding your page structure views */
+.mapPageContainer {
+    position: relative;
+    width: 100%;
+    height: calc(100vh - 4rem); /* Accounts perfectly for the 16 (4rem) height of your Navbar */
+    overflow: hidden;
+    background-color: #0f172a; /* Slate-900 canvas backdrop */
+}
+
+/* Ensures the underlying React Leaflet container expands to fill
+  the complete visual boundary frame without clipping.
+*/
+:global(.leaflet-container) {
+    width: 100% !important;
+    height: 100% !important;
+    z-index: 1; /* Sits at base layer level */
+}
+
+/* Adjusts Leaflet default zoom controls placement to look modern and integrated */
+:global(.leaflet-top.leaflet-left) {
+    margin-top: 5rem; /* Pushes zoom triggers downwards so they do not overlap with floating HUD headers */
+}
+
+:global(.leaflet-bar) {
+    border: 1px solid rgba(51, 65, 85, 0.5) !important; /* Subtle border matching your layout styling */
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+}
+
+:global(.leaflet-bar a) {
+    background-color: rgba(15, 23, 42, 0.9) !important; /* Slate-900 overlay theme */
+    color: #94a3b8 !important; /* Slate-400 typography */
+    border-bottom: 1px solid rgba(51, 65, 85, 0.5) !important;
+    transition: all 0.2s ease;
+}
+
+:global(.leaflet-bar a:hover) {
+    background-color: #1e293b !important; /* Slate-800 focus response state */
+    color: #ffffff !important;
+}
+
+/* Clean, smooth transitions for map pin popups */
+:global(.leaflet-popup-content-wrapper) {
+    background-color: rgba(15, 23, 42, 0.95) !important;
+    color: #f8fafc !important;
+    border: 1px solid #334155 !important;
+    border-radius: 0.5rem !important;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3) !important;
+    backdrop-filter: blur(4px);
+}
+
+:global(.leaflet-popup-tip) {
+    background-color: rgba(15, 23, 42, 0.95) !important;
+    border: 1px solid #334155 !important;
+}
+
+:global(.leaflet-container a.leaflet-popup-close-button) {
+    color: #94a3b8 !important;
+    padding: 6px 4px 0 0 !important;
+}
+
+:global(.leaflet-container a.leaflet-popup-close-button:hover) {
+    color: #ef4444 !important; /* Bright red exit response state */
+}
+
+.modeButton {
+    background-color: #3b82f6; /* Default Blue */
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    margin: 4px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.2s ease;
+}
+
+.modeButton:hover {
+    background-color: #2563eb;
+}
+
+.active {
+    background-color: #1d4ed8 !important; /* Deeper Blue / Accent */
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.4);
+}

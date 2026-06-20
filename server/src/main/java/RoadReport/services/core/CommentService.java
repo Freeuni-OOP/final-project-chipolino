@@ -35,9 +35,10 @@ public class CommentService {
      * @param text     text of comment
      * @throws ReportNotFoundException if report does not exist
      * @throws UserNotFoundException if user does not exist
+     * @return Saved Comment
      */
     @Transactional
-    public void addComment(Long userId, Long reportId, String text) {
+    public Comment addComment(Long userId, Long reportId, String text) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("couldn't found: " + userId));
         Report report = reportRepository.findById(reportId)
@@ -49,7 +50,7 @@ public class CommentService {
         comment.setUser(user);
         comment.setText(safeText);
         comment.setReport(report);
-        commentRepository.save(comment);
+        return commentRepository.save(comment);
     }
 
     /**

@@ -38,10 +38,11 @@ const getBrightnessByStatus = (status) => {
  * for interactive details.</li>
  * </ul>
  * </p>
- * @param report The report object containing data.
+ * @param report Report object containing data.
+ * @param currentUser User submitting report
  * @returns {@link Marker} component if the report is active, or {@code null} if the report is removed.
  */
-export const ReportMarker = ({report}) => {
+export const ReportMarker = ({report, currentUser}) => {
     const { latitude, longitude, type, status } = report
     if (status?.toUpperCase() === 'REMOVED'){
         return null
@@ -63,7 +64,8 @@ export const ReportMarker = ({report}) => {
     return (
         <Marker position={[latitude, longitude]}
                 icon={roadIcon}>
-            <ReportPopup report={report} />
+            <ReportPopup report={report}
+                         currentUser={currentUser} />
         </Marker>
     )
 }

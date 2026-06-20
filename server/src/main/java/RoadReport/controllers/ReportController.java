@@ -67,8 +67,15 @@ public class ReportController {
     public ResponseEntity<List<ReportResponseDTO>> findNearbyReports(@RequestParam Double latitude,
                                                                      @RequestParam Double longitude,
                                                                      @RequestParam Double radius) {
-        List<ReportResponseDTO> reports = reportService.findNearbyReports(latitude, longitude, radius)
-                .stream()
+
+        List<Report> reportsList;
+        if (radius <= 0) {
+            reportsList = reportService.findAllReports();
+        } else {
+            reportsList = reportService.findNearbyReports(latitude, longitude, radius);
+        }
+
+        List<ReportResponseDTO> reports = reportsList.stream()
                 .map(this::convertReportToDTO)
                 .toList();
 

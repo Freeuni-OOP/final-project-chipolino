@@ -114,7 +114,8 @@ export const Settings = () => {
         {value: '1', label: '1 km'},
         {value: '3', label: '3 km'},
         {value: '5', label: '5 km'},
-        {value: '10', label: '10 km'}
+        {value: '10', label: '10 km'},
+        {value: '0', label: 'All Reports (Global)'}
     ];
 
     if(status.loading && !profile.username){

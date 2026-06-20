@@ -39,9 +39,12 @@ export const useProximityAlerts = (userLocation, hazards, radiusInMeters = 50) =
     const [activeAlerts, setActiveAlerts] = useState([]);
 
     useEffect(() => {
-        if (!userLocation || !hazards || hazards.length === 0) return;
+        if (!userLocation || !hazards || hazards.length === 0) {
+            setActiveAlerts([]);
+            return;
+        }
 
-        const nearbyHazards = hazards.filter((hazard) => {
+        const nearbyHazards = hazards.map((hazard) => {
             const distance = calculateDistance(
                 userLocation.lat,
                 userLocation.lng,
@@ -49,10 +52,8 @@ export const useProximityAlerts = (userLocation, hazards, radiusInMeters = 50) =
                 hazard.longitude
             );
 
-            hazard.distanceFromUser = distance;
-
-            return distance <= radiusInMeters;
-        });
+            return { ...hazard, distanceFromUser: distance };
+        }).filter((hazardWithDistance) => hazardWithDistance.distanceFromUser <= radiusInMeters);
 
         setActiveAlerts(nearbyHazards);
     }, [userLocation, hazards, radiusInMeters]);

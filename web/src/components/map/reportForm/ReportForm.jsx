@@ -5,7 +5,7 @@ import { Select } from '../../common/select/Select';
 import { createReport } from '../../../api/reportApi.js';
 import styles from './ReportForm.module.css';
 
-const ReportForm = ({ location, onClose }) => {
+const ReportForm = ({ location, onClose, onSuccess }) => {
     const [reportType, setReportType] = useState('');
     const [description, setDescription] = useState('');
     const [errors, setErrors] = useState({});
@@ -38,6 +38,10 @@ const ReportForm = ({ location, onClose }) => {
             console.log('Sending report to backend:', reportData);
 
             await createReport(reportData);
+            if (onSuccess) {
+                onSuccess();
+            }
+
             onClose();
         } catch {
             setErrors({ general: 'Failed to submit report' });
@@ -68,6 +72,7 @@ const ReportForm = ({ location, onClose }) => {
                     <div className={styles.inputGroup}>
                         <Select
                             label="Report Type"
+                            placeholder="-- Select Type --"
                             options={reportOptions}
                             value={reportType}
                             onChange={(e) => setReportType(e.target.value)}
