@@ -48,6 +48,7 @@ const AppRoutes = ({ currentMode, setCurrentMode }) => {
                 </ProtectedRoute>
             } />
             <Route path="*" element={<NotFound />} />
+            <Route path="/users/:id" element={<Profile />} />
         </Routes>
     );
 }

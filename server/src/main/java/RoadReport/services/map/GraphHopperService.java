@@ -1,6 +1,10 @@
 package RoadReport.services.map;
 
-
+import com.graphhopper.util.JsonFeature;
+import org.jspecify.annotations.NonNull;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Polygon;
 import RoadReport.entities.Report;
 import RoadReport.services.map.RiskAnalysisService.WeightedReport;
 import com.graphhopper.GHRequest;
@@ -37,7 +41,7 @@ public class GraphHopperService {
      * The radius where speed penalty will be applied.
      * roughly 22 meters.
      */
-    private static final double REPORT_LOOKUP_RADIUS = 0.0003;
+    private static final double REPORT_LOOKUP_RADIUS = 0.00008;
 
 
     @Value("${graphhopper.osm-file}")
@@ -171,6 +175,7 @@ public class GraphHopperService {
         applyRiskToRequest(req, weightedReports);
         return req;
     }
+
     /**
      * Injects a Custom Model into the GraphHopper request. This custom model dynamically
      * alters the routing speed based on the bounding boxes generated from the reports.
@@ -178,25 +183,36 @@ public class GraphHopperService {
      * @param request         The {@link GHRequest} to mutate.
      * @param weightedReports The reports dictating the speed multiplication rules.
      */
-    private void applyRiskToRequest(GHRequest request, List<WeightedReport> weightedReports ) {
+    private void applyRiskToRequest(GHRequest request, List<WeightedReport> weightedReports) {
         if (weightedReports.isEmpty()) return;
 
         CustomModel model = new CustomModel();
         model.addToSpeed(Statement.If("true", Statement.Op.LIMIT, "45"));
-        for (WeightedReport r : weightedReports) {
-            model.addToSpeed(toSpeedStatement(r));
+
+        GeometryFactory geometryFactory = new GeometryFactory();
+        int areaCounter = 1;
+
+        for (WeightedReport wr : weightedReports) {
+            String areaId = "report_area_" + areaCounter++;
+
+            Coordinate[] coordinates = getCoordinates(wr);
+
+            Polygon boundingBox = geometryFactory.createPolygon(coordinates);
+
+            JsonFeature feature = new JsonFeature();
+            feature.setId(areaId);
+            feature.setGeometry(boundingBox);
+
+            model.getAreas().getFeatures().add(feature);
+
+            String condition = "in_" + areaId;
+            model.addToSpeed(Statement.If(condition, Statement.Op.MULTIPLY, String.valueOf(wr.multiplier())));
         }
+
         request.setCustomModel(model);
     }
-    /**
-     * Converts a single {@link WeightedReport} into a GraphHopper JSON Custom Model {@link Statement}.
-     * It creates a bounding box around the report based on {@code REPORT_LOOKUP_RADIUS_KM}
-     * and applies a multiplication operation to the speed within that box.
-     *
-     * @param wr The weighted report containing coordinates and the speed multiplier.
-     * @return A GraphHopper {@link Statement} to be added to a CustomModel.
-     */
-    private com.graphhopper.json.Statement toSpeedStatement(WeightedReport wr) {
+
+    private static Coordinate @NonNull [] getCoordinates(WeightedReport wr) {
         double lat = wr.report().getLatitude();
         double lon = wr.report().getLongitude();
 
@@ -205,15 +221,16 @@ public class GraphHopperService {
         double minLon = lon - REPORT_LOOKUP_RADIUS;
         double maxLon = lon + REPORT_LOOKUP_RADIUS;
 
-
-        String condition = String.format(Locale.US,
-                "lat >= %f && lat <= %f && lon >= %f && lon <= %f",
-                minLat, maxLat, minLon, maxLon
-        );
-        return Statement.If(condition,
-                Statement.Op.MULTIPLY,
-                String.valueOf(wr.multiplier()));
+        Coordinate[] coordinates = new Coordinate[] {
+                new Coordinate(minLon, minLat),
+                new Coordinate(maxLon, minLat),
+                new Coordinate(maxLon, maxLat),
+                new Coordinate(minLon, maxLat),
+                new Coordinate(minLon, minLat) // Замыкаем полигон
+        };
+        return coordinates;
     }
+
     /**
      * Maps the best path from a {@link GHResponse} into the application's domain {@link RouteResult}.
      *

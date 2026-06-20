@@ -1,5 +1,5 @@
 import {useEffect, useState} from 'react'
-import {getComments, deleteComment} from '../../../api/commentApi.js'
+import {getComments, updateComment, deleteComment} from '../../../api/commentApi.js'
 import styles from './CommentLists.module.css'
 import {Card} from "../../common/card/Card.jsx"
 import {Button} from "../../common/button/Button.jsx"
@@ -26,6 +26,9 @@ export const CommentLists = ({reportId, currentUser}) => {
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState(null)
 
+    const [editingId, setEditingId] = useState(null)
+    const [editContent, setEditContent] = useState("")
+
     useEffect(() => {
         if(!reportId){
             return
@@ -47,6 +50,23 @@ export const CommentLists = ({reportId, currentUser}) => {
 
         void fetchComments()
     }, [reportId])
+
+    const startEdit = (comment) => {
+        setEditingId(comment.id)
+        setEditContent(comment.content)
+    }
+
+    const handleUpdate = async (commentId) => {
+        try {
+            const updatedComment = await updateComment(commentId, editContent)
+            setComments(prev => prev.map(c => c.id === commentId ? updatedComment : c))
+            setEditingId(null)
+            setEditContent("")
+        } catch (err) {
+            console.error(`Failed to update, ${err}`)
+            alert("Cannot save comment.")
+        }
+    }
 
     const handleCommentAdded = (newComment) => {
         setComments((prevComments) => [...prevComments, newComment]);
@@ -77,7 +97,7 @@ export const CommentLists = ({reportId, currentUser}) => {
     if (error) {
         return <div className={styles.error}>{error}</div>
     }
-    console.log('CommentLists', comments)
+
     return (
         <div className={styles.commentsWrapper}>
             <h2 className={styles.commentsTitle}>
@@ -89,6 +109,7 @@ export const CommentLists = ({reportId, currentUser}) => {
                         const isAdmin = currentUser?.role === 'ADMIN'
                         const isAuthor = currentUser?.username === comment.authorUsername
                         const canDelete = isAdmin || isAuthor
+                        const isEditing = editingId === comment.id
 
                         return (
                             <Card className={styles.commentCard}
@@ -100,17 +121,42 @@ export const CommentLists = ({reportId, currentUser}) => {
                                     <span className={styles.commentDate}>
                                             {new Date(comment.createdAt).toLocaleDateString()}
                                     </span>
-                                    {canDelete?
+
+
+                                    {canDelete && !isEditing?
                                         <Button className={styles.deleteBtn}
                                                 onClick={() => handleDelete(comment.id)}
                                                 title="Delete comment">
                                             🗑️
                                         </Button> : null
                                     }
+                                    {isAuthor && !isEditing ?
+                                        <Button onClick={(e) => {
+                                            e.stopPropagation()
+                                            startEdit(comment)
+                                        }}>
+                                            ✏️
+                                        </Button> : null
+                                    }
                                 </div>
-                                <p className={styles.commentContent}>
-                                    {comment.content}
-                                </p>
+                                {isEditing ? (
+                                    <div className={styles.editForm}>
+                                        <textarea
+                                            value={editContent}
+                                            onChange={(e) =>
+                                                setEditContent(e.target.value)}
+                                            className={styles.editTextarea}
+                                        />
+                                        <div className={styles.editActions}>
+                                            <Button onClick={() => handleUpdate(comment.id)}>Save</Button>
+                                            <Button onClick={() => setEditingId(null)}>Cancel</Button>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <p className={styles.commentContent}>
+                                        {comment.content}
+                                    </p>
+                                )}
                             </Card>
                         )
                     })}

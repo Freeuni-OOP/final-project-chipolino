@@ -17,12 +17,13 @@ import {Button} from "../../common/button/Button.jsx";
  * @param reportId The unique identifier of the report being voted on.
  * @param initUpvotes The initial count of upvotes provided by the API.
  * @param initDownvotes The initial count of downvotes provided by the API.
+ * @param initUserVote The initial vote that user made in the past
  * @returns A JSX element containing two interactive buttons with dynamic counts and icons.
  */
-export const VoteButtons = ({reportId, initUpvotes = 0, initDownvotes = 0}) => {
+export const VoteButtons = ({reportId, initUpvotes = 0, initDownvotes = 0, initUserVote = null}) => {
     const [upvotes, setUpvotes] = useState(initUpvotes)
     const [downvotes, setDownvotes] = useState(initDownvotes)
-    const [userVote, setUserVote] = useState(null)
+    const [userVote, setUserVote] = useState(initUserVote)
     const [loading, setLoading] = useState(false)
 
     const handleVote = (type) => {

@@ -135,12 +135,12 @@ public class TestVoteService {
         when(voteRepository.countByReportIdAndType(reportId, VoteType.POSITIVE)).thenReturn(3L);
         when(voteRepository.findByUserId(userId)).thenReturn(vList);
 
-        Optional<Vote> findVotes = voteService.findByReportIdAndUserId(reportId, userId);
+        Vote findVotes = voteService.findByReportIdAndUserId(reportId, userId);
         long voteCount = voteService.countByReportIdAndType(reportId, VoteType.POSITIVE);
         List<Vote> userVotes = voteService.findByUserId(userId);
 
-        assertTrue(findVotes.isPresent());
-        assertEquals(v, findVotes.get());
+        assertNotNull(findVotes);
+        assertEquals(v, findVotes);
         assertEquals(3L, voteCount);
         assertEquals(1, userVotes.size());
         assertEquals(v, userVotes.get(0));

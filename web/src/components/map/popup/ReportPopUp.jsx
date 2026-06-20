@@ -31,14 +31,15 @@ const formatEnumText = (text) => {
  * @returns {@link Popup} component containing the structured report information.
  */
 export const ReportPopup = ({report, currentUser}) => {
-    const { id, authorUsername, authorId, type, description, status, upvotes, downvotes, createDate } = report;
+    const { id, authorUsername, userId, type, description,
+        status, upvotes, downvotes, createDate, voteType } = report;
     const typeStyle = styles[type?.toLowerCase()]
     const statusStyle = styles[status?.toLowerCase()]
 
     const isOwnReport = currentUser &&
-        Number(authorId) === Number(currentUser.id);
+        Number(userId) === Number(currentUser.id);
 
-    const profilePath = isOwnReport ? '/profile' : `/users/${authorId}`;
+    const profilePath = isOwnReport ? '/profile' : `/users/${userId}`;
 
     return (
         <Popup minWidth={240}>
@@ -70,6 +71,7 @@ export const ReportPopup = ({report, currentUser}) => {
                         reportId={id}
                         initUpvotes={upvotes}
                         initDownvotes={downvotes}
+                        initUserVote={voteType}
                     />
                 </div>
 

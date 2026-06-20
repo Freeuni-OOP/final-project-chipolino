@@ -102,10 +102,10 @@ const Map = ({ currentMode, setCurrentMode }) => {
                 loadNearbyHazards={loadNearbyHazards}
                 routeStart={routeStart}
                 routeEnd={routeEnd}
-                routePoints={routeCoords}
+                routeCoords={routeCoords}
                 setRouteStart={setRouteStart}
                 setRouteEnd={setRouteEnd}
-                setRoutePoints={setRouteCoords}
+                setRouteCoords={setRouteCoords}
 
             />
         </div>

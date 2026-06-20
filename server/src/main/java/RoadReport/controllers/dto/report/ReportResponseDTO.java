@@ -2,6 +2,7 @@ package RoadReport.controllers.dto.report;
 
 import RoadReport.enums.ReportStatus;
 import RoadReport.enums.ReportType;
+import RoadReport.enums.VoteType;
 
 import java.time.LocalDateTime;
 
@@ -16,5 +17,6 @@ public record ReportResponseDTO(
         ReportStatus status,
         Integer upvotes,
         Integer downvotes,
-        LocalDateTime createDate
+        LocalDateTime createDate,
+        VoteType vote
 ) {}

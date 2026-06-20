@@ -80,8 +80,8 @@ public class VoteService {
      * @return An Optional containing the Vote if found, otherwise empty.
      */
     @Transactional(readOnly = true)
-    public Optional<Vote> findByReportIdAndUserId(Long reportId, Long userId) {
-        return voteRepository.findByReportIdAndUserId(reportId, userId);
+    public Vote findByReportIdAndUserId(Long reportId, Long userId) {
+        return voteRepository.findByReportIdAndUserId(reportId, userId).orElse(null);
     }
 
     /**

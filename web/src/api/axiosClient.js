@@ -16,7 +16,7 @@ import axios from "axios";
 const axiosApi = axios.create({
     baseURL: "/api",   //Need to change http with https later!!
     headers: {"Content-Type" : "application/json"},
-    timeout: 5000,
+    timeout: 10000000,
     withCredentials: true,
 });
 

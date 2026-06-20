@@ -1,13 +1,15 @@
-
 .container {
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start;
     min-height: 100vh;
+    padding: 40px 20px;
+    width: 100%;
     background-color: #f5f7fa;
     font-family: system-ui, -apple-system, sans-serif;
+    overflow-y: auto;
+    box-sizing: border-box;
 }
-
 .card {
     background-color: white;
     padding: 40px;
