@@ -226,7 +226,7 @@ public class GraphHopperService {
                 new Coordinate(maxLon, minLat),
                 new Coordinate(maxLon, maxLat),
                 new Coordinate(minLon, maxLat),
-                new Coordinate(minLon, minLat) // Замыкаем полигон
+                new Coordinate(minLon, minLat)
         };
         return coordinates;
     }
