@@ -102,4 +102,17 @@ public class ReportController {
 
         return ResponseEntity.ok(reports);
     }
+
+
+    /**
+     * Retrieves a list of all reports submitted by the authenticated user.
+     */
+    @GetMapping("/me")
+    public ResponseEntity<List<ReportResponseDTO>> getMyReports(@AuthenticationPrincipal RoadUserDetails roadUserDetails) {
+        return ResponseEntity.ok(
+                reportService.getReportsByUserId(roadUserDetails.getId()).stream()
+                        .map(report -> convertReportToDTO(report, null))
+                        .toList()
+        );
+    }
 }

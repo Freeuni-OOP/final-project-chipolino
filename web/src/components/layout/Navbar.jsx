@@ -1,11 +1,14 @@
 import React from 'react';
 import styles from './Navbar.module.css';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import {useAuth} from "../../hooks/useAuth.js";
 
 const Navbar = () => {
     const navigate = useNavigate();
     const { user, loading, handleLogout } = useAuth();
+
+    const [searchParams] = useSearchParams();
+    const isViewingMine = searchParams.get('view') === 'mine';
 
     const logout = async () => {
         try {
@@ -37,6 +40,25 @@ const Navbar = () => {
 
                 {user ? (
                     <>
+                        <button
+                            onClick={() => {
+                                if (isViewingMine) {
+                                    navigate('/map');
+                                } else {
+                                    navigate('/map?view=mine');
+                                }
+                            }}
+                            className={styles.link}
+                            style={{
+                                background: 'none',
+                                border: 'none',
+                                font: 'inherit',
+                                cursor: 'pointer'
+                            }}
+                        >
+                            {isViewingMine ? 'All Reports' : 'My Reports'}
+                        </button>
+
                         {isAdmin && (
                             <Link to="/admin" className={`${styles.link} ${styles.adminLink}`}>
                                 🛠️ Admin Panel

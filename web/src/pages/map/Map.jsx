@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import MapView from '../../components/map/mapView/MapView.jsx';
 import styles from './Map.module.css';
-import {findNearbyReports} from "../../api/reportApi.js";
+import {findNearbyReports, getMyReports} from "../../api/reportApi.js";
 
 const Map = ({ currentMode, setCurrentMode }) => {
     const [userLocation, setUserLocation] = useState({ lat: 0, lng: 0 });
@@ -16,14 +17,24 @@ const Map = ({ currentMode, setCurrentMode }) => {
 
     const defaultCenter = [41.7151, 44.8271];
 
+    const [searchParams] = useSearchParams();
+    const viewMode = searchParams.get('view');
+
     // 2. Fetch reported hazards from your Spring Boot Backend API
     const loadNearbyHazards = useCallback(async () => {
         setApiLoading(true);
         try {
-            const savedRadius = parseFloat(localStorage.getItem('proximityRadius') || '5');
-            const lat = userLocation.lat !== 0 ? userLocation.lat : defaultCenter[0];
-            const lng = userLocation.lng !== 0 ? userLocation.lng : defaultCenter[1];
-            const data = await findNearbyReports(lat, lng, savedRadius);
+            let data;
+
+            if (viewMode === 'mine') {
+                data = await getMyReports();
+            } else {
+                // Otherwise, load geographic radius boundary hazards normally
+                const savedRadius = parseFloat(localStorage.getItem('proximityRadius') || '5');
+                const lat = userLocation.lat !== 0 ? userLocation.lat : defaultCenter[0];
+                const lng = userLocation.lng !== 0 ? userLocation.lng : defaultCenter[1];
+                data = await findNearbyReports(lat, lng, savedRadius);
+            }
 
             setHazards(data);
         } catch (error) {
@@ -31,7 +42,7 @@ const Map = ({ currentMode, setCurrentMode }) => {
         } finally {
             setApiLoading(false);
         }
-    }, [userLocation]);
+    }, [userLocation, viewMode]);
 
     // 3. Track Browser Geolocation Coordinates
     useEffect(() => {
