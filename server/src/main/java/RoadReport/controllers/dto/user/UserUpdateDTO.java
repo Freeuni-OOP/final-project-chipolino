@@ -1,4 +1,4 @@
-package RoadReport.controllers.dto;
+package RoadReport.controllers.dto.user;
 
 public record UserUpdateDTO(
         String username,

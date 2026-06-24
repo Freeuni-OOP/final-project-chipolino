@@ -1,6 +1,7 @@
 package RoadReport.security.service;
 
 import RoadReport.entities.User;
+import RoadReport.enums.Role;
 import lombok.Builder;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -33,8 +34,11 @@ public class RoadUserDetails implements UserDetails {
     }
 
     public @NonNull String getEmail() {
-
         return user.getEmail();
+    }
+
+    public @NonNull Role getRole() {
+        return user.getRoles();
     }
 
     public @NonNull Integer getReputationScore() {

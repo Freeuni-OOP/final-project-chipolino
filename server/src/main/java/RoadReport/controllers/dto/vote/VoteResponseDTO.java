@@ -1,4 +1,4 @@
-package RoadReport.controllers.dto;
+package RoadReport.controllers.dto.vote;
 
 public record VoteResponseDTO(
         Long upvotes,

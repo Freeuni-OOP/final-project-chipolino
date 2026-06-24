@@ -1,11 +1,13 @@
 package RoadReport.controllers;
 
-import RoadReport.controllers.dto.CommentRequest;
-import RoadReport.controllers.dto.CommentResponse;
+import RoadReport.controllers.dto.comment.CommentRequestDTO;
+import RoadReport.controllers.dto.comment.CommentResponseDTO;
 import RoadReport.entities.Comment;
 import RoadReport.security.service.RoadUserDetails;
 import RoadReport.services.core.CommentService;
 import lombok.RequiredArgsConstructor;
+import org.jsoup.Jsoup;
+import org.jsoup.safety.Safelist;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -28,15 +30,22 @@ public class CommentController {
      * @param userDetails The authenticated user's details.
      * @return A {@link ResponseEntity} with HTTP status 201 (Created).
      */
+    @SuppressWarnings({"JvmTaintAnalysis"})
     @PostMapping("/reports/{reportId}/comments")
-    public ResponseEntity<Void> addComment(
+    public ResponseEntity<CommentResponseDTO> addComment(
             @PathVariable Long reportId,
-            @RequestBody CommentRequest request,
+            @RequestBody CommentRequestDTO request,
             @AuthenticationPrincipal RoadUserDetails userDetails
     ) {
-        commentService.addComment(userDetails.getId(), reportId, request.content());
+        Comment comment = commentService.addComment(userDetails.getId(), reportId, request.content());
+        CommentResponseDTO response = new CommentResponseDTO(
+                comment.getId(),
+                comment.getText(),
+                comment.getUser().getUsername(),
+                comment.getCreateDate()
+        );
 
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     /**
@@ -44,14 +53,14 @@ public class CommentController {
      * The returned list is ordered chronologically, newest first.
      *
      * @param reportId The ID of the report whose comments are being fetched.
-     * @return A {@link ResponseEntity} containing a list of {@link CommentResponse} objects.
+     * @return A {@link ResponseEntity} containing a list of {@link CommentResponseDTO} objects.
      */
     @GetMapping("/reports/{reportId}/comments")
-    public ResponseEntity<List<CommentResponse>> getCommentsByReport(@PathVariable Long reportId) {
+    public ResponseEntity<List<CommentResponseDTO>> getCommentsByReport(@PathVariable Long reportId) {
         List<Comment> comments = commentService.getCommentsByReport(reportId);
 
-        List<CommentResponse> responseList = comments.stream()
-                .map(comment -> new CommentResponse(
+        List<CommentResponseDTO> responseList = comments.stream()
+                .map(comment -> new CommentResponseDTO(
                         comment.getId(),
                         comment.getText(),
                         comment.getUser().getUsername(),
@@ -69,16 +78,16 @@ public class CommentController {
      * @param commentId   The ID of the comment to update.
      * @param request     The data transfer object containing the updated text.
      * @param userDetails The authenticated user's details.
-     * @return A {@link ResponseEntity} containing the updated {@link CommentResponse}.
+     * @return A {@link ResponseEntity} containing the updated {@link CommentResponseDTO}.
      */
     @PutMapping("/comments/{commentId}")
-    public ResponseEntity<CommentResponse> updateComment(
+    public ResponseEntity<CommentResponseDTO> updateComment(
             @PathVariable Long commentId,
-            @RequestBody CommentRequest request,
+            @RequestBody CommentRequestDTO request,
             @AuthenticationPrincipal RoadUserDetails userDetails
     ) {
         Comment comment = commentService.updateComment(commentId, userDetails.getId(), request.content());
-        CommentResponse response = new CommentResponse(
+        CommentResponseDTO response = new CommentResponseDTO(
                 comment.getId(),
                 comment.getText(),
                 comment.getUser().getUsername(),

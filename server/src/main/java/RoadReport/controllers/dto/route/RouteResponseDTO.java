@@ -1,8 +1,8 @@
-package RoadReport.controllers.dto;
+package RoadReport.controllers.dto.route;
 
 import java.util.List;
 
-public record RouteResponse(double distanceMeters,
+public record RouteResponseDTO(double distanceMeters,
                             long timeMillis,
                             List<double[]> points)
 {}

@@ -22,3 +22,8 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Local HTTPS Certificates
+*.pem
+*.p12
+*.jks

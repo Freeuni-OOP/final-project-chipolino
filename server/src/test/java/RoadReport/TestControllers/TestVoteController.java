@@ -32,9 +32,6 @@ public class TestVoteController {
     @Autowired
     private MockMvc mvc;
 
-    @Autowired
-    private ObjectMapper objectMapper;
-
     @MockitoBean
     private VoteService voteService;
 
@@ -49,6 +46,7 @@ public class TestVoteController {
 
     @BeforeEach
     public void setUp() {
+        ObjectMapper objectMapper = new ObjectMapper();
         lenient().when(mockDetails.getId()).thenReturn(1L);
         lenient().when(mockDetails.getUsername()).thenReturn("Giorgi");
         lenient().when(mockDetails.getPassword()).thenReturn("password");

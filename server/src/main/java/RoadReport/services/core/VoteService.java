@@ -64,6 +64,12 @@ public class VoteService {
                 if (report.getStatus() != ReportStatus.PERMANENT) updateUsersScore(report, newVote, false);
                 reportService.addVote(report, newVote);
             }
+        } else {
+            if (report.getStatus() != ReportStatus.PERMANENT) {
+                updateUsersScore(report, vote.get(), true);
+            }
+            reportService.handleReportVotes(vote.get(), report, -1);
+            voteRepository.delete(vote.get());
         }
     }
 
@@ -74,8 +80,8 @@ public class VoteService {
      * @return An Optional containing the Vote if found, otherwise empty.
      */
     @Transactional(readOnly = true)
-    public Optional<Vote> findByReportIdAndUserId(Long reportId, Long userId) {
-        return voteRepository.findByReportIdAndUserId(reportId, userId);
+    public Vote findByReportIdAndUserId(Long reportId, Long userId) {
+        return voteRepository.findByReportIdAndUserId(reportId, userId).orElse(null);
     }
 
     /**
