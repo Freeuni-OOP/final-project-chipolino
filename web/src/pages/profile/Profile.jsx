@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import {getCurrentUser, getUser} from '../../api/userApi.js'
 import styles from './Profile.module.css'
