@@ -1,24 +1,20 @@
 import fs from 'fs';
-import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
-
-const isHttps = fs.existsSync('./localhost-key.pem') && fs.existsSync('./localhost.pem');
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
 
 export default defineConfig({
   plugins: [react()],
   server: {
     proxy: {
       '/api': {
-        target: 'http://roadreport-backend:8080',
+        target: 'http://localhost:8080',
         changeOrigin: true,
         secure: false
       }
     },
-    ...(isHttps ? {
-      https: {
-        key: fs.readFileSync('./localhost-key.pem'),
-        cert: fs.readFileSync('./localhost.pem'),
-      }
-    } : {})
+    https: {
+      key: fs.readFileSync('./localhost-key.pem'),
+      cert: fs.readFileSync('./localhost.pem'),
+    },
   },
-});
+})

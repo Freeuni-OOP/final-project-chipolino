@@ -178,5 +178,3 @@ export const Profile = ({isMe = false}) => {
         </div>
     )
 }
-
-export default Profile;

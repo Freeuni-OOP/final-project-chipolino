@@ -104,6 +104,7 @@ public class ReportController {
     }
 
 
+
     /**
      * Retrieves a list of all reports submitted by the authenticated user.
      */
