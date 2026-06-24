@@ -9,6 +9,11 @@ services:
       - "3307:3306"
     volumes:
       - db_data:/var/lib/mysql
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-pchipolino123" ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
   backend:
     build: ./server
@@ -16,13 +21,16 @@ services:
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://roadreport-db:3306/roadreport?useSSL=false&allowPublicKeyRetrieval=true
       DB_USERNAME: root
-      DB_PASSWORD: chipolino123
-      JWT_SECRET_KEY: super_secret_key_1234567890_must_be_long
+      DB_PASSWORD: ${DB_PASSWORD}
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
       JWT_EXPIRATION: 86400000
     ports:
       - "8082:8080"
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+    volumes:
+      - ./data:/app/data
 
   frontend:
     build: ./web
@@ -31,8 +39,8 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - ./nginx.crt:/etc/nginx/certs/nginx.crt:ro
-      - ./nginx.key:/etc/nginx/certs/nginx.key:ro
+      - ./web/localhost.pem:/etc/nginx/certs/nginx.crt:ro
+      - ./web/localhost-key.pem:/etc/nginx/certs/nginx.key:ro
     depends_on:
       - backend
 volumes:
