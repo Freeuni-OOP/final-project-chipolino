@@ -6,7 +6,6 @@ import {useCallback, useEffect, useState} from "react";
  * location: {lat: number, lng: number},
  * error: string|null,
  * loading: boolean,
- * refreshLocation: function
  * }}
  * An object containing the coordinates, error messages,
  * loading state, and a function for manual refresh.
@@ -30,21 +29,25 @@ export const useGeolocation = () => {
         setLoading(false)
     }, [])
 
-    const refreshLocation = useCallback(() => {
+    useEffect(() => {
         if(!navigator.geolocation){
             setError('Geolocation does not work in this browser')
             setLoading(false)
             return;
         }
 
-        setLoading(true)
-        navigator.geolocation.getCurrentPosition(handleSuccess, handleError)
+        const geoOptions = {
+            enableHighAccuracy: true,
+            timeout: 100000,
+            maximumAge: 0
+        };
 
+        setLoading(true)
+        const watchId =
+            navigator.geolocation.watchPosition(handleSuccess, handleError, geoOptions)
+
+        return () => navigator.geolocation.clearWatch(watchId)
     }, [handleSuccess, handleError])
 
-    useEffect(() => {
-        refreshLocation()
-    }, [refreshLocation])
-
-    return {location, error, loading, refreshLocation}
+    return {location, error, loading}
 }

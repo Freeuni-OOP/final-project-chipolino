@@ -65,7 +65,7 @@ const Navbar = () => {
                             </Link>
                         )}
 
-                        <Link to="/settings" className={styles.link}>
+                        <Link to="/profile" className={styles.link}>
                             Profile ({user.username || 'User'})
                         </Link>
                         <button onClick={logout} className={styles.logoutBtn}>

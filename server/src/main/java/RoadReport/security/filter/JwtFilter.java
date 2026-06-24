@@ -27,14 +27,16 @@ public class JwtFilter extends OncePerRequestFilter {
     /**
      * Inspects the incoming request for a JWT token, performs validation, and sets up
      * the security authentication context if the token is valid.
-     * If an exception occurs during token parsing or validation (e.g., an expired or tampered token),
-     * the filter aborts the normal filter chain execution and delegates to {@link #handleException}
-     * to return a 401 Unauthorized response.
+     * <p>
+     * If the token is missing, or if an exception occurs during parsing or validation
+     * (e.g., an expired or tampered token), the security context is cleared, and the
+     * request safely continues down the filter chain as an unauthenticated (anonymous) request.
      *
-     * @param request     the incoming HTTP request
-     * @param response    the outgoing HTTP response
-     * @param filterChain the remaining filter chain to execute
-     * @throws IOException      if an I/O error occurs during processing
+     * @param request HTTP request
+     * @param response HTTP response
+     * @param filterChain remaining filter chain to execute
+     * @throws IOException if an I/O error occurs during processing
+     * @throws ServletException if a servlet error occurs during processing
      */
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request,
@@ -83,22 +85,5 @@ public class JwtFilter extends OncePerRequestFilter {
         }
 
        return null;
-    }
-
-    /**
-     *  This method manually enforces a {@code 401 Unauthorized} status code
-     *
-     * @param response the current HTTP response to modify
-     * @throws IOException if an error occurs while writing to the response body
-     */
-    private void handleException(HttpServletResponse response) throws IOException {
-        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        response.setContentType("application/json");
-        response.setCharacterEncoding("UTF-8");
-        response.getWriter().write(
-                "{" +
-                        "\"error\": \"Unauthorized\"" +
-                        "}"
-        );
     }
 }

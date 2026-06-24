@@ -1,0 +1,47 @@
+services:
+  db:
+    image: mysql:8.0
+    container_name: roadreport-db
+    environment:
+      MYSQL_ROOT_PASSWORD: chipolino123
+      MYSQL_DATABASE: roadreport
+    ports:
+      - "3307:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-pchipolino123" ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build: ./server
+    container_name: roadreport-backend
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://roadreport-db:3306/roadreport?useSSL=false&allowPublicKeyRetrieval=true
+      DB_USERNAME: root
+      DB_PASSWORD: ${DB_PASSWORD}
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+      JWT_EXPIRATION: 86400000
+    ports:
+      - "8082:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ./data:/app/data
+
+  frontend:
+    build: ./web
+    container_name: roadreport-frontend
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./web/localhost.pem:/etc/nginx/certs/nginx.crt:ro
+      - ./web/localhost-key.pem:/etc/nginx/certs/nginx.key:ro
+    depends_on:
+      - backend
+volumes:
+  db_data:

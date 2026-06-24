@@ -103,6 +103,8 @@ public class GraphHopperService {
         if (waypoints == null || waypoints.size() < 2) {
             throw new IllegalArgumentException("min 2 points required");
         }
+        final ClassLoader springClassLoader = Thread.currentThread().getContextClassLoader();
+
         List<WeightedReport> weighted = prepareWeights(reports);
         List<CompletableFuture<ResponsePath>> futures = new ArrayList<>();
         for (int i = 0; i < waypoints.size() - 1; i++) {
@@ -111,6 +113,7 @@ public class GraphHopperService {
             double toLat   = waypoints.get(i + 1)[0], toLon   = waypoints.get(i + 1)[1];
 
             CompletableFuture<com.graphhopper.ResponsePath> future = CompletableFuture.supplyAsync(() -> {
+                Thread.currentThread().setContextClassLoader(springClassLoader);
                 GHResponse response = hopper.route(buildRequest(fromLat, fromLon, toLat, toLon, weighted));
                 assertNoErrors(response);
                 return response.getBest();
