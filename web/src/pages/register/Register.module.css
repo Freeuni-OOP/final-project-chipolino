@@ -1,0 +1,24 @@
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    /* 1. Вместо жестких 100vh занимаем ровно то место, которое оставил Navbar */
+    height: calc(100vh - 64px); /* 64px — условная высота твоего Navbar, подставь свою */
+    width: 100%;
+    background-color: #f5f7fa;
+    font-family: system-ui, -apple-system, sans-serif;
+    padding: 40px 20px;
+    box-sizing: border-box;
+    overflow-y: auto;
+}
+
+.card {
+    background-color: white;
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    width: 100%;
+    max-width: 400px;
+    height: auto;
+}

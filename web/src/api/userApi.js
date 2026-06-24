@@ -13,7 +13,7 @@ export const getCurrentUser = () =>
 
 /**
  * Fetches a specific user's profile by their ID.
- * @param {number} id - The unique ID of the user.
+ * @param {string} id - The unique ID of the user.
  * @returns {Promise<Object>} The user's public data.
  */
 export const getUser = (id) =>

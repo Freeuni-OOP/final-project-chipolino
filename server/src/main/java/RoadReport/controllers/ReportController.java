@@ -4,8 +4,11 @@ package RoadReport.controllers;
 import RoadReport.controllers.dto.report.ReportRequestDTO;
 import RoadReport.controllers.dto.report.ReportResponseDTO;
 import RoadReport.entities.Report;
+import RoadReport.entities.Vote;
+import RoadReport.enums.VoteType;
 import RoadReport.security.service.RoadUserDetails;
 import RoadReport.services.core.ReportService;
+import RoadReport.services.core.VoteService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +16,10 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/reports")
@@ -21,6 +27,7 @@ import java.util.List;
 public class ReportController {
 
     private final ReportService reportService;
+    private final VoteService voteService;
 
     private Report convertDTOToReport(ReportRequestDTO reportRequestDTO) {
         return Report.builder()
@@ -44,9 +51,11 @@ public class ReportController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    private ReportResponseDTO convertReportToDTO(Report report) {
+    private ReportResponseDTO convertReportToDTO(Report report, VoteType vt) {
         return new ReportResponseDTO(
                 report.getId(),
+                report.getUser().getId(),
+                report.getUser().getUsername(),
                 report.getType(),
                 report.getDescription(),
                 report.getLatitude(),
@@ -54,7 +63,8 @@ public class ReportController {
                 report.getStatus(),
                 report.getUpvotes(),
                 report.getDownvotes(),
-                report.getCreateDate()
+                report.getCreateDate(),
+                vt
         );
     }
 
@@ -64,12 +74,45 @@ public class ReportController {
     @GetMapping
     public ResponseEntity<List<ReportResponseDTO>> findNearbyReports(@RequestParam Double latitude,
                                                                      @RequestParam Double longitude,
-                                                                     @RequestParam Double radius) {
-        List<ReportResponseDTO> reports = reportService.findNearbyReports(latitude, longitude, radius)
-                .stream()
-                .map(this::convertReportToDTO)
+                                                                     @RequestParam Double radius,
+                                                                     @AuthenticationPrincipal RoadUserDetails userDetails) {
+
+        List<Report> reportsList;
+        if (radius <= 0) {
+            reportsList = reportService.findAllReports();
+        } else {
+            reportsList = reportService.findNearbyReports(latitude, longitude, radius);
+        }
+
+        Map<Long, VoteType> userVotesMap;
+
+        if (userDetails != null) {
+            userVotesMap = voteService.findByUserId(userDetails.getId()).stream()
+                    .collect(Collectors.toMap(
+                            v -> v.getReport().getId(),
+                            Vote::getType
+                    ));
+        } else {
+            userVotesMap = new HashMap<>();
+        }
+
+        List<ReportResponseDTO> reports = reportsList.stream()
+                .map(report -> convertReportToDTO(report, userVotesMap.get(report.getId())))
                 .toList();
 
         return ResponseEntity.ok(reports);
+    }
+
+
+    /**
+     * Retrieves a list of all reports submitted by the authenticated user.
+     */
+    @GetMapping("/me")
+    public ResponseEntity<List<ReportResponseDTO>> getMyReports(@AuthenticationPrincipal RoadUserDetails roadUserDetails) {
+        return ResponseEntity.ok(
+                reportService.getReportsByUserId(roadUserDetails.getId()).stream()
+                        .map(report -> convertReportToDTO(report, null))
+                        .toList()
+        );
     }
 }

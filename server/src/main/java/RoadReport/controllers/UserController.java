@@ -34,7 +34,8 @@ public class UserController {
                 roadUserDetails.getReputationScore(),
                 roadUserDetails.getBanned(),
                 roadUserDetails.getBanExpiration(),
-                roadUserDetails.getCreateDate()
+                roadUserDetails.getCreateDate(),
+                roadUserDetails.getRole()
         );
         return ResponseEntity.ok(selfResponse);
     }
@@ -53,7 +54,8 @@ public class UserController {
                 user.getId(),
                 user.getUsername(),
                 user.getReputationScore(),
-                user.getCreateDate()
+                user.getCreateDate(),
+                user.getRoles()
         );
         return ResponseEntity.ok(userResponse);
     }
@@ -81,7 +83,8 @@ public class UserController {
                 user.getReputationScore(),
                 user.getBanned(),
                 user.getBanExpiration(),
-                user.getCreateDate()
+                user.getCreateDate(),
+                user.getRoles()
         );
         return ResponseEntity.ok(selfResponse);
     }

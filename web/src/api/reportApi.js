@@ -31,3 +31,13 @@ export const findNearbyReports = async (latitude, longitude, radius) => {
     });
     return response.data;
 };
+
+/**
+ * Retrieves all road reports submitted by the currently authenticated user.
+ * @async
+ * @returns {Promise<Array<Object>>} A promise resolving to an array of the user's personal ReportResponseDTO objects.
+ */
+export const getMyReports = async () => {
+    const response = await axiosApi.get('/reports/me');
+    return response.data;
+};

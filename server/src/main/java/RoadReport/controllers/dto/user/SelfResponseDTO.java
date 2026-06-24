@@ -1,5 +1,7 @@
 package RoadReport.controllers.dto.user;
 
+import RoadReport.enums.Role;
+
 import java.time.LocalDateTime;
 
 public record SelfResponseDTO(
@@ -9,5 +11,6 @@ public record SelfResponseDTO(
         Integer reputationScore,
         Boolean banned,
         LocalDateTime banExpiration,
-        LocalDateTime createDate
+        LocalDateTime createDate,
+        Role role
 ) {}
