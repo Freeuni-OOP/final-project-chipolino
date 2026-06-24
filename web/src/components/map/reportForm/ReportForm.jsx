@@ -3,7 +3,7 @@ import { Button } from '../../common/button/Button';
 import { Spinner } from '../../common/spinner/Spinner';
 import { Select } from '../../common/select/Select';
 import { createReport } from '../../../api/reportApi.js';
-import styles from './ReportForm.module.css';
+import styles from './reportForm.module.css';
 
 const ReportForm = ({ location, onClose, onSuccess }) => {
     const [reportType, setReportType] = useState('');

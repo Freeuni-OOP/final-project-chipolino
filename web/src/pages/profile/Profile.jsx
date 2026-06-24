@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import {getCurrentUser, getUser} from '../../api/userApi.js'
 import styles from './Profile.module.css'
@@ -178,3 +178,5 @@ export const Profile = ({isMe = false}) => {
         </div>
     )
 }
+
+export default Profile;
