@@ -21,8 +21,8 @@ services:
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://roadreport-db:3306/roadreport?useSSL=false&allowPublicKeyRetrieval=true
       DB_USERNAME: root
-      DB_PASSWORD: ${DB_PASSWORD}
-      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+      DB_PASSWORD: chipolino123
+      JWT_SECRET_KEY: Um9hZFJlcG9ydFNlY3JldEtleTIwMjZDaGlwb2xpbm9zVGVhbSE=
       JWT_EXPIRATION: 86400000
     ports:
       - "8082:8080"
