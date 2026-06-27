@@ -79,9 +79,9 @@ const Login = () => {
                 <form onSubmit={handleSubmit}>
                     <div className={styles.inputGroup}>
                         <Input
-                            label="username"
+                            label="Username"
                             type="text"
-                            placeholder="type username"
+                            placeholder="Type username"
                             value={username}
                             onChange={(e) => setUsername(e.target.value)}
                             disabled={isLoading}
@@ -91,9 +91,9 @@ const Login = () => {
 
                     <div className={styles.inputGroup}>
                         <Input
-                            label="password"
+                            label="Password"
                             type="password"
-                            placeholder="type password"
+                            placeholder="Type password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             disabled={isLoading}
@@ -111,9 +111,9 @@ const Login = () => {
                     </div>
 
                     <p className={styles.footerText}>
-                        do not have account?{' '}
+                        Don't have an account?{' '}
                         <Link to="/register" className={styles.link}>
-                            register
+                            Register
                         </Link>
                     </p>
 

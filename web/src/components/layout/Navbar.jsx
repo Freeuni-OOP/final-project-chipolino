@@ -22,7 +22,7 @@ const Navbar = () => {
     if (loading) {
         return (
             <nav className={styles.navbar}>
-                <Link to="/" className={styles.logo}>GeoTracker</Link>
+                <Link to="/" className={styles.logo}>RoadReport</Link>
             </nav>
         );
     }
@@ -32,7 +32,7 @@ const Navbar = () => {
     return (
         <nav className={styles.navbar}>
             <Link to="/" className={styles.logo}>
-                GeoTracker
+                RoadReport
             </Link>
 
             <div className={styles.navLinks}>

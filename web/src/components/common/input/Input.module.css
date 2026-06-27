@@ -1,105 +1,116 @@
 .inputContainer {
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 8px;
     margin-bottom: 20px;
     width: 100%;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     position: relative;
 }
 
 .label {
     font-size: 14px;
     font-weight: 600;
-    color: #475569;
+    color: #94a3b8;
     text-align: left;
     margin-left: 2px;
     transition: color 0.3s ease;
 }
 
 .inputContainer:focus-within .label {
-    color: #3b82f6;
+    color: #60a5fa;
 }
 
 .inputField {
     width: 100%;
-    padding: 12px 16px;
-    font-size: 16px;
+    padding: 14px 16px;
+    font-size: 15px;
     line-height: 1.5;
 
-    border: 2px solid #e2e8f0;
+    border: 1px solid rgba(148, 163, 184, 0.2);
     border-radius: 10px;
-    background-color: #f8fafc;
-    color: #0f172a;
+    background: rgba(30, 41, 59, 0.6);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    color: #f8fafc;
     outline: none;
 
-    transition: border-color 0.3s ease, background-color 0.3s ease, box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.3s ease;
     box-sizing: border-box;
 }
 
-
 .inputField:hover:not(:disabled) {
-    border-color: #cbd5e1;
-    background-color: #ffffff;
+    border-color: rgba(148, 163, 184, 0.3);
+    background: rgba(30, 41, 59, 0.8);
 }
 
-
 .inputField:focus {
-    background-color: #ffffff;
+    background: rgba(30, 41, 59, 0.9);
     border-color: #3b82f6;
-    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.08), 0 0 0 4px rgba(59, 130, 246, 0.15);
+    box-shadow:
+            0 0 0 3px rgba(59, 130, 246, 0.2),
+            0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 .inputField::placeholder {
-    color: #94a3b8;
+    color: #64748b;
     transition: opacity 0.3s ease;
 }
+
 .inputField:focus::placeholder {
     opacity: 0.5;
 }
 
 .inputField:disabled {
-    background-color: #e2e8f0;
-    color: #94a3b8;
+    background: rgba(51, 65, 85, 0.4);
+    color: #64748b;
     cursor: not-allowed;
     border-color: transparent;
-    opacity: 0.8;
+    opacity: 0.6;
 }
 
-/*Error Part*/
+/* Error States */
 .inputField.error {
     border-color: #f87171;
-    background-color: #fef2f2;
+    background: rgba(239, 68, 68, 0.1);
 }
 
 .inputField.error:focus {
     border-color: #ef4444;
-    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.08), 0 0 0 4px rgba(239, 68, 68, 0.15);
+    box-shadow:
+            0 0 0 3px rgba(239, 68, 68, 0.2),
+            0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 .inputContainer:has(.error) .label {
-    color: #ef4444;
+    color: #f87171;
 }
 
 .errorMessage {
     font-size: 13px;
     font-weight: 500;
-    color: #ef4444;
+    color: #f87171;
     text-align: left;
     margin-left: 2px;
-    margin-top: 2px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
 
     animation: slideDown 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-    transform-origin: top;
+}
+
+.errorMessage::before {
+    content: '⚠';
+    font-size: 12px;
 }
 
 @keyframes slideDown {
     0% {
         opacity: 0;
-        transform: translateY(-5px) scaleY(0.8);
+        transform: translateY(-5px);
     }
     100% {
         opacity: 1;
-        transform: translateY(0) scaleY(1);
+        transform: translateY(0);
     }
 }

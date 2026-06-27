@@ -86,9 +86,9 @@ const Register = () => {
                 <form onSubmit={handleSubmit}>
                     <div className={styles.inputGroup}>
                         <Input
-                            label="username"
+                            label="Username"
                             type="text"
-                            placeholder="type username"
+                            placeholder="Type username"
                             value={username}
                             onChange={(e) => setUsername(e.target.value)}
                             disabled={isLoading}
@@ -98,9 +98,9 @@ const Register = () => {
 
                     <div className={styles.inputGroup}>
                         <Input
-                            label="email"
+                            label="Email"
                             type="email"
-                            placeholder="type email"
+                            placeholder="Eype email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             disabled={isLoading}
@@ -110,9 +110,9 @@ const Register = () => {
 
                     <div className={styles.inputGroup}>
                         <Input
-                            label="password"
+                            label="Password"
                             type="password"
-                            placeholder="type password"
+                            placeholder="Type password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             disabled={isLoading}
@@ -122,9 +122,9 @@ const Register = () => {
 
                     <div className={styles.inputGroup}>
                         <Input
-                            label="confirm password"
+                            label="Confirm password"
                             type="password"
-                            placeholder="confirm password"
+                            placeholder="Confirm password"
                             value={confirmPassword}
                             onChange={(e) => setConfirmPassword(e.target.value)}
                             disabled={isLoading}
@@ -142,9 +142,9 @@ const Register = () => {
                     </div>
 
                     <p className={styles.footerText}>
-                        already have an account?{' '}
+                        Already have an account?{' '}
                         <Link to="/login" className={styles.link}>
-                            login
+                            Login
                         </Link>
                     </p>
 

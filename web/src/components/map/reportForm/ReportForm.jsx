@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Button } from '../../common/button/Button';
 import { Spinner } from '../../common/spinner/Spinner';
 import { Select } from '../../common/select/Select';
@@ -10,6 +10,23 @@ const ReportForm = ({ location, onClose, onSuccess }) => {
     const [description, setDescription] = useState('');
     const [errors, setErrors] = useState({});
     const [isLoading, setIsLoading] = useState(false);
+    const textareaRef = useRef(null);
+
+    useEffect(() => {
+        if (textareaRef.current) {
+            textareaRef.current.scrollTop = 0;
+            adjustDescHeight(textareaRef.current)
+        }
+    }, [])
+
+    const adjustDescHeight = (el) => {
+        if (!el) return
+        const MAX = 300
+        el.style.height = 'auto'
+        const newH = Math.min(el.scrollHeight, MAX)
+        el.style.height = newH + 'px'
+        el.style.overflowY = el.scrollHeight > MAX ? 'auto' : 'hidden'
+    }
 
 
     const handleSubmit = async (e) => {
@@ -84,10 +101,14 @@ const ReportForm = ({ location, onClose, onSuccess }) => {
                     <div className={styles.inputGroup}>
                         <label className={styles.label}>Description (optional)</label>
                         <textarea
+                            ref={textareaRef}
                             className={styles.textarea}
                             placeholder="Add more details about the report..."
                             value={description}
-                            onChange={(e) => setDescription(e.target.value)}
+                            onChange={(e) => {
+                                setDescription(e.target.value)
+                                adjustDescHeight(e.target)
+                            }}
                             disabled={isLoading}
                         />
                     </div>

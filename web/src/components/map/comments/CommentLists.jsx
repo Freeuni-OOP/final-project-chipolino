@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react'
+import {useEffect, useState, useRef} from 'react'
 import {getComments, updateComment, deleteComment} from '../../../api/commentApi.js'
 import styles from './CommentLists.module.css'
 import {Card} from "../../common/card/Card.jsx"
@@ -29,6 +29,8 @@ export const CommentLists = ({reportId, currentUser}) => {
     const [editingId, setEditingId] = useState(null)
     const [editContent, setEditContent] = useState("")
 
+    const commentsListRef = useRef(null)
+
     useEffect(() => {
         if(!reportId){
             return
@@ -54,6 +56,25 @@ export const CommentLists = ({reportId, currentUser}) => {
     const startEdit = (comment) => {
         setEditingId(comment.id)
         setEditContent(comment.content)
+        // after enabling edit mode, ensure the comment element is visible inside the scroll container
+        setTimeout(() => {
+            try {
+                const el = document.getElementById(`comment-${comment.id}`)
+                const container = commentsListRef.current
+                if (el && container) {
+                    // attempt to center the edited comment in the visible area so edit box fits
+                    const elTop = el.offsetTop
+                    const containerHeight = container.clientHeight
+                    // calculate a scrollTop so the element appears with some top padding
+                    const desired = Math.max(0, elTop - Math.floor(containerHeight / 4))
+                    container.scrollTo({ top: desired, behavior: 'smooth' })
+                    // also ensure the element is in view as a fallback
+                    el.scrollIntoView({ block: 'nearest' })
+                }
+            } catch (e) {
+                // ignore
+            }
+        }, 0)
     }
 
     const handleUpdate = async (commentId) => {
@@ -70,6 +91,12 @@ export const CommentLists = ({reportId, currentUser}) => {
 
     const handleCommentAdded = (newComment) => {
         setComments((prevComments) => [...prevComments, newComment]);
+        // Scroll to top of comments list to show the new comment
+        setTimeout(() => {
+            if (commentsListRef.current) {
+                commentsListRef.current.scrollTop = 0;
+            }
+        }, 0);
     };
 
     const handleDelete = async (commentId) => {
@@ -104,7 +131,7 @@ export const CommentLists = ({reportId, currentUser}) => {
                 Comments ({comments.length})
             </h2>
             {comments.length !== 0 ?
-                <div className={styles.commentsList}>
+                <div className={styles.commentsList} ref={commentsListRef}>
                     {comments.map((comment) => {
                         const isAdmin = currentUser?.role === 'ADMIN'
                         const isAuthor = currentUser?.username === comment.authorUsername
@@ -112,7 +139,7 @@ export const CommentLists = ({reportId, currentUser}) => {
                         const isEditing = editingId === comment.id
 
                         return (
-                            <Card className={styles.commentCard}
+                            <Card id={`comment-${comment.id}`} className={styles.commentCard}
                               key={comment.id}>
                                 <div className={styles.commentHeader}>
                                     <span className={styles.commentAuthor}>
@@ -131,7 +158,7 @@ export const CommentLists = ({reportId, currentUser}) => {
                                         </Button> : null
                                     }
                                     {isAuthor && !isEditing ?
-                                        <Button onClick={(e) => {
+                                        <Button className={styles.iconBtn} onClick={(e) => {
                                             e.stopPropagation()
                                             startEdit(comment)
                                         }}>

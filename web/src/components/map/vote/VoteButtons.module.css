@@ -1,51 +1,64 @@
 .voteContainer {
     display: flex;
-    justify-content: space-around;
+    justify-content: center;
     gap: 12px;
     width: 100%;
 }
 
 .voteBtn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    flex: 1;
-    padding: 6px 12px;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    background-color: #fff;
-    cursor: pointer;
-    font-weight: 600;
-    font-size: 13px;
-    transition: all 0.2s ease;
-    outline: none;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 6px !important;
+    flex: 1 !important;
+    padding: 8px 14px !important;
+    border: 1px solid rgba(148, 163, 184, 0.2) !important;
+    border-radius: 10px !important;
+    background: rgba(30, 41, 59, 0.5) !important;
+    cursor: pointer !important;
+    font-weight: 600 !important;
+    font-size: 13px !important;
+    transition: all 0.25s ease !important;
+    outline: none !important;
+    box-shadow: none !important;
 }
 
-.upvote:hover {
-    background-color: #e8f5e9;
-    border-color: #a5d6a7;
-    color: #2e7d32;
+.upvote {
+    color: #94a3b8 !important;
 }
 
-.downvote:hover {
-    background-color: #ffebee;
-    border-color: #ef9a9a;
-    color: #c62828;
+.upvote:hover:not(:disabled) {
+    background: rgba(34, 197, 94, 0.15) !important;
+    border-color: rgba(34, 197, 94, 0.3) !important;
+    color: #4ade80 !important;
+}
+
+.downvote {
+    color: #94a3b8 !important;
+}
+
+.downvote:hover:not(:disabled) {
+    background: rgba(239, 68, 68, 0.15) !important;
+    border-color: rgba(239, 68, 68, 0.3) !important;
+    color: #f87171 !important;
 }
 
 .activeUpvote {
-    background-color: #2e7d32 !important;
-    border-color: #2e7d32 !important;
-    color: #fff !important;
-    box-shadow: 0 2px 6px rgba(46, 125, 50, 0.3);
+    background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%) !important;
+    border-color: rgba(34, 197, 94, 0.5) !important;
+    color: #ffffff !important;
+    box-shadow:
+            0 4px 12px rgba(34, 197, 94, 0.3),
+            0 0 16px rgba(34, 197, 94, 0.15) !important;
 }
 
 .activeDownvote {
-    background-color: #c62828 !important;
-    border-color: #c62828 !important;
-    color: #fff !important;
-    box-shadow: 0 2px 6px rgba(198, 40, 40, 0.3);
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
+    border-color: rgba(239, 68, 68, 0.5) !important;
+    color: #ffffff !important;
+    box-shadow:
+            0 4px 12px rgba(239, 68, 68, 0.3),
+            0 0 16px rgba(239, 68, 68, 0.15) !important;
 }
 
 .count {
@@ -60,10 +73,10 @@
     transition: transform 0.2s ease;
 }
 
-.upvote:hover .icon {
-    transform: translateY(-1px);
+.upvote:hover:not(:disabled) .icon {
+    transform: translateY(-2px);
 }
 
-.downvote:hover .icon {
-    transform: translateY(1px);
+.downvote:hover:not(:disabled) .icon {
+    transform: translateY(2px);
 }

@@ -2,69 +2,76 @@
     display: flex;
     flex-direction: column;
     gap: 14px;
-    min-width: 250px;
-    max-width: 280px;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-    color: #1e293b;
-    padding: 4px 2px;
+    min-width: 260px;
+    max-width: 300px;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    color: #f8fafc;
+    padding: 4px;
 }
 
 .header {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-start;
     gap: 8px;
     flex-wrap: wrap;
-    border-bottom: 1px solid #e2e8f0;
-    padding-bottom: 10px;
+    /* reduce space used by header */
+    border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+    padding-bottom: 8px;
 }
 
 .reportId {
     font-size: 11px;
     font-weight: 700;
-    color: #94a3b8;
-    background-color: #f1f5f9;
-    padding: 2px 6px;
-    border-radius: 4px;
+    color: #64748b;
+    background: rgba(51, 65, 85, 0.6);
+    padding: 3px 8px;
+    border-radius: 6px;
     letter-spacing: 0.5px;
+    /* keep the id next to status badge instead of pushing it to the far right */
+    margin-left: 6px;
 }
 
 .badge {
-    padding: 4px 8px;
-    border-radius: 6px;
-    font-size: 11px;
-    font-weight: 600;
+    padding: 5px 10px;
+    border-radius: 8px;
+    font-size: 10px;
+    font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
 
-.pothole        { background-color: #fef2f2; color: #991b1b; border: 1px solid #fee2e2; }
-.accident       { background-color: #fff5f1; color: #c2410c; border: 1px solid #ffedd5; }
-.heavy_traffic  { background-color: #fef9c3; color: #854d0e; border: 1px solid #fef08a; }
-.road_closure   { background-color: #f4f4f5; color: #27272a; border: 1px solid #e4e4e7; }
-.speed_camera   { background-color: #f0fdf4; color: #166534; border: 1px solid #dcfce7; }
-.police         { background-color: #eff6ff; color: #1e40af; border: 1px solid #dbeafe; }
-.custom         { background-color: #faf5ff; color: #6b21a8; border: 1px solid #f3e8ff; }
+/* Type badges */
+.pothole        { background: rgba(239, 68, 68, 0.2); color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.3); }
+.accident       { background: rgba(249, 115, 22, 0.2); color: #fdba74; border: 1px solid rgba(249, 115, 22, 0.3); }
+.heavy_traffic  { background: rgba(234, 179, 8, 0.2); color: #fde047; border: 1px solid rgba(234, 179, 8, 0.3); }
+.road_closure   { background: rgba(148, 163, 184, 0.2); color: #cbd5e1; border: 1px solid rgba(148, 163, 184, 0.3); }
+.speed_camera   { background: rgba(34, 197, 94, 0.2); color: #86efac; border: 1px solid rgba(34, 197, 94, 0.3); }
+.police         { background: rgba(59, 130, 246, 0.2); color: #93c5fd; border: 1px solid rgba(59, 130, 246, 0.3); }
+.custom         { background: rgba(168, 85, 247, 0.2); color: #d8b4fe; border: 1px solid rgba(168, 85, 247, 0.3); }
 
+/* Status badges */
 .temporary {
-    background-color: #fffbeb;
-    border: 1px dashed #d97706;
-    color: #b45309;
+    background: rgba(251, 191, 36, 0.15);
+    border: 1px dashed rgba(251, 191, 36, 0.5);
+    color: #fcd34d;
 }
+
 .not_verified_permanent {
-    background-color: #f8fafc;
-    border: 1px dashed #64748b;
-    color: #475569;
+    background: rgba(100, 116, 139, 0.2);
+    border: 1px dashed rgba(100, 116, 139, 0.4);
+    color: #94a3b8;
 }
+
 .permanent {
-    background-color: #f0fdf4;
-    color: #166534;
-    border: 1px solid #bbf7d0;
+    background: rgba(34, 197, 94, 0.15);
+    color: #86efac;
+    border: 1px solid rgba(34, 197, 94, 0.3);
 }
 
 .reportAuthor {
     font-size: 12px;
-    color: #64748b;
+    color: #94a3b8;
     display: flex;
     align-items: center;
     flex-wrap: wrap;
@@ -72,76 +79,79 @@
 }
 
 .authorLink {
-    color: #2563eb;
+    color: #60a5fa;
     text-decoration: none;
     font-weight: 600;
-    transition: all 0.2s ease-in-out;
+    transition: all 0.2s ease;
 }
 
 .authorLink:hover {
-    color: #1d4ed8;
+    color: #93c5fd;
     text-decoration: underline;
 }
 
 .myTarget {
-    color: #10b981;
+    color: #4ade80;
     font-weight: 600;
     font-size: 11px;
 }
 
 .description {
-    font-size: 13.5px;
-    color: #334155;
+    font-size: 13px;
+    color: #cbd5e1;
     margin: 0;
     line-height: 1.5;
-    background-color: #f8fafc;
+    background: rgba(30, 41, 59, 0.6);
     padding: 8px 12px;
-    border-radius: 6px;
-    border-left: 3px solid #cbd5e1;
+    border-radius: 10px;
+    border-left: 3px solid #3b82f6;
 }
 
 .interactiveZone {
-    background-color: #ffffff;
-    border-radius: 8px;
-    padding: 4px 0;
-}
-
-.voteCounters {
-    display: flex;
-    justify-content: space-around;
-    font-weight: 700;
-    font-size: 14px;
-}
-
-.upvoteText {
-    color: #166534;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-}
-
-.downvoteText {
-    color: #991b1b;
-    display: flex;
-    align-items: center;
-    gap: 4px;
+    background: rgba(30, 41, 59, 0.4);
+    border-radius: 10px;
+    padding: 6px;
 }
 
 .date {
     font-size: 11px;
-    color: #94a3b8;
+    color: #64748b;
     text-align: right;
-    margin-top: 2px;
-    border-top: 1px dashed #e2e8f0;
-    padding-top: 6px;
+    margin-top: 4px;
+    border-top: 1px dashed rgba(148, 163, 184, 0.15);
+    padding-top: 10px;
 }
 
+/* Override Leaflet popup styles for dark theme */
 :global(.leaflet-popup-content) {
-    margin: 12px 14px !important;
+    margin: 14px 16px !important;
     line-height: inherit !important;
 }
 
 :global(.leaflet-popup-content-wrapper) {
-    border-radius: 12px !important;
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1) !important;
+    background: rgba(15, 23, 42, 0.95) !important;
+    backdrop-filter: blur(16px) !important;
+    -webkit-backdrop-filter: blur(16px) !important;
+    border-radius: 16px !important;
+    border: 1px solid rgba(148, 163, 184, 0.15) !important;
+    box-shadow:
+            0 16px 48px rgba(0, 0, 0, 0.5),
+            0 0 0 1px rgba(255, 255, 255, 0.05) inset !important;
+    color: #f8fafc !important;
+}
+
+:global(.leaflet-popup-tip) {
+    background: rgba(15, 23, 42, 0.95) !important;
+    border: 1px solid rgba(148, 163, 184, 0.15) !important;
+    box-shadow: none !important;
+}
+
+:global(.leaflet-popup-close-button) {
+    color: #94a3b8 !important;
+    font-size: 20px !important;
+    padding: 8px !important;
+}
+
+:global(.leaflet-popup-close-button:hover) {
+    color: #f8fafc !important;
 }
