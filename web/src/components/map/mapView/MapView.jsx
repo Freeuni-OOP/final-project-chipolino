@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, Polyline } from 'react-leaflet';
 import styles from './MapView.module.css';
+import routePopupStyles from './RoutePopup.module.css';
 import {MapClickHandler} from "../MapClickHandler.jsx";
 import ReportForm from '../reportForm/ReportForm';
 import RecenterMap from '../RecenterMap';
@@ -105,16 +106,15 @@ const MapView = ({
 
                 {currentMode === 'route' && routeStart && (
                     <Marker position={[routeStart.lat, routeStart.lng]}>
-                        <Popup>
-                            <div style={{ padding: '4px', textAlign: 'center' }}>
-                                <strong>📍 Origin (Start)</strong>
-                                <br />
+                        <Popup minWidth={160}>
+                            <div className={routePopupStyles.popupContent}>
+                                <strong className={routePopupStyles.popupTitle}>📍 Origin (Start)</strong>
                                 <button
+                                    className={routePopupStyles.popupButton}
                                     onClick={(e) => {
                                         e.stopPropagation();
                                         setRouteStart(null);
                                     }}
-                                    style={{ marginTop: '5px', padding: '2px 6px', fontSize: '11px', cursor: 'pointer' }}
                                 >
                                     Clear Start
                                 </button>
@@ -124,16 +124,15 @@ const MapView = ({
                 )}
                 {currentMode === 'route' && routeEnd && (
                     <Marker position={[routeEnd.lat, routeEnd.lng]}>
-                        <Popup>
-                            <div style={{ padding: '4px', textAlign: 'center' }}>
-                                <strong>🏁 Destination (End)</strong>
-                                <br />
+                        <Popup minWidth={160}>
+                            <div className={routePopupStyles.popupContent}>
+                                <strong className={routePopupStyles.popupTitle}>🏁 Destination (End)</strong>
                                 <button
+                                    className={routePopupStyles.popupButton}
                                     onClick={(e) => {
                                         e.stopPropagation();
                                         setRouteEnd(null);
                                     }}
-                                    style={{ marginTop: '5px', padding: '2px 6px', fontSize: '11px', cursor: 'pointer' }}
                                 >
                                     Clear Destination
                                 </button>
@@ -147,7 +146,7 @@ const MapView = ({
                 {userLocation && userLocation.lat !== 0 && (
                     <Marker position={[userLocation.lat, userLocation.lng]}>
                         <Popup>
-                            <div style={{ textAlign: 'center', fontWeight: 'bold', color: '#1e293b' }}>
+                            <div style={{ textAlign: 'center', fontWeight: 'bold', color: '#848485' }}>
                                 Your Position
                             </div>
                         </Popup>

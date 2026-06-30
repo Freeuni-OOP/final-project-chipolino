@@ -1,4 +1,4 @@
-import {useState} from "react";
+import {useState, useRef, useEffect} from "react";
 import {addComment} from "../../../api/commentApi.js"
 import {Button} from "../../common/button/Button.jsx"
 import styles from './CommentForm.module.css'
@@ -22,6 +22,14 @@ export const CommentForm = ({reportId, onCommentAdded}) => {
     const [content, setContent] = useState('')
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState(null)
+    const textareaRef = useRef(null)
+
+    useEffect(() => {
+        if (textareaRef.current) {
+            textareaRef.current.scrollTop = 0;
+            adjustHeight(textareaRef.current)
+        }
+    }, [])
 
     const submit = async (e) => {
         e.preventDefault()
@@ -36,6 +44,7 @@ export const CommentForm = ({reportId, onCommentAdded}) => {
         try {
             const comment = await addComment(reportId, trim)
             setContent('')
+            if (textareaRef.current) textareaRef.current.scrollTop = 0;
             if (onCommentAdded) {
                 onCommentAdded(comment)
             }
@@ -47,15 +56,27 @@ export const CommentForm = ({reportId, onCommentAdded}) => {
         }
     }
 
+    const adjustHeight = (el) => {
+        if (!el) return
+        const MAX = 220 // px
+        el.style.height = 'auto'
+        const newH = Math.min(el.scrollHeight, MAX)
+        el.style.height = newH + 'px'
+        el.style.overflowY = el.scrollHeight > MAX ? 'auto' : 'hidden'
+    }
+
     return (
         <form className={styles.formContainer} onSubmit={submit}>
             <div className={styles.inputWrapper}>
                 <textarea
+                    ref={textareaRef}
                     className={styles.textarea}
                     placeholder="Write a comment..."
                     value={content}
-                    onChange={(e) =>
-                        setContent(e.target.value)}
+                    onChange={(e) => {
+                        setContent(e.target.value)
+                        adjustHeight(e.target)
+                    }}
                     maxLength={500}
                     disabled={loading}
                     required

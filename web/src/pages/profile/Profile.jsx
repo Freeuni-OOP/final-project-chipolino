@@ -99,11 +99,6 @@ export const Profile = ({isMe = false}) => {
                 <h1 className={styles.title}>
                     {isMe ? 'My Profile' : 'User Profile'}
                 </h1>
-                <Button type="button"
-                        className={styles.backBtn}
-                        onClick={() => navigate(-1)}>
-                    Back
-                </Button>
             </div>
 
             <Card className={styles.profileCard}>
@@ -156,6 +151,9 @@ export const Profile = ({isMe = false}) => {
 
                 {isMe ?
                     <div className={styles.accountActions}>
+                        <Button className={styles.backBtn} onClick={() => navigate(-1)}>
+                            Back
+                        </Button>
                         <Button className={styles.editBtn} onClick={() => navigate('/settings')}>
                             ⚙️ Edit Settings
                         </Button>

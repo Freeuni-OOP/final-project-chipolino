@@ -3,7 +3,7 @@ services:
     image: mysql:8.0
     container_name: roadreport-db
     environment:
-      MYSQL_ROOT_PASSWORD: chipolino123
+      MYSQL_ROOT_PASSWORD: chipolino123 #
       MYSQL_DATABASE: roadreport
     ports:
       - "3307:3306"
@@ -21,8 +21,8 @@ services:
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://roadreport-db:3306/roadreport?useSSL=false&allowPublicKeyRetrieval=true
       DB_USERNAME: root
-      DB_PASSWORD: chipolino123
-      JWT_SECRET_KEY: Um9hZFJlcG9ydFNlY3JldEtleTIwMjZDaGlwb2xpbm9zVGVhbSE=
+      DB_PASSWORD: chipolino123 #
+      JWT_SECRET_KEY: 8nm6pZFHy45fD7noVw3E9gs5j6jbosgmUL/tvrwW+skempnYHb46AcwkUdztc0hvBV7Ae6+5VFVTSQocU9AJgg==  #
       JWT_EXPIRATION: 86400000
     ports:
       - "8082:8080"
