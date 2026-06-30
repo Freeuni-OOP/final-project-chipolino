@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDateTime;
 
@@ -14,7 +16,6 @@ import java.time.LocalDateTime;
 @Table(name = "votes", uniqueConstraints = {
     @UniqueConstraint(columnNames = {"user_id", "report_id"})}
 )
-
 public class Vote {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,6 +27,7 @@ public class Vote {
 
     @ManyToOne
     @JoinColumn(name = "report_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Report report;
 
     @Enumerated(EnumType.STRING)

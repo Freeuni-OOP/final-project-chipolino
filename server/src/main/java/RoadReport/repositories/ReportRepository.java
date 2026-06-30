@@ -64,4 +64,5 @@ public interface ReportRepository extends JpaRepository<Report, Long> {
     @Modifying
     @Query("DELETE FROM Report r WHERE r.expireDate <= CURRENT_TIMESTAMP OR r.status = RoadReport.enums.ReportStatus.REMOVED")
     void deleteExpiredReports();
+
 }

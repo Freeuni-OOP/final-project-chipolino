@@ -146,7 +146,7 @@ const MapView = ({
                 {userLocation && userLocation.lat !== 0 && (
                     <Marker position={[userLocation.lat, userLocation.lng]}>
                         <Popup>
-                            <div style={{ textAlign: 'center', fontWeight: 'bold', color: '#1e293b' }}>
+                            <div style={{ textAlign: 'center', fontWeight: 'bold', color: '#848485' }}>
                                 Your Position
                             </div>
                         </Popup>
