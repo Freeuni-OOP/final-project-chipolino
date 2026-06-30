@@ -20,13 +20,13 @@ public class GlobalExceptionHandler {
     /**
      * Handles database concurrency conflicts caused by optimistic locking failures.
      * @param ex the caught {@link ObjectOptimisticLockingFailureException}
-     * @return a {@code 409 Conflict} response containing the concurrency error message
+     * @return a {@code 409 Conflict} response containing the concurrency message message
      */
     @ExceptionHandler(ObjectOptimisticLockingFailureException.class)
     public ResponseEntity<Map<String, String>> handleOptimisticLock(Exception ex){
         Map<String, String> response = new HashMap<>();
 
-        response.put("error", ex.getMessage());
+        response.put("message", ex.getMessage());
         response.put("status", String.valueOf(HttpStatus.CONFLICT.value()));
 
         return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
@@ -35,13 +35,13 @@ public class GlobalExceptionHandler {
     /**
      * Handles situations where a requested user entity could not be found in the database.
      * @param ex the caught {@link UserNotFoundException}
-     * @return a {@code 404 Not Found} response with the specific error message
+     * @return a {@code 404 Not Found} response with the specific message message
      */
     @ExceptionHandler(UserNotFoundException.class)
     public ResponseEntity<Map<String,String>> handleUserNotFound(UserNotFoundException ex){
         Map<String, String> response = new HashMap<>();
 
-        response.put("error", ex.getMessage());
+        response.put("message", ex.getMessage());
         response.put("status", String.valueOf((HttpStatus.NOT_FOUND).value()));
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
@@ -51,14 +51,14 @@ public class GlobalExceptionHandler {
      * Handles registration or update conflicts where the identity attributes
      * are already taken.
      * @param ex the caught {@link UserAlreadyExistsException}
-     * @return a {@code 409 Conflict} response with the specific error message
+     * @return a {@code 409 Conflict} response with the specific message message
      */
     @ExceptionHandler(UserAlreadyExistsException.class)
     public ResponseEntity<Map<String,String>> handleUserAlreadyExists
             (UserAlreadyExistsException ex){
         Map<String, String> response = new HashMap<>();
 
-        response.put("error", ex.getMessage());
+        response.put("message", ex.getMessage());
         response.put("status", String.valueOf((HttpStatus.CONFLICT).value()));
 
         return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
@@ -74,7 +74,7 @@ public class GlobalExceptionHandler {
             (BadRequestException ex){
         Map<String, String> response = new HashMap<>();
 
-        response.put("error", ex.getMessage());
+        response.put("message", ex.getMessage());
         response.put("status", String.valueOf((HttpStatus.BAD_REQUEST).value()));
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
@@ -90,7 +90,7 @@ public class GlobalExceptionHandler {
             (ReportNotFoundException ex){
         Map<String, String> response = new HashMap<>();
 
-        response.put("error", ex.getMessage());
+        response.put("message", ex.getMessage());
         response.put("status", String.valueOf((HttpStatus.NOT_FOUND).value()));
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
@@ -106,7 +106,7 @@ public class GlobalExceptionHandler {
             (UserBannedException ex){
         Map<String, String> response = new HashMap<>();
 
-        response.put("error", ex.getMessage());
+        response.put("message", ex.getMessage());
         response.put("status", String.valueOf((HttpStatus.FORBIDDEN).value()));
 
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
@@ -122,7 +122,7 @@ public class GlobalExceptionHandler {
             (CommentNotFoundException ex) {
         Map<String, String> response = new HashMap<>();
 
-        response.put("error", ex.getMessage());
+        response.put("message", ex.getMessage());
         response.put("status", String.valueOf(HttpStatus.NOT_FOUND.value()));
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
@@ -138,7 +138,7 @@ public class GlobalExceptionHandler {
             (ActionForbiddenException ex) {
         Map<String, String> response = new HashMap<>();
 
-        response.put("error", ex.getMessage());
+        response.put("message", ex.getMessage());
         response.put("status", String.valueOf(HttpStatus.FORBIDDEN.value()));
 
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
@@ -153,7 +153,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Map<String, String>> handleBadCredentials(BadCredentialsException ex) {
         Map<String, String> response = new HashMap<>();
 
-        response.put("error", ex.getMessage());
+        response.put("message", ex.getMessage());
         response.put("status", String.valueOf(HttpStatus.UNAUTHORIZED.value()));
 
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
@@ -168,7 +168,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Map<String, String>> handleUsernameNotFound(UsernameNotFoundException ex) {
         Map<String, String> response = new HashMap<>();
 
-        response.put("error", ex.getMessage());
+        response.put("message", ex.getMessage());
         response.put("status", String.valueOf(HttpStatus.NOT_FOUND.value()));
         
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
@@ -178,14 +178,14 @@ public class GlobalExceptionHandler {
      * Handles security violations where an administrative action is attempted against
      * another protected administrator account (The "Admin Shield").
      * * @param ex The caught {@link AdminOperationException} containing the violation details.
-     * @return A {@code 403 Forbidden} response containing a specialized error payload
+     * @return A {@code 403 Forbidden} response containing a specialized message payload
      * with the type "ADMIN_SHIELD_VIOLATION".
      */
     @ExceptionHandler(AdminOperationException.class)
     public ResponseEntity<Map<String, String>> handleAdminShieldViolation(AdminOperationException ex) {
         Map<String, String> response = new HashMap<>();
 
-        response.put("error", ex.getMessage());
+        response.put("message", ex.getMessage());
         response.put("type", "ADMIN_SHIELD_VIOLATION");
         response.put("status", String.valueOf(HttpStatus.FORBIDDEN.value()));
 

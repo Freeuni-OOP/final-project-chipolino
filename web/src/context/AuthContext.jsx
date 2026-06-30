@@ -37,9 +37,14 @@ export const AuthProvider = ({children}) => {
     }
 
     const handleRegister =  async (data) => {
-        await register(data)
-        const res = await getCurrentUser()
-        setUser(res)
+        try {
+            await register(data)
+            const res = await getCurrentUser()
+            setUser(res)
+        }
+        catch(err){
+            throw err;
+        }
     }
 
     return (
