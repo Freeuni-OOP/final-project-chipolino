@@ -42,7 +42,7 @@ public class SystemDataInitializer implements CommandLineRunner {
     }
 
     private void initAdminUser() {
-        if (userRepository.findUserByUsername("admin").isEmpty()) {
+        if (userRepository.findUserByUsername("admin").isEmpty() && userRepository.findUserByEmail("admin@roadreport.ge").isEmpty()) {
             User admin = new User();
             admin.setUsername("admin");
             admin.setEmail("admin@roadreport.ge");

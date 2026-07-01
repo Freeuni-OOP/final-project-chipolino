@@ -1,12 +1,12 @@
 {
   "rewrites": [
     {
-      "source": "/api/(.*)",
-      "destination": "https://roadreport-backend.onrender.com/api/$1"
+      "source": "/api/:path*",
+      "destination": "https://final-project-chipolino.onrender.com/api/:path*"
     },
     {
-      "source": "/(.*)",
-      "destination": "/index.html"
+      "source": "/((?!api/).*)",
+      "destination": "/web/$1"
     }
   ]
 }
