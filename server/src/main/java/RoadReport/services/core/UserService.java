@@ -57,8 +57,11 @@ public class UserService {
     public void registerUser(User user) {
         String name = user.getUsername();
         String email = user.getEmail();
-        if (userRepository.findUserByEmail(email).isPresent() || userRepository.findUserByUsername(name).isPresent()) {
-            throw new UserAlreadyExistsException("This name or email is taken");
+        if (userRepository.findUserByEmail(email).isPresent()) {
+            throw new UserAlreadyExistsException("This email is taken");
+        }
+        if(userRepository.findUserByUsername(name).isPresent()){
+            throw new UserAlreadyExistsException("This name is taken");
         }
         String password = user.getPassword();
         String hashedPassword = passwordEncoder.encode(password);
