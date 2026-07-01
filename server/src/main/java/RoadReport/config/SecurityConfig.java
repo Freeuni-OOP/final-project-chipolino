@@ -56,7 +56,7 @@ public class SecurityConfig {
         configuration.setAllowedOrigins(List.of(
                 "https://localhost:5173",
                 "https://localhost",
-                "https://roadreport.vercel.app"
+                "https://*.vercel.app"
                 ));
         configuration.setAllowedMethods(List.of("GET","POST","PUT","DELETE","PATCH", "OPTIONS"));
         configuration.setAllowCredentials(true);
