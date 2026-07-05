@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, Polyline } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, Polyline,useMapEvents, ZoomControl } from 'react-leaflet';
 import styles from './MapView.module.css';
 import routePopupStyles from './RoutePopup.module.css';
 import {MapClickHandler} from "../MapClickHandler.jsx";
@@ -13,6 +13,15 @@ const worldBounds = [
     [-90, -180],
     [90, 180]
 ];
+
+const MapEventsHandler = ({ setFollowUser }) => {
+    useMapEvents({
+        dragstart: () => {
+            setFollowUser(false);
+        },
+    });
+    return null;
+};
 
 const MapView = ({
                      currentMode,
@@ -31,7 +40,9 @@ const MapView = ({
                      routeCoords,
                      setRouteStart,
                      setRouteEnd,
-                     setRouteCoords
+                     setRouteCoords,
+                     followUser,
+                     setFollowUser
                  }) => {
 
 
@@ -73,6 +84,13 @@ const MapView = ({
                     Report Mode
                 </button>
 
+                <button
+                    className={styles.modeButton}
+                    onClick={() => setFollowUser(!followUser)}
+                >
+                    {followUser ? "Auto-Follow: ON" : "Auto-Follow: OFF"}
+                </button>
+
                 {currentMode === 'route' && (
                     <RoutePanel
                         startPoint={routeStart}
@@ -93,11 +111,14 @@ const MapView = ({
             <MapContainer
                 center={userLocation && userLocation.lat !== 0 ? [userLocation.lat, userLocation.lng] : defaultCenter}
                 zoom={14}
+                zoomControl={false}
                 minZoom={2.5}
                 maxBounds={worldBounds}
                 maxBoundsViscosity={1.0}
                 className={styles.leafletContainer}
             >
+                <ZoomControl position="topright" />
+
                 <TileLayer
                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -150,7 +171,7 @@ const MapView = ({
                     </Marker>
                 )}
 
-                {userLocation && userLocation.lat !== 0 && <RecenterMap location={userLocation} />}
+                {followUser && userLocation && userLocation.lat !== 0 && <RecenterMap location={userLocation} />}
 
                 {userLocation && userLocation.lat !== 0 && (
                     <Marker position={[userLocation.lat, userLocation.lng]}>

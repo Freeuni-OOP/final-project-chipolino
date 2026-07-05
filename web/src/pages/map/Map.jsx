@@ -1,19 +1,20 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import MapView from '../../components/map/mapView/MapView.jsx';
+import { useGeolocation } from '../../hooks/useGeolocation.js';
 import styles from './Map.module.css';
 import {findNearbyReports, getMyReports} from "../../api/reportApi.js";
 
 const Map = ({ currentMode, setCurrentMode }) => {
-    const [userLocation, setUserLocation] = useState({ lat: 0, lng: 0 });
+    const {location: userLocation, loading: geoLoading } = useGeolocation();
     const [selectedCoords, setSelectedCoords] = useState(null);
     const [hazards, setHazards] = useState([]);
     const [activeAlerts] = useState([]);
     const [routeStart, setRouteStart] = useState(null);
     const [routeEnd, setRouteEnd] = useState(null);
     const [routeCoords, setRouteCoords] = useState([]);
-    const [geoLoading, setGeoLoading] = useState(true);
     const [apiLoading, setApiLoading] = useState(false);
+    const [followUser, setFollowUser] = useState(true);
 
     const defaultCenter = [41.7151, 44.8271];
 
@@ -44,39 +45,11 @@ const Map = ({ currentMode, setCurrentMode }) => {
         }
     }, [userLocation, viewMode]);
 
-    // 3. Track Browser Geolocation Coordinates
-    useEffect(() => {
-        if (!navigator.geolocation) {
-            console.error("Geolocation is not supported by your browser");
-            setGeoLoading(false);
-            return;
-        }
-
-        const success = (position) => {
-            setUserLocation({
-                lat: position.coords.latitude,
-                lng: position.coords.longitude
-            });
-            setGeoLoading(false);
-        };
-
-        const error = (err) => {
-            console.warn(`Geolocation error (${err.code}): ${err.message}`);
-            setGeoLoading(false);
-        };
-
-        navigator.geolocation.getCurrentPosition(success, error, {
-            enableHighAccuracy: true,
-            timeout: 1000000,
-            maximumAge: 0
-        });
-    }, []);
-
     useEffect(() => {
         loadNearbyHazards().catch(err => console.error("Initial load failed:", err));
     }, [loadNearbyHazards]);
 
-    // 4. Handle clicks on the map grid canvas context
+    // 3. Handle clicks on the map grid canvas context
     const handleMapClick = (e) => {
         if (currentMode === 'report') {
             setSelectedCoords({ lat: e.lat, lng: e.lng });
@@ -106,8 +79,6 @@ const Map = ({ currentMode, setCurrentMode }) => {
                 selectedCoords={selectedCoords}
                 setSelectedCoords={setSelectedCoords}
                 activeAlerts={activeAlerts}
-                geoLoading={geoLoading}
-                apiLoading={apiLoading}
                 handleMapClick={handleMapClick}
                 handleCancel={handleCancelClick}
                 loadNearbyHazards={loadNearbyHazards}
@@ -117,7 +88,8 @@ const Map = ({ currentMode, setCurrentMode }) => {
                 setRouteStart={setRouteStart}
                 setRouteEnd={setRouteEnd}
                 setRouteCoords={setRouteCoords}
-
+                followUser={followUser}
+                setFollowUser={setFollowUser}
             />
         </div>
     );
