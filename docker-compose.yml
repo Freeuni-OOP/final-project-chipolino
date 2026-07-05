@@ -36,6 +36,7 @@ services:
     container_name: roadreport-frontend
     ports:
       - "80:80"
+      - "443:443"
     depends_on:
       - backend
 
