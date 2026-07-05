@@ -36,22 +36,24 @@ public class SystemDataInitializer implements CommandLineRunner {
             ghostUser.setRoles(Role.USER);
 
             ghostUser.setBanned(true);
+            ghostUser.setEnabled(true);
 
             userRepository.save(ghostUser);
         }
     }
 
     private void initAdminUser() {
-        if (userRepository.findUserByUsername("admin").isEmpty() && userRepository.findUserByEmail("admin@roadreport.ge").isEmpty()) {
+        if (userRepository.findUserByUsername("road_admin").isEmpty() && userRepository.findUserByEmail("road_admin@roadreport.ge").isEmpty()) {
             User admin = new User();
-            admin.setUsername("admin");
-            admin.setEmail("admin@roadreport.ge");
+            admin.setUsername("road_admin");
+            admin.setEmail("road_admin@roadreport.ge");
 
-            admin.setPassword(passwordEncoder.encode("admin"));
+            admin.setPassword(passwordEncoder.encode("road_admin"));
 
             admin.setRoles(Role.ADMIN);
 
             admin.setBanned(false);
+            admin.setEnabled(true);
 
             userRepository.save(admin);
         }

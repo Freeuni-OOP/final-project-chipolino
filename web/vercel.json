@@ -5,7 +5,7 @@
       "destination": "https://final-project-chipolino.onrender.com/api/:path*"
     },
     {
-      "source": "/((?!api/).*)",
+      "source": "/:path*",
       "destination": "/index.html"
     }
   ]

@@ -8,6 +8,7 @@ import {Settings} from '../pages/settings/Settings';
 import {AdminPanel} from '../pages/admin/AdminPanel';
 import {NotFound} from '../pages/notfound/NotFound.jsx';
 import {ProtectedRoute} from "./ProtectedRoute.jsx";
+import {Verify} from "../pages/verify/Verify.jsx";
 
 /**
  * AppRoutes function sets up the main map for the app's pages.
@@ -36,6 +37,7 @@ const AppRoutes = ({ currentMode, setCurrentMode }) => {
                 </ProtectedRoute>
             } />
             <Route path="/users/:id" element={<Profile isMe={false} />} />
+            <Route path="/verify" element={<Verify />} />
             <Route path="*" element={<NotFound />} />
         </Routes>
     );

@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -192,6 +193,18 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
     }
 
+    /**
+     * Handles authentication attempts for disabled user accounts.
+     *
+     * @param ex The caught {@link DisabledException} thrown during authentication.
+     * @return A {@code 403 Forbidden} response containing an instruction message
+     * prompting the user to verify their email address.
+     */
+    @ExceptionHandler(DisabledException.class)
+    public ResponseEntity<String> handleDisabledException(DisabledException ex) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body("Please verify your email address before logging in.");
+    }
 
 
 }

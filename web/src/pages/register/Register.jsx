@@ -28,6 +28,7 @@ const Register = () => {
     const [confirmPassword, setConfirmPassword] = useState('');
     const [errors, setErrors] = useState({});
     const [isLoading, setIsLoading] = useState(false);
+    const [successMessage, setSuccessMessage] = useState('');
 
     const navigate = useNavigate();
     const { handleRegister, user, loading: authLoading } = useAuth();
@@ -58,8 +59,8 @@ const Register = () => {
         setIsLoading(true);
 
         try {
-            await handleRegister({ username, email, password });
-            navigate('/map', { replace: true });
+            const response = await handleRegister({ username, email, password });
+            setSuccessMessage(response);
         } catch (err) {
             const errorMessage = err.response?.data?.message || 'Registration failed. Please try again.';
             setErrors({ general: errorMessage });
@@ -70,6 +71,24 @@ const Register = () => {
 
     if (authLoading) {
         return <Spinner fullScreen />;
+    }
+
+    if (successMessage) {
+        return (
+            <div className={styles.container}>
+                <div className={styles.card}>
+                    <h2 className={styles.title}>Success!</h2>
+                    <div className={styles.successBox}>
+                        {successMessage}
+                    </div>
+                    <div className={styles.inputGroup}>
+                        <Link to="/login" className={styles.link}>
+                            <Button type="button">Go to Login</Button>
+                        </Link>
+                    </div>
+                </div>
+            </div>
+        );
     }
 
     return (
@@ -100,7 +119,7 @@ const Register = () => {
                         <Input
                             label="Email"
                             type="email"
-                            placeholder="Eype email"
+                            placeholder="Type email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             disabled={isLoading}

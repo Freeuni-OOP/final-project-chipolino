@@ -72,7 +72,6 @@ public class RoadUserDetails implements UserDetails {
         return true;
     }
 
-
     @Override
     public boolean isCredentialsNonExpired() {
         return true;
@@ -80,6 +79,6 @@ public class RoadUserDetails implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return user.isEnabled();
     }
 }

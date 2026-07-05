@@ -9,6 +9,11 @@ import RoutePanel from '../routePanel/RoutePanel';
 import { ReportMarker } from '../marker/ReportMarker.jsx';
 import {useAuth} from "../../../hooks/useAuth.js";
 
+const worldBounds = [
+    [-90, -180],
+    [90, 180]
+];
+
 const MapView = ({
                      currentMode,
                      setCurrentMode,
@@ -88,11 +93,15 @@ const MapView = ({
             <MapContainer
                 center={userLocation && userLocation.lat !== 0 ? [userLocation.lat, userLocation.lng] : defaultCenter}
                 zoom={14}
+                minZoom={2.5}
+                maxBounds={worldBounds}
+                maxBoundsViscosity={1.0}
                 className={styles.leafletContainer}
             >
                 <TileLayer
                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                    noWrap={true}
                 />
 
                 <MapClickHandler

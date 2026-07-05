@@ -7,10 +7,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
 @RestController
 @RequiredArgsConstructor
@@ -45,23 +44,13 @@ public class AuthController {
      * Takes the registration details, creates a new user entity,
      * and returns an initial JWT token so the user is logged in automatically.
      * @param request The DTO containing the new user's username, email, and password
-     * @return A ResponseEntity containing the JwtResponseDTO and HTTP 200 status.
+     * @return A ResponseEntity containing a success status message and HTTP 200 status.
      */
     @PostMapping("/register")
-    public ResponseEntity<Void> register(@RequestBody RegisterRequest request) {
-        String token = authService.register(request);
+    public ResponseEntity<String> register(@RequestBody RegisterRequest request) {
+        String message = authService.register(request);
 
-        ResponseCookie cookie = ResponseCookie.from("jwt", token)
-                .httpOnly(true)
-                .secure(true)
-                .path("/")
-                .maxAge(60 * 60 * 24)
-                .sameSite("None")
-                .build();
-
-        return ResponseEntity.ok()
-                .header(HttpHeaders.SET_COOKIE, cookie.toString())
-                .build();
+        return ResponseEntity.ok(message);
     }
 
     /**
@@ -83,5 +72,23 @@ public class AuthController {
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, cookie.toString())
                 .build();
+    }
+
+    /**
+     * Consumes the verification token sent from the client-side email link to activate the account.
+     *
+     * @param token The unique token parameter extracted from the verification URL.
+     * @return A ResponseEntity indicating whether the activation succeeded or failed.
+     */
+    @GetMapping("/verify")
+    public ResponseEntity<String> verifyAccount(@RequestParam("token") String token) {
+        boolean isVerified = authService.verifyToken(token);
+
+        if (isVerified) {
+            return ResponseEntity.ok("Account activated successfully! You can now log in.");
+        } else {
+            return ResponseEntity.status(BAD_REQUEST)
+                    .body("Invalid or expired verification token.");
+        }
     }
 }
