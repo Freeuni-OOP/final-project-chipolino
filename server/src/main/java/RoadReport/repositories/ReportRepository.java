@@ -38,18 +38,26 @@ public interface ReportRepository extends JpaRepository<Report, Long> {
      * @return A list of {@link Report} entities found within the specified circular area.
      */
     @Query(value = "SELECT * FROM reports AS r " +
-            "WHERE (6371 * acos(cos(radians(:lat)) * cos(radians(r.latitude)) *" +
+            "WHERE r.latitude BETWEEN (:lat - 0.0006) AND (:lat + 0.0006) " +
+            "AND r.longitude BETWEEN (:lon - 0.0008) AND (:lon + 0.0008) " +
+            "AND (6371 * acos(cos(radians(:lat)) * cos(radians(r.latitude)) *" +
             " cos(radians(r.longitude) - radians(:lon)) + sin(radians(:lat)) *" +
             " sin(radians(r.latitude)))) < :radius",
             nativeQuery = true
     )
+
     List<Report> findNearbyReports(@Param("lat") Double user_latitude,
                                    @Param("lon") Double user_longitude,
                                    @Param("radius") Double user_radius);
 
+    /**
+     Same as findByStatusNotAndExpireDateAfter but for specific type of report.
+     */
     @Query(value = "SELECT * FROM reports AS r " +
-            "WHERE :type = r.type AND " +
-            " (6371 * acos(cos(radians(:lat)) * cos(radians(r.latitude)) *" +
+            "WHERE :type = r.type " +
+            "AND r.latitude BETWEEN (:lat - 0.0006) AND (:lat + 0.0006) " +
+            "AND r.longitude BETWEEN (:lon - 0.0008) AND (:lon + 0.0008) " +
+            "AND (6371 * acos(cos(radians(:lat)) * cos(radians(r.latitude)) *" +
             " cos(radians(r.longitude) - radians(:lon)) + sin(radians(:lat)) *" +
             " sin(radians(r.latitude)))) < :radius",
             nativeQuery = true
@@ -65,4 +73,5 @@ public interface ReportRepository extends JpaRepository<Report, Long> {
     @Query("DELETE FROM Report r WHERE r.expireDate <= CURRENT_TIMESTAMP OR r.status = RoadReport.enums.ReportStatus.REMOVED")
     void deleteExpiredReports();
 
+    List<Report> findByExpireDateBeforeOrStatus(LocalDateTime now, ReportStatus reportStatus);
 }

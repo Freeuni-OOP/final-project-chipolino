@@ -36,6 +36,7 @@ public class SystemDataInitializer implements CommandLineRunner {
             ghostUser.setRoles(Role.USER);
 
             ghostUser.setBanned(true);
+            ghostUser.setEnabled(true);
 
             userRepository.save(ghostUser);
         }
@@ -52,6 +53,7 @@ public class SystemDataInitializer implements CommandLineRunner {
             admin.setRoles(Role.ADMIN);
 
             admin.setBanned(false);
+            admin.setEnabled(true);
 
             userRepository.save(admin);
         }

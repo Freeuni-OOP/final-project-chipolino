@@ -66,6 +66,7 @@ public class UserService {
         String password = user.getPassword();
         String hashedPassword = passwordEncoder.encode(password);
         user.setPassword(hashedPassword);
+        user.setEnabled(false);
         userRepository.save(user);
     }
 

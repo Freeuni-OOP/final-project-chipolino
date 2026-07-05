@@ -32,6 +32,9 @@ public class User {
     @Builder.Default
     private Role roles = Role.USER;
 
+    @Column(nullable = false)
+    private boolean isEnabled = false;
+
     @Version
     private Long version;
 

@@ -1,10 +1,13 @@
 package RoadReport.security.service;
 
 import RoadReport.entities.User;
+import RoadReport.entities.VerificationToken;
 import RoadReport.enums.Role;
 import RoadReport.services.core.UserService;
 import RoadReport.security.dto.LoginRequest;
 import RoadReport.security.dto.RegisterRequest;
+import RoadReport.services.email.EmailService;
+import RoadReport.services.email.VerificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -18,6 +21,8 @@ public class AuthService {
     private final RoadUserDetailsService userDetailsService;
     private final AuthenticationManager authenticationManager;
 
+    private final EmailService emailService;
+    private final VerificationService verificationService;
     /**
      * Registers a new user in the system with the default USER role
      * and generates an initial JWT token for them.
@@ -34,7 +39,9 @@ public class AuthService {
                 build();
         userService.registerUser(user);
 
-        return getToken(request.getUsername());
+        String token = verificationService.createVerificationToken(user);
+        emailService.sendVerificationEmail(user.getEmail(), token);
+        return "Registration successful! Please check your email to activate your account";
     }
 
 
@@ -55,6 +62,14 @@ public class AuthService {
          );
 
          return getToken(request.getUsername());
+    }
+
+    /**
+     * @param token verification token string
+     * @return true if verification succeeds, false otherwise
+     */
+    public boolean verifyToken(String token) {
+        return verificationService.verifyToken(token);
     }
 
     private String getToken(String username) {

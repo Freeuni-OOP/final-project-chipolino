@@ -1,4 +1,4 @@
-import {createContext, useState, useEffect, useCallback} from "react";
+import {createContext, useCallback, useEffect, useState} from "react";
 import {getCurrentUser} from "../api/userApi.js";
 import {login, logout, register} from "../api/authApi.js";
 
@@ -38,9 +38,7 @@ export const AuthProvider = ({children}) => {
 
     const handleRegister =  async (data) => {
         try {
-            await register(data)
-            const res = await getCurrentUser()
-            setUser(res)
+            return await register(data);
         }
         catch(err){
             throw err;
