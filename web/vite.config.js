@@ -12,9 +12,10 @@ export default defineConfig({
         secure: false
       }
     },
-    https: {
-      key: fs.readFileSync('./localhost-key.pem'),
-      cert: fs.readFileSync('./localhost.pem'),
-    },
+    https: fs.existsSync('./localhost-key.pem') && fs.existsSync('./localhost.pem')
+        ? {
+          key: fs.readFileSync('./localhost-key.pem'),
+          cert: fs.readFileSync('./localhost.pem'),
+        } : false
   },
 })

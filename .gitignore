@@ -61,3 +61,10 @@ ehthumbs.db
 *.war
 *.class
 hs_err_pid*
+
+# SSL Certificates (Let's Encrypt)
+certbot
+
+# Docker
+docker-compose.override.yml
+.dockerignore

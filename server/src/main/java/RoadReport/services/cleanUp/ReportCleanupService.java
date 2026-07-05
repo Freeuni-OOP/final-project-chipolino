@@ -78,7 +78,6 @@ public class ReportCleanupService {
             }
         }
 
-
         log.info("Finished scheduled Merge reports");
     }
 }

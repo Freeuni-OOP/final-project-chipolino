@@ -1,6 +1,6 @@
 package RoadReport.services.map;
 
-import com.graphhopper.util.JsonFeature;
+import com.graphhopper.util.*;
 import org.jspecify.annotations.NonNull;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
@@ -13,9 +13,6 @@ import com.graphhopper.GraphHopper;
 import com.graphhopper.ResponsePath;
 import com.graphhopper.config.Profile;
 import com.graphhopper.json.Statement;
-import com.graphhopper.util.CustomModel;
-import com.graphhopper.util.Parameters;
-import com.graphhopper.util.PointList;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -63,7 +60,9 @@ public class GraphHopperService {
         hopper = new GraphHopper();
         hopper.setOSMFile(osmFilePath);
         hopper.setGraphHopperLocation(graphCachePath);
-        CustomModel customModel = new CustomModel();
+
+        hopper.setEncodedValuesString("car_access, car_average_speed, road_access, road_environment, max_speed, roundabout");
+        CustomModel customModel = GHUtility.loadCustomModelFromJar("car.json");
         customModel.addToSpeed(Statement.If("true", Statement.Op.LIMIT, "45"));
         hopper.setProfiles(new Profile(PROFILE).setCustomModel(customModel));
         hopper.importOrLoad();
