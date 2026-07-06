@@ -116,4 +116,24 @@ public class TestAuthController {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
+
+    @Test
+    void verifyAccountSuccessfully() throws Exception {
+        Mockito.when(authService.verifyToken("valid-token")).thenReturn(true);
+
+        mock.perform(get("/api/auth/verify")
+                        .param("token", "valid-token"))
+                .andExpect(status().isOk())
+                .andExpect(content().string("Account activated successfully! You can now log in."));
+    }
+
+    @Test
+    void verifyAccountUnsuccessfully() throws Exception {
+        Mockito.when(authService.verifyToken("invalid-token")).thenReturn(false);
+
+        mock.perform(get("/api/auth/verify")
+                        .param("token", "invalid-token"))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("Invalid or expired verification token."));
+    }
 }
