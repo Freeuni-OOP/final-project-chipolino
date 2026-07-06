@@ -5,7 +5,7 @@ import { useGeolocation } from '../../hooks/useGeolocation.js';
 import styles from './Map.module.css';
 import {findNearbyReports, getMyReports} from "../../api/reportApi.js";
 
-const Map = ({ currentMode, setCurrentMode }) => {
+const Map = ({ currentMode, setCurrentMode, followUser, setFollowUser }) => {
     const {location: userLocation, loading: geoLoading } = useGeolocation();
     const [selectedCoords, setSelectedCoords] = useState(null);
     const [hazards, setHazards] = useState([]);
@@ -14,7 +14,6 @@ const Map = ({ currentMode, setCurrentMode }) => {
     const [routeEnd, setRouteEnd] = useState(null);
     const [routeCoords, setRouteCoords] = useState([]);
     const [apiLoading, setApiLoading] = useState(false);
-    const [followUser, setFollowUser] = useState(true);
 
     const defaultCenter = [41.7151, 44.8271];
 

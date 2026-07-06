@@ -18,16 +18,23 @@ L.Icon.Default.mergeOptions({
 
 function App() {
     const [currentMode, setCurrentMode] = useState('route');
+    const [followUser, setFollowUser] = useState(true);
 
     return (
         <Router>
             <AuthProvider>
                 <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', width: '100%' }}>
 
-                    <Navbar />
+                    <Navbar followUser={followUser}
+                            setFollowUser={setFollowUser}
+                    />
 
                     <main style={{ flex: 1, width: '100%', position: 'relative' }}>
-                        <AppRoutes currentMode={currentMode} setCurrentMode={setCurrentMode} />
+                        <AppRoutes currentMode={currentMode}
+                                   setCurrentMode={setCurrentMode}
+                                   followUser={followUser}
+                                   setFollowUser={setFollowUser}
+                        />
                     </main>
 
                 </div>

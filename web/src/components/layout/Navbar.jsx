@@ -1,14 +1,15 @@
 import React from 'react';
 import styles from './Navbar.module.css';
-import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 import {useAuth} from "../../hooks/useAuth.js";
 
-const Navbar = () => {
+const Navbar = ({ followUser, setFollowUser }) => {
     const navigate = useNavigate();
     const { user, loading, handleLogout } = useAuth();
-
+    const location = useLocation();
     const [searchParams] = useSearchParams();
     const isViewingMine = searchParams.get('view') === 'mine';
+    const isMapPage = location.pathname === '/map';
 
     const logout = async () => {
         try {
@@ -38,6 +39,17 @@ const Navbar = () => {
             <div className={styles.navLinks}>
                 <Link to="/map" className={styles.link}>Map View</Link>
 
+                {isMapPage ? (
+                    <button
+                        onClick={() => setFollowUser(!followUser)}
+                        className={`${styles.link} ${styles.followBtn} 
+                                    ${followUser ? styles.followBtnOn : styles.followBtnOff}
+                        `}
+                    >
+                        {followUser ? 'Follow: ON' : 'Follow: OFF'}
+                    </button>
+                ) : null}
+
                 {user ? (
                     <>
                         <button
@@ -48,13 +60,7 @@ const Navbar = () => {
                                     navigate('/map?view=mine');
                                 }
                             }}
-                            className={styles.link}
-                            style={{
-                                background: 'none',
-                                border: 'none',
-                                font: 'inherit',
-                                cursor: 'pointer'
-                            }}
+                            className={`${styles.link} ${styles.btnLink}`}
                         >
                             {isViewingMine ? 'All Reports' : 'My Reports'}
                         </button>

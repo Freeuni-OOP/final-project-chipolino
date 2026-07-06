@@ -84,13 +84,6 @@ const MapView = ({
                     Report Mode
                 </button>
 
-                <button
-                    className={styles.modeButton}
-                    onClick={() => setFollowUser(!followUser)}
-                >
-                    {followUser ? "Auto-Follow: ON" : "Auto-Follow: OFF"}
-                </button>
-
                 {currentMode === 'route' && (
                     <RoutePanel
                         startPoint={routeStart}
@@ -117,6 +110,8 @@ const MapView = ({
                 maxBoundsViscosity={1.0}
                 className={styles.leafletContainer}
             >
+                <MapEventsHandler setFollowUser={setFollowUser} />
+
                 <ZoomControl position="topright" />
 
                 <TileLayer
