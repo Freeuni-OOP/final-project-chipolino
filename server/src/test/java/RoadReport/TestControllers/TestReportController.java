@@ -3,6 +3,7 @@ package RoadReport.TestControllers;
 import RoadReport.controllers.ReportController;
 import RoadReport.controllers.dto.report.ReportRequestDTO;
 import RoadReport.entities.Report;
+import RoadReport.entities.User;
 import RoadReport.enums.ReportStatus;
 import RoadReport.enums.ReportType;
 import RoadReport.enums.VoteType;
@@ -113,6 +114,22 @@ public class TestReportController {
 
     @Test
     public void testFindNearbyReportsOK() throws Exception {
+        User dummyUser = User.builder()
+                .id(1L)
+                .username("Luka")
+                .build();
+
+        Report mockReport = Report.builder()
+                .id(100L)
+                .user(dummyUser)
+                .type(ReportType.POLICE)
+                .upvotes(5)
+                .downvotes(0)
+                .latitude(41.7)
+                .longitude(44.8)
+                .status(ReportStatus.TEMPORARY)
+                .build();
+
         when(reportService.findNearbyReports(41.7, 44.8, 10.0))
                 .thenReturn(List.of(mockReport));
 

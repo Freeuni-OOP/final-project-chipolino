@@ -182,7 +182,7 @@ public class TestUserService {
             userService.registerUser(firstUser);
         });
 
-        assertEquals("This name or email is taken", exception.getMessage());
+        assertEquals("This email is taken", exception.getMessage());
 
         verify(userRepository, times(1)).findUserByEmail(firstUser.getEmail());
         verify(userRepository, never()).findUserByUsername(anyString());
@@ -200,7 +200,7 @@ public class TestUserService {
             userService.registerUser(firstUser);
         });
 
-        assertEquals("This name or email is taken", exception.getMessage());
+        assertEquals("This name is taken", exception.getMessage());
 
         verify(userRepository, times(1)).findUserByEmail(firstUser.getEmail());
         verify(userRepository, times(1)).findUserByUsername(firstUser.getUsername());

@@ -82,14 +82,16 @@ public class TestAuthController {
         request.setUsername("Luka");
         request.setPassword("12345");
 
-        Mockito.when(authService.register(request)).thenReturn("fake-register-token");
+        String expectedMessage = "Registration successful! Please check your email to activate your account";
+
+        Mockito.when(authService.register(Mockito.any(RegisterRequest.class)))
+                .thenReturn(expectedMessage);
 
         mock.perform(post("/api/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
-                .andExpect(header().exists(HttpHeaders.SET_COOKIE))
-                .andExpect(header().string(HttpHeaders.SET_COOKIE, containsString("jwt=")));
+                .andExpect(content().string(expectedMessage));
     }
 
     @Test

@@ -52,9 +52,12 @@ public class TestReportCleanupService {
 
     @Test
     public void testCleanupReports() {
+        when(reportRepository.findByExpireDateBeforeOrStatus(any(LocalDateTime.class), eq(ReportStatus.REMOVED)))
+                .thenReturn(Collections.emptyList());
+
         reportCleanupService.cleanupReports();
 
-        verify(reportRepository, times(1)).deleteExpiredReports();
+        verify(reportRepository, times(1)).findByExpireDateBeforeOrStatus(any(LocalDateTime.class), eq(ReportStatus.REMOVED));
         verifyNoMoreInteractions(reportRepository);
         verifyNoInteractions(reportMergeService);
     }

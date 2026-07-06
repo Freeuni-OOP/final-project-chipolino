@@ -60,7 +60,7 @@ public class TestVoteController {
                         .with(user(mockDetails)))
                 .andExpect(status().isOk());
 
-        verify(voteService).createVote(100L, 1L, VoteType.POSITIVE);
+        verify(voteService).createVote(1L, 100L, VoteType.POSITIVE);
     }
 
     @Test
@@ -80,7 +80,7 @@ public class TestVoteController {
                         .with(user(mockDetails)))
                 .andExpect(status().isOk());
 
-        verify(voteService).createVote(100L, 1L, VoteType.NEGATIVE);
+        verify(voteService).createVote(1L, 100L, VoteType.NEGATIVE);
     }
 
     @Test
