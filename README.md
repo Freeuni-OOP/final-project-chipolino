@@ -32,6 +32,7 @@
 - [Architecture](#-architecture)
 - [Project Structure](#-project-structure)
 - [Getting Started](#-getting-started)
+- [Testing](#-testing)
 - [Cloud Deployment](#-cloud-deployment)
 - [API Overview](#-api-overview)
 - [Security Notes](#-security-notes)
@@ -81,39 +82,39 @@ The default map view is centered on Tbilisi and the app currently ships with an 
 
 | Layer | Technologies |
 |---|---|
-| Backend | Java 17 · Spring Boot · Spring Security · Spring Data JPA / Hibernate · MySQL 8 · Lombok · Jsoup (XSS sanitization) · GraphHopper (self-hosted routing) · Maven |
+| Backend | Java 17 · Spring Boot · Spring Security · Spring Data JPA / Hibernate · MySQL 8 · Lombok · Jsoup (XSS sanitization) · GraphHopper (self-hosted routing) · JUnit 5 · Mockito · Maven |
 | Frontend | React · React Router · Leaflet / react-leaflet · Axios · Vite |
 | Infra | Docker & Docker Compose · Nginx · Aiven (MySQL) · Render (backend) · Vercel (frontend) · Brevo (email) |
 
 > [!NOTE]
-> The JWT cookie is issued with `Secure` + `SameSite=None` (needed since the deployed frontend and backend live on different domains), so browsers will only send/accept it over HTTPS — which is why even local development runs behind Nginx with a TLS certificate instead of plain HTTP.
+> The JWT cookie is issued with `Secure` + `SameSite=None` (needed since the deployed frontend and backend live on different domains), so browsers will only send/accept it over HTTPS — which is why even local development runs behind a TLS certificate instead of plain HTTP.
 
 ## 🏗️ Architecture
 
 ```mermaid
-graph TB
+flowchart TB
     U["🧑‍💻 Browser<br/>React + Vite + Leaflet"]
-
-    subgraph frontend_container["frontend container"]
-        N["Nginx<br/>TLS termination · SPA · reverse proxy"]
-    end
-
-    subgraph backend_container["backend container"]
-        S["Spring Boot API<br/>Spring Security · JWT · JPA/Hibernate"]
-        G["GraphHopper<br/>self-hosted routing engine"]
-    end
-
-    D[(MySQL 8)]
+    N["Nginx<br/>TLS termination · SPA · reverse proxy"]
+    S["Spring Boot API<br/>Spring Security · JWT · JPA/Hibernate"]
+    G["GraphHopper<br/>self-hosted routing engine"]
+    D[("MySQL 8")]
     BR["Brevo<br/>transactional email"]
 
-    U -- HTTPS --> N
-    N -- "/api/** proxy" --> S
+    U -->|HTTPS| N
+    N -->|"/api/** proxy"| S
     S --> G
-    S -- "JPA/Hibernate" --> D
-    S -- "verification emails" --> BR
+    S -->|JPA/Hibernate| D
+    S -->|verification emails| BR
+
+    classDef frontend fill:#fef9c3,stroke:#ca8a04,color:#1f2937
+    classDef backend fill:#dbeafe,stroke:#1d4ed8,color:#1f2937
+    classDef external fill:#f3f4f6,stroke:#6b7280,color:#1f2937
+    class N frontend
+    class S,G backend
+    class D,BR external
 ```
 
-Three Docker Compose services do the work: `db` (MySQL, internal-only), `backend` (Spring Boot with the embedded GraphHopper engine), and `frontend` (Nginx, serving the built SPA and terminating TLS). In local dev, `backend` is also reachable directly at `localhost:8082` for debugging — but in production, only `frontend` needs to be public; Nginx proxies `/api` requests straight through.
+Three Docker Compose services do the work: `db` (MySQL, internal-only), `backend` (Spring Boot with the embedded GraphHopper engine — shown in blue above), and `frontend` (Nginx, serving the built SPA and terminating TLS — shown in yellow). In local dev, `backend` is also reachable directly at `localhost:8082` for debugging — but in production, only `frontend` needs to be public; Nginx proxies `/api` requests straight through.
 
 ## 📁 Project Structure
 
@@ -123,12 +124,16 @@ Three Docker Compose services do the work: `db` (MySQL, internal-only), `backend
 ├── .env                     # you create this — see Getting Started
 ├── .env.example
 ├── server/                  # Spring Boot backend
-│   ├── src/main/java/RoadReport/...
-│   ├── src/main/resources/application.properties
+│   ├── src/
+│   │   ├── main/java/RoadReport/...
+│   │   ├── main/resources/application.properties
+│   │   └── test/java/RoadReport/...      # JUnit test suite — see Testing
 │   ├── data/                # OSM extract + GraphHopper cache (not committed)
+│   ├── dummy-cache/         # lightweight GraphHopper cache used by tests
 │   └── Dockerfile
 └── web/                     # React frontend
     ├── src/...
+    ├── vite.config.js       # dev-mode HTTPS + /api proxy
     ├── nginx.conf
     ├── vercel.json
     ├── localhost.pem / localhost-key.pem   # you create these — see Getting Started
@@ -157,7 +162,7 @@ server/data/georgia-260525.osm.pbf
 ```
 
 > [!TIP]
-> Using a different file name or region? Update `graphhopper.osm-file` in `server/src/main/resources/application.properties` to match. The **first** backend startup will take a few minutes while GraphHopper imports the file and builds its cache — later starts are fast as long as the container isn't rebuilt/recreated.
+> Using a different file name or region? Either update `graphhopper.osm-file` in `application.properties`, or just set the `OSM_FILE_PATH` environment variable — it overrides the default without touching any code. The **first** backend startup will take a few minutes while GraphHopper imports the file and builds its cache — later starts are fast as long as the container isn't rebuilt/recreated.
 
 ### 3. Configure environment variables
 Copy the example file into a `.env` at the project root (next to `docker-compose.yml`), then fill it in:
@@ -175,12 +180,13 @@ cp server/.env.example .env
 | `FRONTEND_URL` | Public URL of the frontend, used inside verification emails | `https://localhost` |
 | `BREVO_API_KEY` | API key for Brevo transactional email | — |
 | `SENDER_EMAIL` | Verified "from" address for verification emails | `no-reply@roadreport.ge` |
+| `OSM_FILE_PATH` | *(optional)* Overrides where GraphHopper looks for the `.osm.pbf` extract | defaults to `data/georgia-260525.osm.pbf` |
 
 > [!NOTE]
 > The bundled `docker-compose.yml` hardcodes the MySQL root password (`chipolino123`) and database name (`roadreport`) for the `db` service — keep `DB_USERNAME` / `DB_PASSWORD` / `SPRING_DATASOURCE_URL` in sync with those, or edit `docker-compose.yml` if you want different credentials. No manual migrations needed — Hibernate creates the schema automatically (`ddl-auto=update`) against the empty database on first boot.
 
 > [!WARNING]
-> No real Brevo key yet? Registration still "succeeds", but the verification email silently fails to send and the new account stays disabled. Either add real Brevo credentials, or manually flip that user's `enabled` flag to `true` in the database for local testing.
+> No real Brevo key yet? Registration still "succeeds", but the verification email silently fails to send and the new account stays disabled. Either add real Brevo credentials, or manually set that user's `is_enabled` column to `1`/`TRUE` in the `users` table for local testing.
 
 ### 4. Generate a local TLS certificate
 The frontend container serves the app over HTTPS using a certificate you provide. Generate one for `localhost` and place it in `web/`:
@@ -190,7 +196,7 @@ mkcert -cert-file web/localhost.pem -key-file web/localhost-key.pem localhost
 ```
 
 > [!WARNING]
-> Without these two files, the `frontend` image won't build — the Dockerfile copies them in directly.
+> Without these two files, the `frontend` image won't build — the Dockerfile copies them in directly. (The same two files are also picked up automatically if you run the frontend outside Docker — see below.)
 
 ### 5. Run it
 ```bash
@@ -210,6 +216,53 @@ Open **https://localhost** (accept the self-signed certificate warning if you sk
 
 > [!TIP]
 > The GraphHopper cache isn't mounted as a Docker volume, so `--build` or `down && up` re-imports the OSM graph from scratch. Mount `server/data/graphhopper-cache` as a volume if you want faster rebuild cycles.
+
+### Running locally without Docker
+
+**Database** — install MySQL 8 and create an empty database:
+```sql
+CREATE DATABASE roadreport;
+```
+Hibernate creates all the tables automatically on first run (`ddl-auto=update`), so no manual migration is required. If you'd rather set the schema up explicitly, a plain SQL version (matching what Hibernate would generate) is also included in the repo — note that it targets a database named `road_report_db`, so either rename it to match your `SPRING_DATASOURCE_URL` or point the URL at that name instead.
+
+**Backend:**
+```bash
+cd server
+# export the variables from your .env into the shell, or configure them in your IDE run config
+./mvnw spring-boot:run
+```
+Runs at `http://localhost:8080`. You need to set `OSM_FILE_PATH` if your `.osm.pbf` file lives somewhere other than `app/data/georgia-260525.osm.pbf` — that's the default.
+
+**Frontend:**
+```bash
+cd web
+npm install
+npm run dev
+```
+Runs at `http://localhost:5173`. `vite.config.js` already proxies `/api` to `http://localhost:8080`, so the dev server talks to your local backend with no extra setup. If `web/localhost.pem` / `web/localhost-key.pem` exist (the same certificate pair from step 4 above), Vite automatically serves over HTTPS too — otherwise it just falls back to plain HTTP.
+
+## 🧪 Testing
+
+The backend has a JUnit 5 test suite under `server/src/test/java/RoadReport/`, mirroring the main source layout:
+
+| Package | Covers |
+|---|---|
+| `TestControllers` | REST endpoint behavior |
+| `TestExceptionHandler` | Global exception → HTTP status mapping |
+| `TestRepositories` | JPA queries, via `@DataJpaTest` + `TestEntityManager` |
+| `TestSecurity` | JWT filter & authentication flow |
+| `TestServices` | Business logic — reports, votes, users, email, etc. |
+
+Repository tests spin up an isolated JPA context and exercise the real queries — e.g. `TestCommentRepository` covers per-report/per-user ordering and the comment-migration query used when reports get merged. Service-layer tests lean on Mockito — `TestEmailService`, for example, mocks `RestClient` to confirm both the happy path and that a failed Brevo call is caught and logged instead of breaking registration.
+
+Run everything with:
+```bash
+cd server
+./mvnw test
+```
+
+> [!NOTE]
+> A `dummy-cache` folder alongside `src/` gives GraphHopper a small, isolated cache to boot from during tests, so the suite doesn't need to import the full real-world OSM extract just to start the Spring context.
 
 ## ☁️ Cloud Deployment
 
