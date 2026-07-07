@@ -14,11 +14,16 @@ import {Verify} from "../pages/verify/Verify.jsx";
  * AppRoutes function sets up the main map for the app's pages.
  * @returns {JSX.Element} The whole navigation system to use it.
  */
-const AppRoutes = ({ currentMode, setCurrentMode }) => {
+const AppRoutes = ({ currentMode, setCurrentMode, followUser, setFollowUser }) => {
     return (
         <Routes>
             <Route path="/" element={<Navigate to="/map" replace />} />
-            <Route path="/map" element={<Map currentMode={currentMode} setCurrentMode={setCurrentMode} />} />
+            <Route path="/map" element={<Map currentMode={currentMode}
+                                             setCurrentMode={setCurrentMode}
+                                             followUser={followUser}
+                                             setFollowUser={setFollowUser}
+                                        />}
+            />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/profile" element={
