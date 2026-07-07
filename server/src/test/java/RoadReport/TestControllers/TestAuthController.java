@@ -82,14 +82,16 @@ public class TestAuthController {
         request.setUsername("Luka");
         request.setPassword("12345");
 
-        Mockito.when(authService.register(request)).thenReturn("fake-register-token");
+        String expectedMessage = "Registration successful! Please check your email to activate your account";
+
+        Mockito.when(authService.register(Mockito.any(RegisterRequest.class)))
+                .thenReturn(expectedMessage);
 
         mock.perform(post("/api/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
-                .andExpect(header().exists(HttpHeaders.SET_COOKIE))
-                .andExpect(header().string(HttpHeaders.SET_COOKIE, containsString("jwt=")));
+                .andExpect(content().string(expectedMessage));
     }
 
     @Test
@@ -113,5 +115,25 @@ public class TestAuthController {
                         .header("Authorization", "Bearer fake-jwt-token")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    void verifyAccountSuccessfully() throws Exception {
+        Mockito.when(authService.verifyToken("valid-token")).thenReturn(true);
+
+        mock.perform(get("/api/auth/verify")
+                        .param("token", "valid-token"))
+                .andExpect(status().isOk())
+                .andExpect(content().string("Account activated successfully! You can now log in."));
+    }
+
+    @Test
+    void verifyAccountUnsuccessfully() throws Exception {
+        Mockito.when(authService.verifyToken("invalid-token")).thenReturn(false);
+
+        mock.perform(get("/api/auth/verify")
+                        .param("token", "invalid-token"))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("Invalid or expired verification token."));
     }
 }

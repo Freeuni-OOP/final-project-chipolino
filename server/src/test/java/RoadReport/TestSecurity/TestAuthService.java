@@ -1,5 +1,6 @@
 package RoadReport.TestSecurity;
 
+import RoadReport.entities.User;
 import RoadReport.security.dto.LoginRequest;
 import RoadReport.security.dto.RegisterRequest;
 import RoadReport.security.service.AuthService;
@@ -7,6 +8,8 @@ import RoadReport.security.service.JwtService;
 import RoadReport.security.service.RoadUserDetails;
 import RoadReport.security.service.RoadUserDetailsService;
 import RoadReport.services.core.UserService;
+import RoadReport.services.email.EmailService;
+import RoadReport.services.email.VerificationService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -21,6 +24,7 @@ import org.springframework.security.core.AuthenticationException;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -36,7 +40,10 @@ public class TestAuthService {
     private AuthenticationManager authenticationManager;
     @Mock
     private RoadUserDetails userDetails;
-
+    @Mock
+    private EmailService emailService;
+    @Mock
+    private VerificationService verificationService;
     @InjectMocks
     private AuthService authService;
 
@@ -49,7 +56,7 @@ public class TestAuthService {
         registerRequest = new RegisterRequest();
         registerRequest.setUsername("Giorgi");
         registerRequest.setPassword("1234");
-
+        registerRequest.setEmail("giorgi@gmail.com");
         loginRequest = new LoginRequest();
         loginRequest.setUsername("Giorgi");
         loginRequest.setPassword("1234");
@@ -57,15 +64,15 @@ public class TestAuthService {
 
     @Test
     public void testRegister(){
-        when(userDetailsService.loadUserByUsername("Giorgi")).thenReturn(userDetails);
-        when(jwtService.generateToken(userDetails)).thenReturn("mock");
+        when(verificationService.createVerificationToken(any(User.class))).thenReturn("mock-verification-token");
 
-        String token = authService.register(registerRequest);
-        assertEquals("mock", token);
+        String response = authService.register(registerRequest);
 
-        verify(userDetailsService).loadUserByUsername("Giorgi");
-        verify(jwtService).generateToken(userDetails);
-    }
+        assertEquals("Registration successful! Please check your email to activate your account", response);
+
+        verify(userService).registerUser(any(User.class));
+        verify(verificationService).createVerificationToken(any(User.class));
+        verify(emailService).sendVerificationEmail(eq("giorgi@gmail.com"), eq("mock-verification-token"));    }
 
 
     @Test

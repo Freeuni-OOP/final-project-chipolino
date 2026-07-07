@@ -5,7 +5,9 @@ import RoadReport.entities.User;
 import RoadReport.entities.Vote;
 import RoadReport.enums.ReportStatus;
 import RoadReport.enums.VoteType;
+import RoadReport.exceptions.core.ReportNotFoundException;
 import RoadReport.exceptions.core.UserBannedException;
+import RoadReport.exceptions.core.UserNotFoundException;
 import RoadReport.exceptions.special.ActionForbiddenException;
 import RoadReport.repositories.ReportRepository;
 import RoadReport.repositories.UserRepository;
@@ -144,5 +146,127 @@ public class TestVoteService {
         assertEquals(3L, voteCount);
         assertEquals(1, userVotes.size());
         assertEquals(v, userVotes.get(0));
+    }
+
+
+    @Test
+    void testCreateVoteReportNotFound() {
+        when(reportRepository.findById(10L)).thenReturn(Optional.empty());
+        assertThrows(ReportNotFoundException.class, () -> voteService.createVote(1L, 10L, VoteType.POSITIVE));
+    }
+
+    @Test
+    void testCreateVoteUserNotFound() {
+        when(reportRepository.findById(10L)).thenReturn(Optional.of(report));
+        when(userRepository.findById(1L)).thenReturn(Optional.empty());
+        assertThrows(UserNotFoundException.class, () -> voteService.createVote(1L, 10L, VoteType.POSITIVE));
+    }
+
+    @Test
+    void testDeleteExistingVoteSameType() {
+        Vote matchingVote = new Vote();
+        matchingVote.setType(VoteType.POSITIVE);
+
+        when(reportRepository.findById(10L)).thenReturn(Optional.of(report));
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+        when(voteRepository.findByReportIdAndUserId(10L, 1L)).thenReturn(Optional.of(matchingVote));
+
+        voteService.createVote(1L, 10L, VoteType.POSITIVE);
+
+        verify(userService).handleRejectedVote(2L);
+        verify(reportService).handleReportVotes(matchingVote, report, -1);
+        verify(voteRepository).delete(matchingVote);
+    }
+
+    @Test
+    void testDeleteExistingNegativeVoteSameType() {
+        Vote matchingVote = new Vote();
+        matchingVote.setType(VoteType.NEGATIVE);
+
+        when(reportRepository.findById(10L)).thenReturn(Optional.of(report));
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+        when(voteRepository.findByReportIdAndUserId(10L, 1L)).thenReturn(Optional.of(matchingVote));
+
+        voteService.createVote(1L, 10L, VoteType.NEGATIVE);
+
+        verify(userService).handleAcceptedVote(2L);
+        verify(voteRepository).delete(matchingVote);
+    }
+
+    @Test
+    void testSwitchVoteNegativeToPositive() {
+        Vote oldVote = new Vote();
+        oldVote.setType(VoteType.NEGATIVE);
+
+        when(reportRepository.findById(10L)).thenReturn(Optional.of(report));
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+        when(voteRepository.findByReportIdAndUserId(10L, 1L)).thenReturn(Optional.of(oldVote));
+
+        voteService.createVote(1L, 10L, VoteType.POSITIVE);
+        assertEquals(VoteType.POSITIVE, oldVote.getType());
+    }
+
+    @Test
+    void testCreateNewNegativeVoteScoreUpdate() {
+        when(reportRepository.findById(10L)).thenReturn(Optional.of(report));
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+        when(voteRepository.findByReportIdAndUserId(10L, 1L)).thenReturn(Optional.empty());
+
+        voteService.createVote(1L, 10L, VoteType.NEGATIVE);
+
+        verify(userService).handleRejectedVote(2L);
+    }
+
+    @Test
+    void testCreateVotePermanentReportShortCircuitsScoreUpdates() {
+        report.setStatus(ReportStatus.PERMANENT);
+        when(reportRepository.findById(10L)).thenReturn(Optional.of(report));
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+        when(voteRepository.findByReportIdAndUserId(10L, 1L)).thenReturn(Optional.empty());
+
+        voteService.createVote(1L, 10L, VoteType.POSITIVE);
+
+        verify(userService, never()).handleAcceptedVote(anyLong());
+        verify(userService, never()).handleRejectedVote(anyLong());
+        verify(reportService).addVote(eq(report), any(Vote.class));
+    }
+
+    @Test
+    void testSwitchVotePermanentReportShortCircuitsScoreUpdates() {
+        report.setStatus(ReportStatus.PERMANENT);
+        Vote oldVote = new Vote();
+        oldVote.setType(VoteType.NEGATIVE);
+
+        when(reportRepository.findById(10L)).thenReturn(Optional.of(report));
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+        when(voteRepository.findByReportIdAndUserId(10L, 1L)).thenReturn(Optional.of(oldVote));
+
+        voteService.createVote(1L, 10L, VoteType.POSITIVE);
+
+        verify(userService, never()).handleAcceptedVote(anyLong());
+        verify(userService, never()).handleRejectedVote(anyLong());
+    }
+
+    @Test
+    void testDeleteVotePermanentReportShortCircuitsScoreUpdates() {
+        report.setStatus(ReportStatus.PERMANENT);
+        Vote matchingVote = new Vote();
+        matchingVote.setType(VoteType.POSITIVE);
+
+        when(reportRepository.findById(10L)).thenReturn(Optional.of(report));
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+        when(voteRepository.findByReportIdAndUserId(10L, 1L)).thenReturn(Optional.of(matchingVote));
+
+        voteService.createVote(1L, 10L, VoteType.POSITIVE);
+
+        verify(userService, never()).handleAcceptedVote(anyLong());
+        verify(userService, never()).handleRejectedVote(anyLong());
+    }
+
+    @Test
+    void testFindVoteReturnsNullWhenEmpty() {
+        when(voteRepository.findByReportIdAndUserId(10L, 1L)).thenReturn(Optional.empty());
+        Vote result = voteService.findByReportIdAndUserId(10L, 1L);
+        assertNull(result);
     }
 }

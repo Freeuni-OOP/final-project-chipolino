@@ -3,6 +3,7 @@ package RoadReport.TestSecurity;
 import RoadReport.entities.User;
 import RoadReport.enums.Role;
 import RoadReport.repositories.UserRepository;
+import RoadReport.security.service.RoadUserDetails;
 import RoadReport.security.service.RoadUserDetailsService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -56,5 +57,45 @@ public class TestRoadUserDetailsService {
         assertThrows(UsernameNotFoundException.class, () -> userDetailsService.loadUserByUsername("Giorgi"));
 
         verify(userRepository).findUserByUsername("Giorgi");
+    }
+
+    @Test
+    public void testRoadUserDetailsGettersAndContracts() {
+        java.time.LocalDateTime now = java.time.LocalDateTime.now();
+        user.setEmail("giorgi@gmail.com");
+        user.setReputationScore(100);
+        user.setBanned(false);
+        user.setBanExpiration(now);
+        user.setCreateDate(now);
+        user.setEnabled(true);
+
+        when(userRepository.findUserByUsername("Giorgi")).thenReturn(Optional.of(user));
+
+        RoadUserDetails userDetails = (RoadUserDetails) userDetailsService.loadUserByUsername("Giorgi");
+
+        assertEquals(1L, userDetails.getId());
+        assertEquals("giorgi@gmail.com", userDetails.getEmail());
+        assertEquals(Role.USER, userDetails.getRole());
+        assertEquals(100, userDetails.getReputationScore());
+        assertFalse(userDetails.getBanned());
+        assertEquals(now, userDetails.getBanExpiration());
+        assertEquals(now, userDetails.getCreateDate());
+
+        assertTrue(userDetails.isAccountNonExpired());
+        assertTrue(userDetails.isAccountNonLocked());
+        assertTrue(userDetails.isCredentialsNonExpired());
+        assertTrue(userDetails.isEnabled());
+
+        assertEquals("ROLE_USER", userDetails.getAuthorities().iterator().next().getAuthority());
+    }
+
+    @Test
+    public void testRoadUserDetailsBuilder() {
+        RoadUserDetails customDetails = RoadUserDetails.builder()
+                .user(user)
+                .build();
+
+        assertNotNull(customDetails);
+        assertEquals("Giorgi", customDetails.getUsername());
     }
 }
