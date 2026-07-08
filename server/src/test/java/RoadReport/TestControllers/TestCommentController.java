@@ -82,7 +82,8 @@ public class TestCommentController {
     @Test
     public void testAddCommentOK() throws Exception {
         CommentRequestDTO request = new CommentRequestDTO("New awesome comment");
-
+        when(commentService.addComment(1L, 100L, "New awesome comment"))
+                .thenReturn(mockComment);
         mvc.perform(post("/api/reports/100/comments")
                         .with(user(mockUserDetails))
                         .with(csrf())

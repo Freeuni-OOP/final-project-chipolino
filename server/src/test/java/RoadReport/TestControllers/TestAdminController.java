@@ -193,4 +193,33 @@ public class TestAdminController {
 
         verifyNoInteractions(adminService);
     }
+
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    public void testGetSelectedUserOK() throws Exception {
+        // Arrange
+        RoadReport.entities.User mockUser = new RoadReport.entities.User();
+        mockUser.setId(2L);
+        mockUser.setUsername("giorgi");
+        mockUser.setEmail("giorgi@gmail.com");
+        mockUser.setReputationScore(50);
+        mockUser.setBanned(false);
+        mockUser.setBanExpiration(null);
+        mockUser.setCreateDate(java.time.LocalDateTime.now());
+        mockUser.setRoles(RoadReport.enums.Role.USER);
+
+        when(userService.getUserById(2L)).thenReturn(mockUser);
+
+        mvc.perform(get("/api/admin/users/{id}", 2L)
+                        .with(csrf())
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath("$.id").value(2L))
+                .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath("$.username").value("giorgi"))
+                .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath("$.email").value("giorgi@gmail.com"))
+                .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath("$.reputationScore").value(50))
+                .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath("$.banned").value(false));
+
+        verify(userService).getUserById(2L);
+    }
 }

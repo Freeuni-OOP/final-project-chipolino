@@ -121,3 +121,27 @@
     display: flex;
     gap: 0.5rem;
 }
+
+.btnLink {
+    background: none;
+    border: none;
+    font: inherit;
+    cursor: pointer;
+}
+
+.followBtn {
+    background: none;
+    border: none;
+    font: inherit;
+    cursor: pointer;
+    font-weight: bold;
+    transition: color 0.2s ease;
+}
+
+.followBtnOn {
+    color: #22c55e
+}
+
+.followBtnOff {
+    color: #ef4444
+}

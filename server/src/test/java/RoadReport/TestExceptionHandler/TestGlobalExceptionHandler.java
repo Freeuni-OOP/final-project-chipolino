@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.util.Map;
@@ -107,13 +108,22 @@ public class TestGlobalExceptionHandler {
         assertErrorResponse(response, HttpStatus.FORBIDDEN, "Do not have such privileges");
     }
 
+    @Test
+    public void testHandleDisabledException() {
+        DisabledException ex = new DisabledException("Account is disabled");
+        ResponseEntity<String> response = exceptionHandler.handleDisabledException(ex);
 
+        assertAll(
+                () -> assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode()),
+                () -> assertEquals("Please verify your email address before logging in.", response.getBody())
+        );
+    }
     private void assertErrorResponse(ResponseEntity<Map<String, String>> response,
                                      HttpStatus expectedStatus,
                                      String expectedMessage) {
         assertAll(
                 () -> assertEquals(expectedStatus, response.getStatusCode()),
-                () -> assertEquals(expectedMessage, response.getBody().get("error")),
+                () -> assertEquals(expectedMessage, response.getBody().get("message")),
                 () -> assertEquals(String.valueOf(expectedStatus.value()),
                         response.getBody().get("status"))
         );

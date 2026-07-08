@@ -4,6 +4,12 @@ import react from '@vitejs/plugin-react'
 
 export default defineConfig({
     server: {
+        https: fs.existsSync('./localhost-key.pem') && fs.existsSync('./localhost.pem')
+            ? {
+                key: fs.readFileSync('./localhost-key.pem'),
+                cert: fs.readFileSync('./localhost.pem'),
+            }
+            : false,
         proxy: {
             '/api': {
                 target: 'http://localhost:8080',
@@ -13,10 +19,3 @@ export default defineConfig({
         }
     }
 })
-
-//     https: fs.existsSync('./localhost-key.pem') && fs.existsSync('./localhost.pem')
-//         ? {
-//           key: fs.readFileSync('./localhost-key.pem'),
-//           cert: fs.readFileSync('./localhost.pem'),
-//         } : false
-//   },
