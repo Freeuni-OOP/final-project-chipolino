@@ -9,6 +9,7 @@ import RoadReport.enums.VoteType;
 import RoadReport.exceptions.core.ReportNotFoundException;
 import RoadReport.exceptions.core.UserBannedException;
 import RoadReport.repositories.ReportRepository;
+import RoadReport.services.core.ReportAttributesValidator;
 import RoadReport.services.core.ReportService;
 import RoadReport.services.core.UserService;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,7 +29,7 @@ import static org.mockito.Mockito.*;
 public class TestReportService {
     @Mock private ReportRepository reportRepository;
     @Mock private UserService userService;
-
+    @Mock private ReportAttributesValidator reportAttributesValidator;
     @InjectMocks
     private ReportService reportService;
 

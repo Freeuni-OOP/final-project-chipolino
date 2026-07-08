@@ -2,6 +2,7 @@ package RoadReport.TestServices.TestCore;
 
 import RoadReport.entities.Report;
 import RoadReport.enums.ReportStatus;
+import RoadReport.enums.VoteType;
 import RoadReport.repositories.CommentRepository;
 import RoadReport.repositories.ReportRepository;
 import RoadReport.repositories.VoteRepository;
@@ -57,6 +58,8 @@ public class TestReportMergeService {
 
         verify(voteRepository, times(1)).deleteDuplicateVotes(20L, 10L);
         verify(voteRepository, times(1)).migrateVotes(20L, 10L);
+        verify(voteRepository, times(1)).countByReportIdAndType(10L, VoteType.POSITIVE);
+        verify(voteRepository, times(1)).countByReportIdAndType(10L, VoteType.NEGATIVE);
         verify(commentRepository, times(1)).migrateComments(20L, 10L);
         verify(reportRepository, times(1)).save(mainReport);
         verify(reportRepository, times(1)).save(duplicateReport);
