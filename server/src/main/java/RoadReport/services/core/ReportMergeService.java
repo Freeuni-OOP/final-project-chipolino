@@ -2,6 +2,7 @@ package RoadReport.services.core;
 
 import RoadReport.entities.Report;
 import RoadReport.enums.ReportStatus;
+import RoadReport.enums.VoteType;
 import RoadReport.repositories.CommentRepository;
 import RoadReport.repositories.ReportRepository;
 import RoadReport.repositories.VoteRepository;
@@ -35,13 +36,19 @@ public class ReportMergeService {
         voteRepository.deleteDuplicateVotes(duplicateReport.getId(),
                 mainReport.getId());
 
+
         voteRepository.migrateVotes(duplicateReport.getId(), mainReport.getId());
-
         commentRepository.migrateComments(duplicateReport.getId(), mainReport.getId());
-
         mainReport.setWeight(mainReport.getWeight() + duplicateReport.getWeight());
 
+        int mainUpvotes = (int) voteRepository.countByReportIdAndType(mainReport.getId(), VoteType.POSITIVE);
+        int mainDownvotes = (int) voteRepository.countByReportIdAndType(mainReport.getId(), VoteType.NEGATIVE);
+        mainReport.setUpvotes(mainUpvotes);
+        mainReport.setDownvotes(mainDownvotes);
+
         duplicateReport.setStatus(ReportStatus.REMOVED);
+        duplicateReport.setUpvotes(0);
+        duplicateReport.setDownvotes(0);
 
         reportRepository.save(mainReport);
         reportRepository.save(duplicateReport);

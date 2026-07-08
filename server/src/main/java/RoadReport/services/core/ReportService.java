@@ -24,6 +24,7 @@ import java.util.Set;
 public class ReportService {
     private final ReportRepository reportRepository;
     private final UserService userService;
+    private final ReportAttributesValidator reportAttributesValidator;
 
     private final double MAX_RATIO_OF_NEGATIVE_VOTES = 0.5;
     private final double MIN_RATIO_OF_POSITIVE_VOTES = 0.95;
@@ -55,6 +56,10 @@ public class ReportService {
         if (description != null) {
             reportData.setDescription(Jsoup.clean(description, Safelist.none()));
         }
+
+        reportData.setAttributes(
+                reportAttributesValidator.validateAndSanitize(reportData.getType(), reportData.getAttributes())
+        );
 
         reportData.setUpvotes(0);
         reportData.setDownvotes(0);

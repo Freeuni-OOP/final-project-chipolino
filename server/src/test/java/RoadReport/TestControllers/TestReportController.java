@@ -28,6 +28,7 @@ import tools.jackson.databind.ObjectMapper;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
@@ -87,7 +88,7 @@ public class TestReportController {
     @Test
     public void testCreateReportOK() throws Exception {
         ReportRequestDTO requestDTO = new ReportRequestDTO(
-                ReportType.POLICE, "test report", 41.7, 44.8
+                ReportType.POLICE, "test report", 41.7, 44.8, Map.of("POTHOLE", "SEVERE")
         );
 
         mvc.perform(post("/api/reports")

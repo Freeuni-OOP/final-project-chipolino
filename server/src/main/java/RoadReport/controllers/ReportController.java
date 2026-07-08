@@ -35,6 +35,7 @@ public class ReportController {
                 .description(reportRequestDTO.description())
                 .latitude(reportRequestDTO.latitude())
                 .longitude(reportRequestDTO.longitude())
+                .attributes(reportRequestDTO.attributes())
                 .build();
     }
 
@@ -64,7 +65,8 @@ public class ReportController {
                 report.getUpvotes(),
                 report.getDownvotes(),
                 report.getCreateDate(),
-                vt
+                vt,
+                report.getAttributes()
         );
     }
 

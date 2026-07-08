@@ -27,28 +27,28 @@ export const VoteButtons = ({reportId, initUpvotes = 0, initDownvotes = 0, initU
     const [loading, setLoading] = useState(false)
 
     const handleVote = (type) => {
-        if(type === 'UPVOTE') {
-            if(userVote === 'UPVOTE') {
+        if(type === 'POSITIVE') {
+            if(userVote === 'POSITIVE') {
                 setUpvotes(prev => prev - 1)
                 setUserVote(null)
             }
             else {
-                if (userVote === 'DOWNVOTE') {
+                if (userVote === 'NEGATIVE') {
                     setDownvotes(prev => prev - 1)
                 }
                 setUpvotes(prev => prev + 1)
-                setUserVote('UPVOTE')
+                setUserVote('POSITIVE')
             }
-        } else if (type === 'DOWNVOTE') {
-            if (userVote === 'DOWNVOTE') {
+        } else if (type === 'NEGATIVE') {
+            if (userVote === 'NEGATIVE') {
                 setDownvotes(prev => prev - 1)
                 setUserVote(null)
             } else {
-                if (userVote === 'UPVOTE') {
+                if (userVote === 'POSITIVE') {
                     setUpvotes(prev => prev - 1)
                 }
                 setDownvotes(prev => prev + 1)
-                setUserVote('DOWNVOTE')
+                setUserVote('NEGATIVE')
             }
         }
     }
@@ -65,9 +65,9 @@ export const VoteButtons = ({reportId, initUpvotes = 0, initDownvotes = 0, initU
         handleVote(type);
 
         try {
-            if (type === 'UPVOTE') {
+            if (type === 'POSITIVE') {
                 await upVote(reportId)
-            } else if (type === 'DOWNVOTE') {
+            } else if (type === 'NEGATIVE') {
                 await downVote(reportId)
             }
             setLoading(false);
@@ -84,8 +84,8 @@ export const VoteButtons = ({reportId, initUpvotes = 0, initDownvotes = 0, initU
     return (
         <div className={styles.voteContainer}>
             <Button className={`${styles.voteBtn} ${styles.upvote} 
-                        ${userVote === 'UPVOTE' ? styles.activeUpvote : ''}`}
-                    onClick={() => makeVote('UPVOTE')}
+                        ${userVote === 'POSITIVE' ? styles.activeUpvote : ''}`}
+                    onClick={() => makeVote('POSITIVE')}
                     disabled={loading}
                     aria-label="Upvote">
                 <svg className={styles.icon}
@@ -101,8 +101,8 @@ export const VoteButtons = ({reportId, initUpvotes = 0, initDownvotes = 0, initU
             </Button>
 
             <Button className={`${styles.voteBtn} ${styles.downvote} 
-                        ${userVote === 'DOWNVOTE' ? styles.activeDownvote : ''}`}
-                    onClick={() => makeVote('DOWNVOTE')}
+                        ${userVote === 'NEGATIVE' ? styles.activeDownvote : ''}`}
+                    onClick={() => makeVote('NEGATIVE')}
                     disabled={loading}
                     aria-label="Downvote">
                 <svg className={styles.icon}
