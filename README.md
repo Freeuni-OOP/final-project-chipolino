@@ -15,7 +15,7 @@
 ![Docker](https://img.shields.io/badge/Docker-ready-2496ED?logo=docker&logoColor=white)
 ![License](https://img.shields.io/badge/license-TBD-lightgrey)
 
-**[🌐 Live Demo](https://final-project-chipolino-git-develop-fixtests-chipolino1.vercel.app/)** &nbsp;·&nbsp; **[🚀 Getting Started](#-getting-started)** &nbsp;·&nbsp; **[📡 API Overview](#-api-overview)**
+**[🌐 Live Demo](https://final-project-chipolino.vercel.app/)** &nbsp;·&nbsp; **[🚀 Getting Started](#-getting-started)** &nbsp;·&nbsp; **[📡 API Overview](#-api-overview)**
 
 <sub>Preview deployment of the current feature branch — Aiven + Render + Vercel. See <a href="#-cloud-deployment">Cloud Deployment</a>.</sub>
 
