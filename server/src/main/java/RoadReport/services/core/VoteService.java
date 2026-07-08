@@ -15,6 +15,8 @@ import RoadReport.repositories.VoteRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -139,7 +141,9 @@ public class VoteService {
         if (report.getStatus() == ReportStatus.REMOVED) {
             throw new ActionForbiddenException("Removed report cannot be voted!");
         }
-
+        if (report.getExpireDate() != null && report.getExpireDate().isBefore(LocalDateTime.now())) {
+            throw new ActionForbiddenException("Expired report cannot be voted!");
+        }
         if (userService.userIsBanned(user.getId())) {
             throw new UserBannedException("Banned users cannot vote!");
         }

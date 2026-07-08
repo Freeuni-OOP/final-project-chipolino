@@ -4,6 +4,7 @@ import RoadReport.entities.Comment;
 import RoadReport.entities.Report;
 import RoadReport.entities.User;
 import RoadReport.enums.Role;
+import RoadReport.exceptions.core.UserBannedException;
 import RoadReport.exceptions.special.ActionForbiddenException;
 import RoadReport.exceptions.core.CommentNotFoundException;
 import RoadReport.exceptions.core.ReportNotFoundException;
@@ -25,7 +26,7 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final UserRepository userRepository;
     private final ReportRepository reportRepository;
-
+    private final UserService userService;
     /**
      * creates and store users comment,
      * ensures safety from XSS attacks
@@ -41,6 +42,9 @@ public class CommentService {
     public Comment addComment(Long userId, Long reportId, String text) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("couldn't found: " + userId));
+        if (userService.userIsBanned(userId)) {                    // new check
+            throw new UserBannedException("Banned users cannot comment.");
+        }
         Report report = reportRepository.findById(reportId)
                 .orElseThrow(() -> new ReportNotFoundException("couldn't found report: " + reportId));
 

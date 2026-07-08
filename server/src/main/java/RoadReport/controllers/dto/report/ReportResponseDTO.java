@@ -5,6 +5,7 @@ import RoadReport.enums.ReportType;
 import RoadReport.enums.VoteType;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 
 public record ReportResponseDTO(
         Long id,
@@ -18,5 +19,6 @@ public record ReportResponseDTO(
         Integer upvotes,
         Integer downvotes,
         LocalDateTime createDate,
-        VoteType vote
+        VoteType vote,
+        Map<String, Object> attributes
 ) {}

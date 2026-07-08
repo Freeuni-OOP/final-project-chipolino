@@ -2,12 +2,15 @@ import { useState, useRef, useEffect } from 'react';
 import { Button } from '../../common/button/Button';
 import { Spinner } from '../../common/spinner/Spinner';
 import { Select } from '../../common/select/Select';
+import { Input } from '../../common/input/Input';
 import { createReport } from '../../../api/reportApi.js';
+import { REPORT_ATTRIBUTE_FIELDS, buildAttributesPayload } from '../../../constants/reportAttributes.js';
 import styles from './ReportForm.module.css';
 
 const ReportForm = ({ location, onClose, onSuccess }) => {
     const [reportType, setReportType] = useState('');
     const [description, setDescription] = useState('');
+    const [attributes, setAttributes] = useState({});
     const [errors, setErrors] = useState({});
     const [isLoading, setIsLoading] = useState(false);
     const textareaRef = useRef(null);
@@ -27,7 +30,14 @@ const ReportForm = ({ location, onClose, onSuccess }) => {
         el.style.height = newH + 'px'
         el.style.overflowY = el.scrollHeight > MAX ? 'auto' : 'hidden'
     }
+    const handleTypeChange = (e) => {
+        setReportType(e.target.value);
+        setAttributes({});
+    };
 
+    const handleAttributeChange = (key, value) => {
+        setAttributes((prev) => ({ ...prev, [key]: value }));
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -49,7 +59,8 @@ const ReportForm = ({ location, onClose, onSuccess }) => {
                 latitude: location.lat,
                 longitude: location.lng,
                 type: reportType,
-                description: description
+                description: description,
+                attributes: buildAttributesPayload(reportType, attributes)
             };
 
             console.log('Sending report to backend:', reportData);
@@ -60,8 +71,9 @@ const ReportForm = ({ location, onClose, onSuccess }) => {
             }
 
             onClose();
-        } catch {
-            setErrors({ general: 'Failed to submit report' });
+        } catch (err){
+            const message = err.response?.data?.message || 'Failed to submit report';
+            setErrors({ general: message });
         } finally {
             setIsLoading(false);
         }
@@ -92,12 +104,58 @@ const ReportForm = ({ location, onClose, onSuccess }) => {
                             placeholder="-- Select Type --"
                             options={reportOptions}
                             value={reportType}
-                            onChange={(e) => setReportType(e.target.value)}
+                            onChange={handleTypeChange}
                             disabled={isLoading}
                         />
                         {errors.reportType && <span className={styles.errorText}>{errors.reportType}</span>}
                     </div>
+                    {REPORT_ATTRIBUTE_FIELDS[reportType]?.length > 0 && (
+                        <div className={styles.inputGroup}>
+                            {REPORT_ATTRIBUTE_FIELDS[reportType].map((field) => {
+                                if (field.type === 'boolean') {
+                                    return (
+                                        <label key={field.key} className={styles.checkboxRow}>
+                                            <input
+                                                type="checkbox"
+                                                checked={Boolean(attributes[field.key])}
+                                                onChange={(e) => handleAttributeChange(field.key, e.target.checked)}
+                                                disabled={isLoading}
+                                            />
+                                            {field.label}
+                                        </label>
+                                    );
+                                }
 
+                                if (field.type === 'select') {
+                                    return (
+                                        <Select
+                                            key={field.key}
+                                            label={field.label}
+                                            placeholder="-- Select --"
+                                            options={field.options}
+                                            value={attributes[field.key] || ''}
+                                            onChange={(e) => handleAttributeChange(field.key, e.target.value)}
+                                            disabled={isLoading}
+                                        />
+                                    );
+                                }
+
+                                return (
+                                    <Input
+                                        key={field.key}
+                                        label={field.unit ? `${field.label} (${field.unit})` : field.label}
+                                        type={field.type === 'number' ? 'number' : 'text'}
+                                        min={field.min}
+                                        max={field.max}
+                                        maxLength={field.maxLength}
+                                        value={attributes[field.key] || ''}
+                                        onChange={(e) => handleAttributeChange(field.key, e.target.value)}
+                                        disabled={isLoading}
+                                    />
+                                );
+                            })}
+                        </div>
+                    )}
                     <div className={styles.inputGroup}>
                         <label className={styles.label}>Description (optional)</label>
                         <textarea
