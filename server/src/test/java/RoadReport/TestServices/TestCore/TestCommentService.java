@@ -14,6 +14,7 @@ import RoadReport.repositories.CommentRepository;
 import RoadReport.repositories.ReportRepository;
 import RoadReport.repositories.UserRepository;
 import RoadReport.services.core.CommentService;
+import RoadReport.services.core.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -40,6 +41,9 @@ public class TestCommentService {
 
     @Mock
     private ReportRepository reportRepository;
+
+    @Mock
+    private UserService userService;
 
     @InjectMocks
     private CommentService commentService;
@@ -213,6 +217,8 @@ public class TestCommentService {
         });
         verify(commentRepository, never()).save(any(Comment.class));
     }
+
+
 
     @Test
     public void testGetCommentsByReport() {

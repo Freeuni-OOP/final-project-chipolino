@@ -4,6 +4,7 @@ import styles from './ReportPopUp.module.css';
 import {VoteButtons} from "../vote/VoteButtons.jsx";
 import {CommentLists} from "../comments/CommentLists.jsx";
 import { Link } from 'react-router-dom'
+import { REPORT_ATTRIBUTE_FIELDS, formatAttributeValue } from '../../../constants/reportAttributes.js'
 
 const formatEnumText = (text) => {
     if (!text) {
@@ -32,7 +33,7 @@ const formatEnumText = (text) => {
  */
 export const ReportPopup = ({report, currentUser}) => {
     const { id, authorUsername, userId, type, description,
-        status, upvotes, downvotes, createDate, voteType } = report;
+        status, upvotes, downvotes, createDate, voteType, attributes } = report;
     const typeStyle = styles[type?.toLowerCase()]
     const statusStyle = styles[status?.toLowerCase()]
 
@@ -65,7 +66,20 @@ export const ReportPopup = ({report, currentUser}) => {
                 <div className={styles.description}>
                     {description || 'No additional details provided.'}
                 </div>
-
+                {attributes && Object.keys(attributes).length > 0 && (
+                    <div className={styles.attributes}>
+                        {(REPORT_ATTRIBUTE_FIELDS[type] || [])
+                            .filter((field) => attributes[field.key] !== undefined && attributes[field.key] !== null)
+                            .map((field) => (
+                                <div key={field.key} className={styles.attributeRow}>
+                                    <span className={styles.attributeLabel}>{field.label}</span>
+                                    <span className={styles.attributeValue}>
+                                        {formatAttributeValue(field, attributes[field.key])}
+                                    </span>
+                                </div>
+                            ))}
+                    </div>
+                )}
                 <div className={styles.interactiveZone}>
                     <VoteButtons
                         reportId={id}
