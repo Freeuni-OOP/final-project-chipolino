@@ -48,6 +48,14 @@ const MapView = ({
 
     const { user } = useAuth();
     const markerPosition = selectedCoords ? [selectedCoords.lat, selectedCoords.lng] : null;
+
+    useEffect(() => {
+        setSelectedCoords(null);
+        setRouteStart(null);
+        setRouteEnd(null);
+        setRouteCoords([]);
+    }, [currentMode]);
+
     return (
         <div className={styles.mapWrapper}>
 
@@ -125,7 +133,7 @@ const MapView = ({
                     onMapClicked={handleMapClick}
                 />
 
-                {routeCoords && routeCoords.length > 0 && (
+                {currentMode === 'route' && routeCoords && routeCoords.length > 0 && (
                     <Polyline positions={routeCoords} pathOptions={{ color: '#38bdf8', weight: 5, opacity: 0.85, lineJoin: 'round' }} />
                 )}
 
@@ -168,7 +176,7 @@ const MapView = ({
 
                 {followUser && userLocation && userLocation.lat !== 0 && <RecenterMap location={userLocation} />}
 
-                {userLocation && userLocation.lat !== 0 && (
+                {userLocation && userLocation.lat !== 0 && userLocation.lng !==0 && (
                     <Marker position={[userLocation.lat, userLocation.lng]}>
                         <Popup>
                             <div style={{ textAlign: 'center', fontWeight: 'bold', color: '#848485' }}>
@@ -187,7 +195,7 @@ const MapView = ({
                     />
                 ))}
 
-                {selectedCoords !== null && markerPosition && (
+                {currentMode === 'report' && selectedCoords !== null && markerPosition && (
                     <Marker position={markerPosition}>
                         <Popup minWidth={240}>
                             <div onClick={(e) => e.stopPropagation()} onMouseDown={(e) => e.stopPropagation()}>

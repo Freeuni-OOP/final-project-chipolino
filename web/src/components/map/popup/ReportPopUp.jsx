@@ -33,7 +33,7 @@ const formatEnumText = (text) => {
  */
 export const ReportPopup = ({report, currentUser}) => {
     const { id, authorUsername, userId, type, description,
-        status, upvotes, downvotes, createDate, voteType, attributes } = report;
+        status, upvotes, downvotes, createDate, vote, attributes } = report;
     const typeStyle = styles[type?.toLowerCase()]
     const statusStyle = styles[status?.toLowerCase()]
 
@@ -85,7 +85,7 @@ export const ReportPopup = ({report, currentUser}) => {
                         reportId={id}
                         initUpvotes={upvotes}
                         initDownvotes={downvotes}
-                        initUserVote={voteType}
+                        initUserVote={vote}
                     />
                 </div>
 

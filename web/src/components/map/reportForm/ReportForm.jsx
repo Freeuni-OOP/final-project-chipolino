@@ -24,7 +24,7 @@ const ReportForm = ({ location, onClose, onSuccess }) => {
 
     const adjustDescHeight = (el) => {
         if (!el) return
-        const MAX = 300
+        const MAX = 120
         el.style.height = 'auto'
         const newH = Math.min(el.scrollHeight, MAX)
         el.style.height = newH + 'px'

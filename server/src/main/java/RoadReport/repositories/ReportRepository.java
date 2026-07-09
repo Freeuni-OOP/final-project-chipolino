@@ -38,9 +38,7 @@ public interface ReportRepository extends JpaRepository<Report, Long> {
      * @return A list of {@link Report} entities found within the specified circular area.
      */
     @Query(value = "SELECT * FROM reports AS r " +
-            "WHERE r.latitude BETWEEN (:lat - 0.0006) AND (:lat + 0.0006) " +
-            "AND r.longitude BETWEEN (:lon - 0.0008) AND (:lon + 0.0008) " +
-            "AND (6371 * acos(cos(radians(:lat)) * cos(radians(r.latitude)) *" +
+            "WHERE (6371 * acos(cos(radians(:lat)) * cos(radians(r.latitude)) *" +
             " cos(radians(r.longitude) - radians(:lon)) + sin(radians(:lat)) *" +
             " sin(radians(r.latitude)))) < :radius",
             nativeQuery = true
