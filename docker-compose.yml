@@ -4,7 +4,7 @@ services:
     container_name: roadreport-db
     environment:
       MYSQL_ROOT_PASSWORD: chipolino123
-      MYSQL_DATABASE: roadreport
+      MYSQL_DATABASE: road_report_db
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       interval: 5s

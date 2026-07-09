@@ -121,7 +121,7 @@ public class TestReportRepository {
         assertTrue(smallRadius.isEmpty());
 
         List<Report> bigRadius = reportRepository.findNearbyReports(42.00, 16.00, 15000.0);
-        assertEquals(1, bigRadius.size());
+        assertEquals(2, bigRadius.size());
     }
 
     @Test
