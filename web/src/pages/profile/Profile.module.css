@@ -1,0 +1,213 @@
+.profileContainer {
+    max-width: 520px;
+    margin: 40px auto;
+    padding: 0 20px;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+.banBanner {
+    background: rgba(239, 68, 68, 0.15);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    color: #fca5a5;
+    padding: 14px 18px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    font-size: 14px;
+    text-align: center;
+    backdrop-filter: blur(8px);
+}
+
+.profileHeader {
+    display: flex;
+    justify-content: flex-start; /* title only in header now */
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.title {
+    font-size: 26px;
+    color: #f8fafc;
+    margin: 0;
+    font-weight: 700;
+}
+
+.backBtn {
+    background: rgba(51, 65, 85, 0.6) !important;
+    color: #cbd5e1 !important;
+    border: 1px solid rgba(148, 163, 184, 0.2) !important;
+    padding: 8px 16px !important;
+    font-size: 14px !important;
+    box-shadow: none !important;
+    width: auto !important;
+    min-width: 120px;
+}
+
+.backBtn:hover {
+    background: rgba(51, 65, 85, 0.8) !important;
+    border-color: rgba(148, 163, 184, 0.3) !important;
+    color: #f8fafc !important;
+}
+
+.profileCard {
+    padding: 28px !important;
+    margin-bottom: 20px;
+}
+
+.avatarSection {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.15);
+    padding-bottom: 24px;
+    margin-bottom: 24px;
+}
+
+.avatarCircle {
+    width: 88px;
+    height: 88px;
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 36px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    box-shadow:
+            0 8px 24px rgba(59, 130, 246, 0.35),
+            0 0 0 4px rgba(59, 130, 246, 0.15);
+}
+
+.adminAvatar {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    box-shadow:
+            0 8px 24px rgba(245, 158, 11, 0.35),
+            0 0 0 4px rgba(245, 158, 11, 0.15);
+}
+
+.username {
+    font-size: 24px;
+    margin: 0 0 8px 0;
+    color: #f8fafc;
+    font-weight: 700;
+}
+
+.roleBadge {
+    font-size: 11px;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    background: rgba(51, 65, 85, 0.6);
+    color: #94a3b8;
+    border: 1px solid rgba(148, 163, 184, 0.2);
+}
+
+.roleBadge.admin {
+    background: rgba(245, 158, 11, 0.15);
+    color: #fbbf24;
+    border-color: rgba(245, 158, 11, 0.3);
+}
+
+.infoGrid {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.infoField {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    background: rgba(30, 41, 59, 0.5);
+    border-radius: 10px;
+    border: 1px solid rgba(148, 163, 184, 0.1);
+}
+
+.label {
+    font-size: 14px;
+    color: #64748b;
+    font-weight: 500;
+}
+
+.value {
+    font-size: 15px;
+    color: #f8fafc;
+    font-weight: 600;
+}
+
+.positiveRep {
+    color: #4ade80 !important;
+}
+
+.negativeRep {
+    color: #f87171 !important;
+}
+
+.myTarget {
+    font-size: 14px;
+    color: #60a5fa;
+    font-weight: 500;
+    margin-left: 6px;
+}
+
+.accountActions {
+    margin-top: 22px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(148, 163, 184, 0.15);
+    display: flex;
+    justify-content: space-between; /* distribute Back and Edit across the row */
+    gap: 12px;
+}
+
+.editBtn {
+    background: rgba(51, 65, 85, 0.6) !important;
+    color: #cbd5e1 !important;
+    border: 1px solid rgba(148, 163, 184, 0.2) !important;
+    font-size: 14px !important;
+    padding: 10px 16px !important;
+    width: auto !important;
+    min-width: 140px; /* give edit button a consistent size so spacing looks even */
+}
+
+.editBtn:hover {
+    background: rgba(59, 130, 246, 0.2) !important;
+    border-color: rgba(59, 130, 246, 0.3) !important;
+    color: #60a5fa !important;
+}
+
+.rankCard {
+    padding: 20px 24px !important;
+    text-align: center;
+    border: 1px dashed rgba(148, 163, 184, 0.2) !important;
+}
+
+.rankTitle {
+    font-size: 12px;
+    text-transform: uppercase;
+    color: #64748b;
+    margin: 0 0 8px 0;
+    letter-spacing: 1px;
+    font-weight: 600;
+}
+
+.rankText {
+    font-size: 18px;
+    font-weight: 700;
+    color: #60a5fa;
+    margin: 0;
+}
+
+.errorCard {
+    text-align: center;
+    padding: 32px !important;
+}
+
+.errorMsg {
+    color: #f87171;
+    margin-bottom: 20px;
+    font-size: 15px;
+}

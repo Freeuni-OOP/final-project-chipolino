@@ -1,0 +1,84 @@
+.formContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+    box-sizing: border-box;
+    margin-top: 8px;
+    padding-top: 8px;
+    /* keep the separator subtle but compact */
+    border-top: 1px solid rgba(148, 163, 184, 0.06);
+}
+
+.inputWrapper {
+    position: relative;
+    width: 100%;
+}
+
+.textarea {
+    width: 100%;
+    /* allow js to resize up to MAX (set in js). Keep a reasonable CSS cap too */
+    max-height: 220px;
+    padding: 10px 12px 22px;
+    box-sizing: border-box;
+    border: 1px solid rgba(148, 163, 184, 0.15);
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 13px;
+    color: #f8fafc;
+    background: rgba(30, 41, 59, 0.5);
+    resize: none; /* let JS handle resizing */
+    outline: none;
+    transition: all 0.18s ease;
+    overflow-y: hidden;
+}
+
+.textarea:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+    background: rgba(30, 41, 59, 0.7);
+}
+
+.textarea::placeholder {
+    color: #64748b;
+}
+
+.textarea:disabled {
+    background: rgba(51, 65, 85, 0.3);
+    color: #64748b;
+    cursor: not-allowed;
+}
+
+.charCounter {
+    position: absolute;
+    bottom: 8px;
+    right: 12px;
+    font-size: 10px;
+    color: #64748b;
+    pointer-events: none;
+}
+
+.errorMessage {
+    font-size: 12px;
+    color: #f87171;
+    font-weight: 500;
+}
+
+.actions {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.submitBtn {
+    padding: 8px 16px !important;
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    width: auto !important;
+}
+
+.submitBtn:disabled {
+    background: rgba(51, 65, 85, 0.5) !important;
+    color: #64748b !important;
+    border-color: transparent !important;
+    box-shadow: none !important;
+}

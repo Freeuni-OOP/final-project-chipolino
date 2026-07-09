@@ -1,0 +1,19 @@
+.customHazardContainer {
+    background: transparent !important;
+    border: none !important;
+}
+
+.hazardEmojiMarker {
+    font-size: 28px;
+    text-align: center;
+    filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.4));
+    --marker-brightness: 1;
+    opacity: var(--marker-brightness);
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.hazardEmojiMarker:hover {
+    transform: scale(1.2);
+    filter: drop-shadow(0 4px 12px rgba(59, 130, 246, 0.5));
+}

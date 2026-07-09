@@ -1,0 +1,91 @@
+.mapPageContainer {
+    position: relative;
+    width: 100%;
+    height: calc(100vh - 4rem);
+    overflow: hidden;
+    background: #0f172a;
+}
+
+/* Leaflet container fills the entire map page */
+:global(.leaflet-container) {
+    width: 100% !important;
+    height: 100% !important;
+    z-index: 1;
+}
+
+/* Repositioned zoom controls */
+:global(.leaflet-top.leaflet-left) {
+    margin-top: 1rem;
+}
+
+/* Styled zoom bar with glassmorphism */
+:global(.leaflet-bar) {
+    background: rgba(15, 23, 42, 0.9) !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+    border: 1px solid rgba(148, 163, 184, 0.2) !important;
+    border-radius: 10px !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3) !important;
+    overflow: hidden;
+}
+
+:global(.leaflet-bar a) {
+    background: transparent !important;
+    color: #94a3b8 !important;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.15) !important;
+    width: 36px !important;
+    height: 36px !important;
+    line-height: 36px !important;
+    font-size: 18px !important;
+    transition: all 0.2s ease !important;
+}
+
+:global(.leaflet-bar a:last-child) {
+    border-bottom: none !important;
+}
+
+:global(.leaflet-bar a:hover) {
+    background: rgba(59, 130, 246, 0.2) !important;
+    color: #60a5fa !important;
+}
+
+/* Attribution styling */
+:global(.leaflet-control-attribution) {
+    background: rgba(15, 23, 42, 0.8) !important;
+    color: #64748b !important;
+    font-size: 10px !important;
+    backdrop-filter: blur(8px) !important;
+    border-radius: 4px 0 0 0 !important;
+}
+
+:global(.leaflet-control-attribution a) {
+    color: #60a5fa !important;
+}
+
+/* Mode buttons (if used inline) */
+.modeButton {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    color: white;
+    border: 1px solid rgba(96, 165, 250, 0.3);
+    padding: 10px 18px;
+    margin: 4px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 14px;
+    transition: all 0.25s ease;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
+}
+
+.modeButton:hover {
+    background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(59, 130, 246, 0.35);
+}
+
+.active {
+    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%) !important;
+    box-shadow:
+            0 0 0 2px rgba(96, 165, 250, 0.5),
+            0 4px 16px rgba(59, 130, 246, 0.4) !important;
+}

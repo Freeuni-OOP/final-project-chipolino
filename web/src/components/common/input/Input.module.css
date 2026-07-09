@@ -1,0 +1,116 @@
+.inputContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 20px;
+    width: 100%;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    position: relative;
+}
+
+.label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #94a3b8;
+    text-align: left;
+    margin-left: 2px;
+    transition: color 0.3s ease;
+}
+
+.inputContainer:focus-within .label {
+    color: #60a5fa;
+}
+
+.inputField {
+    width: 100%;
+    padding: 14px 16px;
+    font-size: 15px;
+    line-height: 1.5;
+
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    border-radius: 10px;
+    background: rgba(30, 41, 59, 0.6);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    color: #f8fafc;
+    outline: none;
+
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+}
+
+.inputField:hover:not(:disabled) {
+    border-color: rgba(148, 163, 184, 0.3);
+    background: rgba(30, 41, 59, 0.8);
+}
+
+.inputField:focus {
+    background: rgba(30, 41, 59, 0.9);
+    border-color: #3b82f6;
+    box-shadow:
+            0 0 0 3px rgba(59, 130, 246, 0.2),
+            0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.inputField::placeholder {
+    color: #64748b;
+    transition: opacity 0.3s ease;
+}
+
+.inputField:focus::placeholder {
+    opacity: 0.5;
+}
+
+.inputField:disabled {
+    background: rgba(51, 65, 85, 0.4);
+    color: #64748b;
+    cursor: not-allowed;
+    border-color: transparent;
+    opacity: 0.6;
+}
+
+/* Error States */
+.inputField.error {
+    border-color: #f87171;
+    background: rgba(239, 68, 68, 0.1);
+}
+
+.inputField.error:focus {
+    border-color: #ef4444;
+    box-shadow:
+            0 0 0 3px rgba(239, 68, 68, 0.2),
+            0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.inputContainer:has(.error) .label {
+    color: #f87171;
+}
+
+.errorMessage {
+    font-size: 13px;
+    font-weight: 500;
+    color: #f87171;
+    text-align: left;
+    margin-left: 2px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+
+    animation: slideDown 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.errorMessage::before {
+    content: '⚠';
+    font-size: 12px;
+}
+
+@keyframes slideDown {
+    0% {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

@@ -1,0 +1,195 @@
+import { useState, useRef, useEffect } from 'react';
+import { Button } from '../../common/button/Button';
+import { Spinner } from '../../common/spinner/Spinner';
+import { Select } from '../../common/select/Select';
+import { Input } from '../../common/input/Input';
+import { createReport } from '../../../api/reportApi.js';
+import { REPORT_ATTRIBUTE_FIELDS, buildAttributesPayload } from '../../../constants/reportAttributes.js';
+import styles from './ReportForm.module.css';
+
+const ReportForm = ({ location, onClose, onSuccess }) => {
+    const [reportType, setReportType] = useState('');
+    const [description, setDescription] = useState('');
+    const [attributes, setAttributes] = useState({});
+    const [errors, setErrors] = useState({});
+    const [isLoading, setIsLoading] = useState(false);
+    const textareaRef = useRef(null);
+
+    useEffect(() => {
+        if (textareaRef.current) {
+            textareaRef.current.scrollTop = 0;
+            adjustDescHeight(textareaRef.current)
+        }
+    }, [])
+
+    const adjustDescHeight = (el) => {
+        if (!el) return
+        const MAX = 120
+        el.style.height = 'auto'
+        const newH = Math.min(el.scrollHeight, MAX)
+        el.style.height = newH + 'px'
+        el.style.overflowY = el.scrollHeight > MAX ? 'auto' : 'hidden'
+    }
+    const handleTypeChange = (e) => {
+        setReportType(e.target.value);
+        setAttributes({});
+    };
+
+    const handleAttributeChange = (key, value) => {
+        setAttributes((prev) => ({ ...prev, [key]: value }));
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setErrors({});
+
+        if (!reportType) {
+            setErrors({ reportType: 'Please select a report type' });
+            return;
+        }
+
+        if (!location || location.lat == null || location.lng == null) {
+            setErrors({ general: 'Location is missing. Please try selecting on the map again.' });
+            return;
+        }
+        setIsLoading(true);
+
+        try {
+            const reportData = {
+                latitude: location.lat,
+                longitude: location.lng,
+                type: reportType,
+                description: description,
+                attributes: buildAttributesPayload(reportType, attributes)
+            };
+
+            console.log('Sending report to backend:', reportData);
+
+            await createReport(reportData);
+            if (onSuccess) {
+                onSuccess();
+            }
+
+            onClose();
+        } catch (err){
+            const message = err.response?.data?.message || 'Failed to submit report';
+            setErrors({ general: message });
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+
+    const reportOptions = [
+        { value: 'POTHOLE', label: 'Pothole' },
+        { value: 'ACCIDENT', label: 'Accident' },
+        { value: 'HEAVY_TRAFFIC', label: 'Heavy Traffic' },
+        { value: 'ROAD_CLOSURE', label: 'Road Closure' },
+        { value: 'SPEED_CAMERA', label: 'Speed Camera' },
+        { value: 'POLICE', label: 'Police' },
+        { value: 'CUSTOM', label: 'Other' }
+    ];
+
+
+    return (
+        <div className={styles.container}>
+            <div className={styles.card}>
+                <h2 className={styles.title}>Submit Report</h2>
+                {errors.general && <div className={styles.errorBox}>{errors.general}</div>}
+
+                <form onSubmit={handleSubmit}>
+                    <div className={styles.inputGroup}>
+                        <Select
+                            label="Report Type"
+                            placeholder="-- Select Type --"
+                            options={reportOptions}
+                            value={reportType}
+                            onChange={handleTypeChange}
+                            disabled={isLoading}
+                        />
+                        {errors.reportType && <span className={styles.errorText}>{errors.reportType}</span>}
+                    </div>
+                    {REPORT_ATTRIBUTE_FIELDS[reportType]?.length > 0 && (
+                        <div className={styles.inputGroup}>
+                            {REPORT_ATTRIBUTE_FIELDS[reportType].map((field) => {
+                                if (field.type === 'boolean') {
+                                    return (
+                                        <label key={field.key} className={styles.checkboxRow}>
+                                            <input
+                                                type="checkbox"
+                                                checked={Boolean(attributes[field.key])}
+                                                onChange={(e) => handleAttributeChange(field.key, e.target.checked)}
+                                                disabled={isLoading}
+                                            />
+                                            {field.label}
+                                        </label>
+                                    );
+                                }
+
+                                if (field.type === 'select') {
+                                    return (
+                                        <Select
+                                            key={field.key}
+                                            label={field.label}
+                                            placeholder="-- Select --"
+                                            options={field.options}
+                                            value={attributes[field.key] || ''}
+                                            onChange={(e) => handleAttributeChange(field.key, e.target.value)}
+                                            disabled={isLoading}
+                                        />
+                                    );
+                                }
+
+                                return (
+                                    <Input
+                                        key={field.key}
+                                        label={field.unit ? `${field.label} (${field.unit})` : field.label}
+                                        type={field.type === 'number' ? 'number' : 'text'}
+                                        min={field.min}
+                                        max={field.max}
+                                        maxLength={field.maxLength}
+                                        value={attributes[field.key] || ''}
+                                        onChange={(e) => handleAttributeChange(field.key, e.target.value)}
+                                        disabled={isLoading}
+                                    />
+                                );
+                            })}
+                        </div>
+                    )}
+                    <div className={styles.inputGroup}>
+                        <label className={styles.label}>Description (optional)</label>
+                        <textarea
+                            ref={textareaRef}
+                            className={styles.textarea}
+                            placeholder="Add more details about the report..."
+                            value={description}
+                            onChange={(e) => {
+                                setDescription(e.target.value)
+                                adjustDescHeight(e.target)
+                            }}
+                            disabled={isLoading}
+                        />
+                    </div>
+
+                    <div className={styles.buttonGroup}>
+                        <button
+                            type="button"
+                            className={styles.cancelBtn}
+                            onClick={onClose}
+                            disabled={isLoading}
+                        >
+                            Cancel
+                        </button>
+
+
+                        <Button type="submit" disabled={isLoading}>
+                            {isLoading ? <Spinner /> : 'Submit'}
+                        </Button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    );
+};
+
+export default ReportForm;

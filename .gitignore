@@ -5,6 +5,9 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
+# GraphHopper routing engine cache directory
+graph-cache/
+
 # React / Node.js
 node_modules/
 web/node_modules/
@@ -58,3 +61,10 @@ ehthumbs.db
 *.war
 *.class
 hs_err_pid*
+
+# SSL Certificates (Let's Encrypt)
+certbot
+
+# Docker
+docker-compose.override.yml
+.dockerignore

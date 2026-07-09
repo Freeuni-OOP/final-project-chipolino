@@ -1,0 +1,210 @@
+.commentsWrapper {
+    /* Reduce extra spacing and remove the top divider to keep the popup compact */
+    margin-top: 6px;
+    /* no border-top by design for compact popup */
+    padding-top: 0px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.commentsTitle {
+    font-size: 14px;
+    margin: 0;
+    color: #f8fafc;
+    font-weight: 600;
+}
+
+.noComments {
+    font-size: 13px;
+    color: #64748b;
+    text-align: center;
+    padding: 16px;
+    background: rgba(30, 41, 59, 0.4);
+    border-radius: 10px;
+    border: 1px dashed rgba(148, 163, 184, 0.2);
+}
+
+.commentsList {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    /* Show only one comment by default; user can scroll to see others */
+    max-height: 120px;
+    overflow-y: auto;
+    /* leave extra room so inner elements (edit textarea) don't overlap the scrollbar */
+    padding-right: 14px;
+
+    scrollbar-width: thin;
+    scrollbar-color: rgba(148, 163, 184, 0.3) transparent;
+}
+
+.commentsList::-webkit-scrollbar {
+    width: 4px;
+}
+
+.commentsList::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.commentsList::-webkit-scrollbar-thumb {
+    background: rgba(148, 163, 184, 0.3);
+    border-radius: 10px;
+}
+
+.commentsList::-webkit-scrollbar-thumb:hover {
+    background: rgba(59, 130, 246, 0.5);
+}
+
+.commentCard {
+    background: rgba(30, 41, 59, 0.5) !important;
+    border-radius: 10px !important;
+    /* slightly smaller padding to reduce height */
+    padding: 8px 10px !important;
+    box-sizing: border-box !important;
+    border: 1px solid rgba(148, 163, 184, 0.1) !important;
+    transition: all 0.15s ease !important;
+    box-shadow: none !important;
+}
+
+.commentCard:hover {
+    background: rgba(30, 41, 59, 0.7) !important;
+    border-color: rgba(148, 163, 184, 0.2) !important;
+    transform: none !important;
+}
+
+.commentHeader {
+    display: flex;
+    align-items: center;
+    margin-bottom: 4px;
+    gap: 6px;
+}
+
+.commentAuthor {
+    font-size: 12px;
+    font-weight: 600;
+    color: #60a5fa;
+}
+
+.commentDate {
+    font-size: 11px;
+    color: #64748b;
+    margin-right: auto;
+}
+
+.commentContent {
+    font-size: 13px;
+    margin: 0;
+    color: #cbd5e1;
+    line-height: 1.5;
+    word-break: break-word;
+    white-space: pre-wrap;
+}
+
+.loader, .error {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 13px;
+    padding: 20px 0;
+    color: #64748b;
+}
+
+.error {
+    color: #f87171;
+    background: rgba(239, 68, 68, 0.1);
+    border-radius: 8px;
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    padding: 12px;
+}
+
+.deleteBtn {
+    background: transparent !important;
+    border: none !important;
+    padding: 4px 6px !important;
+    font-size: 12px !important;
+    cursor: pointer;
+    box-shadow: none !important;
+    border-radius: 6px !important;
+    color: #64748b !important;
+    transition: all 0.15s ease !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.8;
+    width: auto !important;
+}
+
+.deleteBtn:hover {
+    background: rgba(239, 68, 68, 0.2) !important;
+    color: #f87171 !important;
+    opacity: 1;
+    transform: none !important;
+}
+
+.deleteBtn:active {
+    transform: scale(0.95) !important;
+}
+
+.loginHint {
+    font-size: 13px;
+    color: #64748b;
+    text-align: center;
+    padding: 14px;
+    margin-top: 8px;
+    background: rgba(30, 41, 59, 0.4);
+    border-radius: 10px;
+    font-weight: 500;
+    border: 1px solid rgba(148, 163, 184, 0.1);
+}
+
+.editForm {
+    margin-top: 8px;
+}
+
+.editTextarea {
+    width: 100%;
+    min-height: 60px;
+    max-height: 120px; /* limit expansion so edit box doesn't overflow the popup */
+    padding: 8px;
+    /* avoid overlapping parent's scrollbar by reserving right padding */
+    padding-right: 18px;
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    border-radius: 8px;
+    background: rgba(15, 23, 42, 0.6);
+    color: #f8fafc;
+    resize: vertical;
+    overflow-y: auto; /* scroll inside the textarea if content exceeds max-height */
+    font-family: inherit;
+    font-size: 13px;
+    box-sizing: border-box;
+}
+
+.editTextarea:focus {
+    outline: none;
+    border-color: #3b82f6;
+}
+
+.editActions {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.editActions button {
+    padding: 6px 12px !important;
+    font-size: 12px !important;
+}
+
+/* Small icon-style button for inline edit action */
+.iconBtn {
+    background: transparent !important;
+    border: none !important;
+    padding: 6px !important;
+    font-size: 14px !important;
+    color: #94a3b8 !important;
+    width: auto !important;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}

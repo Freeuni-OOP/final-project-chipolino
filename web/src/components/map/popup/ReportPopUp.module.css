@@ -1,0 +1,204 @@
+.popupContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-width: 280px;
+    max-width: 320px;
+
+    max-height: 360px;
+    overflow-y: auto;
+    padding-right: 6px;
+
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    color: #f8fafc;
+}
+
+.popupContainer::-webkit-scrollbar {
+    width: 4px;
+}
+
+.popupContainer::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.popupContainer::-webkit-scrollbar-thumb {
+    background: rgba(148, 163, 184, 0.2);
+    border-radius: 4px;
+}
+
+.popupContainer::-webkit-scrollbar-thumb:hover {
+    background: rgba(148, 163, 184, 0.4);
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 6px;
+    flex-wrap: wrap;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+    padding-bottom: 6px;
+}
+
+.reportId {
+    font-size: 11px;
+    font-weight: 700;
+    color: #64748b;
+    background: rgba(51, 65, 85, 0.6);
+    padding: 3px 8px;
+    border-radius: 6px;
+    letter-spacing: 0.5px;
+    /* keep the id next to status badge instead of pushing it to the far right */
+    margin-left: 6px;
+}
+
+.badge {
+    padding: 5px 10px;
+    border-radius: 8px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Type badges */
+.pothole        { background: rgba(239, 68, 68, 0.2); color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.3); }
+.accident       { background: rgba(249, 115, 22, 0.2); color: #fdba74; border: 1px solid rgba(249, 115, 22, 0.3); }
+.heavy_traffic  { background: rgba(234, 179, 8, 0.2); color: #fde047; border: 1px solid rgba(234, 179, 8, 0.3); }
+.road_closure   { background: rgba(148, 163, 184, 0.2); color: #cbd5e1; border: 1px solid rgba(148, 163, 184, 0.3); }
+.speed_camera   { background: rgba(34, 197, 94, 0.2); color: #86efac; border: 1px solid rgba(34, 197, 94, 0.3); }
+.police         { background: rgba(59, 130, 246, 0.2); color: #93c5fd; border: 1px solid rgba(59, 130, 246, 0.3); }
+.custom         { background: rgba(168, 85, 247, 0.2); color: #d8b4fe; border: 1px solid rgba(168, 85, 247, 0.3); }
+
+/* Status badges */
+.temporary {
+    background: rgba(251, 191, 36, 0.15);
+    border: 1px dashed rgba(251, 191, 36, 0.5);
+    color: #fcd34d;
+}
+
+.not_verified_permanent {
+    background: rgba(100, 116, 139, 0.2);
+    border: 1px dashed rgba(100, 116, 139, 0.4);
+    color: #94a3b8;
+}
+
+.permanent {
+    background: rgba(34, 197, 94, 0.15);
+    color: #86efac;
+    border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.reportAuthor {
+    font-size: 12px;
+    color: #94a3b8;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+
+.authorLink {
+    color: #60a5fa;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.authorLink:hover {
+    color: #93c5fd;
+    text-decoration: underline;
+}
+
+.myTarget {
+    color: #4ade80;
+    font-weight: 600;
+    font-size: 11px;
+}
+
+.description {
+    font-size: 13px;
+    color: #cbd5e1;
+    margin: 0;
+    line-height: 1.5;
+    background: rgba(30, 41, 59, 0.6);
+    padding: 8px 12px;
+    border-radius: 10px;
+    border-left: 3px solid #3b82f6;
+}
+.attributes {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    background: rgba(30, 41, 59, 0.4);
+    border-radius: 10px;
+    padding: 8px 12px;
+}
+
+.attributeRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    font-size: 12px;
+}
+
+.attributeLabel {
+    color: #94a3b8;
+    font-weight: 600;
+}
+
+.attributeValue {
+    color: #f8fafc;
+    font-weight: 500;
+    text-align: right;
+}
+
+.interactiveZone {
+    background: rgba(30, 41, 59, 0.4);
+    border-radius: 10px;
+    padding: 6px;
+}
+
+.date {
+    font-size: 11px;
+    color: #64748b;
+    text-align: right;
+    margin-top: 4px;
+    border-top: 1px dashed rgba(148, 163, 184, 0.15);
+    padding-top: 10px;
+}
+
+/* Override Leaflet popup styles for dark theme */
+:global(.leaflet-popup-content) {
+    margin: 14px 16px !important;
+    line-height: inherit !important;
+}
+
+:global(.leaflet-popup-content-wrapper) {
+    background: rgba(15, 23, 42, 0.95) !important;
+    backdrop-filter: blur(16px) !important;
+    -webkit-backdrop-filter: blur(16px) !important;
+    border-radius: 16px !important;
+    border: 1px solid rgba(148, 163, 184, 0.15) !important;
+    box-shadow:
+            0 16px 48px rgba(0, 0, 0, 0.5),
+            0 0 0 1px rgba(255, 255, 255, 0.05) inset !important;
+    color: #f8fafc !important;
+}
+
+:global(.leaflet-popup-tip) {
+    background: rgba(15, 23, 42, 0.95) !important;
+    border: 1px solid rgba(148, 163, 184, 0.15) !important;
+    box-shadow: none !important;
+}
+
+:global(.leaflet-popup-close-button) {
+    color: #94a3b8 !important;
+    font-size: 20px !important;
+    padding: 8px !important;
+}
+
+:global(.leaflet-popup-close-button:hover) {
+    color: #f8fafc !important;
+}

@@ -1,0 +1,124 @@
+.container {
+    padding: 2px;
+}
+
+.card {
+    background: transparent;
+    padding: 0;
+    border-radius: 12px;
+    max-width: 100%;
+    margin: auto;
+}
+
+.title {
+    text-align: center;
+    margin-bottom: 12px;
+    color: #f8fafc;
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+.inputGroup {
+    margin-bottom: 10px;
+}
+
+.label {
+    display: block;
+    margin-bottom: 4px;
+    font-weight: 600;
+    font-size: 12px;
+    color: #94a3b8;
+}
+.checkboxRow {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #94a3b8;
+    margin-bottom: 14px;
+    cursor: pointer;
+}
+
+.checkboxRow input {
+    width: 16px;
+    height: 16px;
+    accent-color: #3b82f6;
+    cursor: pointer;
+}
+.textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    border-radius: 10px;
+    background: rgba(30, 41, 59, 0.6);
+    color: #f8fafc;
+    min-height: 50px;
+    max-height: 120px;
+    resize: none;
+    overflow-y: hidden;
+    box-sizing: border-box;
+    font-family: inherit;
+    font-size: 13px;
+    transition: all 0.25s ease;
+}
+
+.textarea:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+    background: rgba(30, 41, 59, 0.8);
+}
+
+.textarea::placeholder {
+    color: #64748b;
+}
+
+.errorBox {
+    color: #fca5a5;
+    background: rgba(239, 68, 68, 0.15);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    padding: 10px 14px;
+    border-radius: 8px;
+    margin-bottom: 14px;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.errorText {
+    color: #f87171;
+    font-size: 12px;
+    margin-top: 6px;
+    display: block;
+}
+
+.buttonGroup {
+    display: flex;
+    gap: 10px;
+    margin-top: 16px;
+}
+
+.cancelBtn {
+    flex: 1;
+    padding: 10px 16px;
+    background: rgba(51, 65, 85, 0.6);
+    color: #cbd5e1;
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 14px;
+    transition: all 0.25s ease;
+}
+
+.cancelBtn:hover:not(:disabled) {
+    background: rgba(51, 65, 85, 0.8);
+    border-color: rgba(148, 163, 184, 0.3);
+    color: #f8fafc;
+}
+
+.cancelBtn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
