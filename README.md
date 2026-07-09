@@ -367,8 +367,6 @@ All admin actions are blocked against other `ADMIN` accounts (the "Admin Shield"
 | Reject-streak ban | 3 auto-removed reports | Author banned for 3 days |
 | Rejected-report penalty | A report is auto-removed | Author reputation −5 |
 | Per-vote reputation | Each up/downvote received on a report | Author reputation +1 / −1 |
-| Non-reliable flag | Reputation drops to ≤ −15 | Score resets to 0, user flagged non-reliable |
-| Reliable restore | Reputation reaches ≥ 20 | Non-reliable flag cleared |
 | Default report lifetime | — | 1 day from creation, unless promoted to `PERMANENT` |
 
 \* Only for non-ephemeral types: `POTHOLE`, `SPEED_CAMERA`, `POLICE`. `ACCIDENT`, `HEAVY_TRAFFIC`, `ROAD_CLOSURE`, and `CUSTOM` are always temporary and simply expire.
