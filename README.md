@@ -37,7 +37,6 @@
 - [API Overview](#-api-overview)
 - [Security Notes](#-security-notes)
 - [Automated Jobs & Moderation Rules](#-automated-jobs--moderation-rules)
-- [License](#-license)
 - [Team](#-team)
 
 </details>
@@ -370,10 +369,6 @@ All admin actions are blocked against other `ADMIN` accounts (the "Admin Shield"
 | Default report lifetime | — | 1 day from creation, unless promoted to `PERMANENT` |
 
 \* Only for non-ephemeral types: `POTHOLE`, `SPEED_CAMERA`, `POLICE`. `ACCIDENT`, `HEAVY_TRAFFIC`, `ROAD_CLOSURE`, and `CUSTOM` are always temporary and simply expire.
-
-## 📄 License
-
-MIT
 
 ## 👥 Team
 
